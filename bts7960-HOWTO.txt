@@ -1,0 +1,4 @@
+R_IS si L_IS prin 10k la GND
+R_ENsi L_IN la 3.3V
+VCC si GND la 3.3 si GND
+RPWM si LPWm la pin 16 si 17

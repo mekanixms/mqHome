@@ -1,0 +1,25 @@
+[
+    {
+        "type": "stimer"
+    },
+    {
+        "type": "fet",
+        "initOptions": {
+            "alias": "onboardLED",
+            "pinOut": 2
+        }
+    },
+    {
+        "type": "relay",
+        "initOptions": {
+            "alias": "Releu",
+            "pinOut": 22
+        }
+    },
+    {
+        "type": "mpu6050"
+    },
+    {
+        "type": "receiver"
+    }
+]

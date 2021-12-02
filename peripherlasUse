@@ -1,0 +1,131 @@
+peripheric mqtt
+    primire mesaj:
+        ON(rawMessage[0=TESTNOU]):  dev[2]/on()
+        ON(rawMessage[1=OFF]):  dev[2]/off()
+        ON(rawMessage[1=TOGGLE]):  dev[2]/toggle()
+        adica
+        {"triggers":
+            {
+            "rawMessage[0=TESTVECHI]":{"execute":[{"pid":"2","params":"","cmd":"off"}],"test":"0=TESTVECHI"},
+            "rawMessage[0=TESTNOU]":{"execute":[{"pid":"2","params":"","cmd":"on"}],"test":"0=TESTNOU"}},
+            "rawMessage[1=TOGGLE]":{"execute":[{"pid":"2","params":"","cmd":"toggle"}],"test":"1=TOGGLE"}
+            }
+
+        mosquitto_pub -h 10.11.1.58 -u mqhome -P ipaq2490b -p 1883 -t TESTVECHI -m "{}"
+        mosquitto_pub -h 10.11.1.58 -u mqhome -P ipaq2490b -p 1883 -t TESTNOU -m "{}"
+
+
+>>> from mcu import mcu
+>>> m=mcu()
+>>> m.addPeripheral({"type":"relfet","initOptions":{"pinOut":14}})
+new peripheral TYPE: relfet
+>>> m.peripherals[0].command({"duty":512})
+>>> m.peripherals[0].command({"freq":2})
+>>> m.peripherals[0].command({"freq":2})
+>>> m.peripherals[0].command("on")
+ON Pin 14
+>>> m.peripherals[0].command("off")
+OFF Pin 14
+>>> m.peripherals[0].command("freq",{"value":2})
+Not in PWM mode 14
+
+http://10.11.1.57:8080/cmd/3/mode?pwm=1
+>>> m.peripherals[0].command("mode",{"pwm":True})
+True
+
+http://10.11.1.57:8080/cmd/3/freq?value=4
+>>> m.peripherals[0].command("freq",{"value":2})
+
+http://10.11.1.57:8080/cmd/3/duty?value=256
+>>> m.peripherals[0].command("duty",{"value":512})
+>>> m.peripherals[0].command("duty",{"value":512})
+>>> m.peripherals[0].command("duty",{"value":768})
+>>> m.peripherals[0].command("duty",{"value":256})
+
+
+
+////timer test cu argumente keyword sau list
+// test pt stimer cu trigger din peripherals pe timcbk
+
+>>> from mcu import mcu
+>>> m=mcu()
+>>> m.addPeripheral({"type": "stimer"})
+new peripheral TYPE: stimer
+<stimer object at 3fff14b0>
+>>> m.addPeripheral({"type": "relay", "initOptions": {"alias": "Rel", "pinOut": 22}})
+new peripheral TYPE: relay
+<relay object at 3fff1c40>
+
+>>> def f(p):
+...     print(p)
+
+m.peripherals[0].setTimer(True,2000,1,{"function": f, "arguments": ["PPPPP"]})
+
+m.peripherals[0].setTimer(True,2000,1,{"function": f, "arguments": {"p":"KKKK"}})
+
+m.peripherals[0].setTimer(False)
+triggersTest.m.peripherals[0].stopTimer = True
+
+OUTPUT la mai sus:
+BEFORE:
+(Timer(3fff15d0; alarm_en=1, auto_reload=1, counter_en=1),)
+BEFORE:
+('toggle',)
+Toggle Pin 22
+AFTER
+{}
+AFTER
+{}
+
+
+peripherals:
+"[{"id":0,"type":"relfet","alias":null,"commands":["freq","duty","off","pwmset","on","relayValue","mode","toggle"],"observableProperties":["duty","freq","isPWM","value"],"observableMethods":["command"]},
+{"id":1,"type":"stimer","alias":"MyTimer","commands":["stop","start"],"observableProperties":["stopTimer"],"observableMethods":["command","timcbk","enable","disable"]},
+{"id":2,"type":"fet","alias":"Fet","commands":["freq","duty","pwmset"],"observableProperties":["duty","freq"],"observableMethods":["command"]},
+{"id":3,"type":"relfet","alias":"Relfet1","commands":["freq","duty","off","pwmset","on","relayValue","mode","toggle"],"observableProperties":["duty","freq","isPWM","value"],"observableMethods":["command"]}]"
+
+
+
+
+MODEL CONDITII AUTOMATIZARE
+    obs: avem operator dublu din jsu / 20210825
+        << >> == != <>
+
+WHEN(duty[0<5]):  dev[2]/off()
+WHEN(duty[0>10]):  dev[2]/on()
+WHEN(duty[7]):  dev[2]/toggle()
+WHEN(duty[1=7]):  dev[2]/toggle()
+
+KWargs
+CONDITIE(duty[a=7,b>0]):  dev[2]/toggle()
+
+WHEN(inclination[0>20]):  dev[1]/pwmset(freq=10,duty=256)
+WHEN(inclination[0<20]):  dev[1]/pwmset(freq=1,duty=768)
+WHEN(period[0>1500]):  dev[1]/freq(value=20)
+
+receiver : trebuie o valoare data la message
+WHEN(message[CMD]):  dev[4]/show(text={MESSAGE})
+
+EX cu evaluare:
+    doar daca se gaseste dev[ in string
+    se foloseste pentru a accesa proprietati metode ale celorlalte periferice
+        WHEN(value[1]):    dev[4]/clear() dev[4]/show(text="Pozitie:"+str(dev[1].position),col=true,row=str(dev[1].position))
+        WHEN(value[0]):    dev[4]/clear()  dev[4]/show(text=ESTE NULL,col=true,row=3)  dev[1]/set(to=4)
+
+        WHEN(inclination[0>9]):  dev[4]/on()  dev[1]/pwmset(freq=dev[5].inclination,duty=256)
+        WHEN(inclination[0<10]):  dev[4]/off()  dev[1]/pwmset(freq=2,duty=256)
+
+        WHEN(position[]):     dev[2]/clearChar(col=3,row=3) dev[2]/clearChar(col=4,row=3) dev[2]/show(text=str(dev[0].position),col=3,row=3)
+
+    Citirea parametrilor CONDITIEI:
+        folosesc pargs sau kargs
+        ON(rawMessage[0=DISPLAY]):  dev[2]/show(text=pargs[1])
+        ON(rawMessage[topic=DISPLAY]):  dev[2]/show(text=pargs[1])
+
+        ON(rawMessage[0==DISPLAY,1!=NU]):  dev[2]/show(text=pargs[1])
+
+        ON(rawMessage[0==DISPLAY,1!=NU]):  dev[2]/show(text=pargs[1])
+        ON(rawMessage[0==DISPLAY,1==RESET,1!=NU]):   dev[2]/resetCursor() dev[2]/clear()
+        WHEN(position[]): dev[2]/clearChar(col=3,row=3) dev[2]/clearChar(col=4,row=3) dev[2]/show(text=str(pargs[0]),col=3,row=3)
+        ON(rawMessage[0==T61]):  dev[2]/clearRow(row=4) dev[2]/show(text=pargs[1],col=4,row=4)
+

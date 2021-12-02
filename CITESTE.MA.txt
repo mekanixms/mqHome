@@ -1,0 +1,46 @@
+
+
+#################################################################
+#################################################################
+## DE STIUT:###
+###############
+    - jssr:
+        modulele mqtt, mqtta si mqttht se initializeaza cu " autostart": False
+
+    - jssr / mqttr*
+        - context startup.run contine
+            dev, mpu si runMode (config sau mqtt)
+
+    - scripturi automation in config (jssr):
+        CONDITIE(c_args): EXECUTA(e_args)
+
+        e_args
+            - este evaluat si are context default dev
+            - acces la c_args se face cu pargs[x] (unde x pozitie in array) sau kargs[x] (x label)
+#################################################################
+#################################################################
+
+
+
+
+
+
+mqttrCuAccesDirectPeriph (mqttr) cu slimmqtt - functional
+    Ex:
+        mosquitto_pub -h 10.11.1.58 -u mqhome -P ipaq2490b -p 1883 -t mqhomeintercom -m '{"from":"SEVRE","data":"{\"pid\":3,\"cmd\":\"stop\",\"options\":{}}","to":"mqac67b22cca0c"}'
+        mosquitto_pub -h 10.11.1.58 -u mqhome -P ipaq2490b -p 1883 -t mqhomeintercom -m '{"from":"SEVRE","data":"{\"pid\":3,\"cmd\":\"start\",\"opt\":{}}","to":"mqac67b22cca0c"}'
+        mosquitto_pub -h 10.11.1.58 -u mqhome -P ipaq2490b -p 1883 -t mqhomeintercom -m '{"from":"SEVRE","data":"{\"pid\":3,\"cmd\":\"setTimer\",\"opt\":{\"period\":100,\"mode\":1}}","to":"mqac67b22cca0c"}'
+
+mqttrVarCuPeriphMqtt (mqttr) cu mqtt - functional 
+        mesajele sunt definite in Animation 
+        - adaptez daca se poate incarca json sa acceseze dev[x].comanda
+                    daca nu sa mearga pe animation
+    Ex:
+        mosquitto_pub -h 10.11.1.58 -u mqhome -P ipaq2490b -p 1883 -t mqhomeintercom -m '{"from":"SEVRE","data":"relon","to":"mqac67b22cca0c"}'
+
+
+
+REGULI AUTOMATION
+WHEN(inclination[0<10]): dev[1]/pwmset(freq=2,duty=768)   dev[4]/send(msg=relon,to=mqac67b22cca0c)
+- perifericele mpu sunt accesibile prin folosirea dev[peripheralID]
+    WHEN(inclination[0>9]):  dev[1]/pwmset(freq=dev[3].inclination/2,duty=512)  dev[4]/send(msg=reloff,to=mqac67b22cca0c)

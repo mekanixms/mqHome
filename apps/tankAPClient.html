@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Setup - MicroHome</title>
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.0/themes/smoothness/jquery-ui.css">
+    <style rel="text/css">
+        button.on {
+            background-color: lightgreen;
+        }
+    </style>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script type="text/javascript" src="https://code.jquery.com/ui/1.12.0/jquery-ui.min.js"></script>
+</head>
+
+<body>
+    <br />
+    <table style="width: 95%;">
+        <tr>
+            <td align="center" style="width: 33%;">
+                <input type="text" id="ml" style="float: left;" size="3" />
+                <br>
+                <br>
+                <button id="mlsb" style="float: left;">↔</button>
+            </td>
+            <td align="center"><button id="drive">GO</button></td>
+            <td align="center" style="width: 33%;">
+                <input type="text" id="mr" style="float: right;" size="3" />
+                <br>
+                <br>
+                <button id="mrsb" style="float: right;">↔</button>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <div id="slider-ml" style="height:200px; float: left;"></div>
+            </td>
+            <td></td>
+            <td>
+                <div id="slider-mr" style="height:200px; float: right;"></div>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="3" align="center"><button id="stop">STOP</button></td>
+        </tr>
+    </table>
+
+    <script language="javascript" type="text/javascript">
+        mcu = "http://192.168.4.1:8080/";
+
+        function isNumeric(str) {
+            return !isNaN(String(str)) && !isNaN(parseFloat(String(str)))
+        }
+
+        function isInteger(s) {
+            var str = String(s);
+            var n = Math.floor(Number(str));
+            return n !== Infinity && String(n) === str && n >= 0;
+        }
+
+        function isDate(s) {
+            return moment(s, dateFormat, true).isValid();
+        }
+
+        function isDateTime(s) {
+            return moment(s, dateTimeFormat, true).isValid();
+        }
+
+        function isEmpty(value) {
+            return !value;
+        }
+
+        function isWhitespace(value) {
+            if (value == "" || isEmpty(value))
+                return false;
+            else
+                return !String(value).trim();
+        }
+
+        function jsonPrettyPrintHtml(json) {
+            if (typeof json != 'string') {
+                json = JSON.stringify(json, undefined, 2);
+            }
+            json = json.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+            return json.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, function (match) {
+                var cls = 'number';
+                if (/^"/.test(match)) {
+                    if (/:$/.test(match)) {
+                        cls = 'key';
+                    } else {
+                        cls = 'string';
+                    }
+                } else if (/true|false/.test(match)) {
+                    cls = 'boolean';
+                } else if (/null/.test(match)) {
+                    cls = 'null';
+                }
+                return '<span class="' + cls + '">' + match + '</span>';
+            });
+        }
+
+
+        function str2bts(str) {
+            var bts = [];
+
+            for (var i = 0; i < str.length; ++i) {
+                var code = str.charCodeAt(i);
+                bts = bts.concat([code & 0xff, code / 256 >>> 0]);
+            }
+            return bts;
+        }
+
+        function drive() {
+            ml = parseInt($("#ml").val()) ? $("#ml").val() : 0;
+            mr = parseInt($("#mr").val()) ? $("#mr").val() : 0;
+            $.ajax({
+                type: "GET",
+                dataType: "jsonp",
+                crossDomain: true,
+                success: function (data) {
+                    $("#slider-mr").slider("value", mr);
+                    $("#slider-ml").slider("value", ml);
+                },
+                url: mcu + "?ml=" + ml + "&mr=" + mr
+            });
+        }
+
+        function stop() {
+            $.ajax({
+                type: "GET",
+                dataType: "jsonp",
+                crossDomain: true,
+                success: function (data) {
+                    $("#slider-mr").slider("value", 0);
+                    $("#slider-ml").slider("value", 0);
+                },
+                url: mcu + "?ml=0&mr=0"
+            });
+        }
+
+        $(function () {
+
+
+            $("button#drive").click(drive);
+
+            $("button#stop").click(stop);
+
+
+            $("button#mlsb").click(function () {
+                $("#ml").val($("#ml").val() * -1);
+                $("#slider-ml").slider("value", $("#ml").val());
+            });
+
+            $("button#mrsb").click(function () {
+                $("#mr").val(-1 * parseInt($("#mr").val()));
+                $("#slider-mr").slider("value", $("#mr").val());
+            });
+
+            $("#slider-ml").slider({
+                orientation: "vertical",
+                range: "min",
+                min: -1023,
+                max: 1023,
+                value: 0,
+                stop: function (event, ui) { drive() },
+                slide: function (event, ui) {
+                    $("#ml").val(ui.value);
+                }
+            });
+            $("#slider-mr").slider({
+                orientation: "vertical",
+                range: "min",
+                min: -1023,
+                max: 1023,
+                value: 0,
+                stop: function (event, ui) { drive() },
+                slide: function (event, ui) {
+                    $("#mr").val(ui.value);
+                }
+            });
+
+        });
+    </script>
+</body>
+
+</html>

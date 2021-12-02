@@ -1,0 +1,130 @@
+0.3.4
+    adaugat driver periferic servo
+    
+0.3.3
+    adaugat suport pt rpi2 in mcu.py
+
+0.3.2
+    conf.py
+        - jsonConfig["peripherals"] sters la save
+        - pin1Btn si pin2Btn sepot suprascire din apl.json
+
+0.3.0-2021-1-10
+    -mqttr
+        - in peripheralDirectCommandHandler folosesc messageIsForMe
+    - conf
+        permite schimbarea pinModeSwitch (initializat in mai pentru selectia config/mqtt mod)
+        
+0.3.0-202109-22
+    - mqttr complet functional
+        finalizat STATUS UPDATE DEVICE CMDS (reboot)
+    - mqtt client
+        adaptat la mqttr
+        
+0.2.7-202109-22
+    - mqttrFull
+         - date nume retea wifi si ifconfig in reply DEVCONF
+
+0.2.6-202109-22
+    - mqttrFull
+        - scos uptime din reply la DEVCONF si mutat in STATUS UPDATE
+        - finalizat reply la topic default STATUS UPDATE
+            pt device
+                mosquitto_pub -h 10.11.1.35 -u mqhome -P ipaq2490b -p 1883 -t statusupdate -m '{"from":"clientjs38","to":"mqa4cf126ca224"}
+            pt periferic dev punem pid
+                mosquitto_pub -h 10.11.1.35 -u mqhome -P ipaq2490b -p 1883 -t statusupdate -m '{"from":"clientjs38","to":"mqa4cf126ca224","pid":"4"}'
+0.2.5-202109-21
+    - conf.py / mqtt mqttq mqttht
+        adaugat topics default pentru comenzi periferice - device
+            PERIPHERAL_CMDS = "mqperipheralcmds"
+            DEVICE_CMDS = "mqdevcmds"
+    
+    - client html mqtt2 update la topic nou PERIPHERAL_CMDS
+
+    - mqttrTentativa este var cu perif mqtt* si inglobeaa default topics pentru devconf, devcmds (de la mqttr cu access direct)
+        - voi redenumi la mqttrComplet in var urmatoare
+    
+
+0.2.4-202109-21
+    - adaugat mpu la startup in scripturi mqttr
+    - curatare prin drivere mqtt*
+    - adaugat var runMode (valori mqtt pt mqttr* sau config pt jssr) la dev si mpu pt context startup.run
+        - ca sa pot executa in startup.run:
+            if runMode=="config":
+                dev[x].start()
+0.2.3-202109-20
+    - jssr / mqttrCuAccesDirectPeriph.py / mqttrVarCuPeriphMqtt.py
+        - scos re-initializare mpu.wifi = network.WLAN()
+            - se face in mcu.py
+    - mcu
+        - adaugat proprietate mcu::ap care, alaturi de mcu::wifi, tine o instanta a interfetei respective
+        - modificat mcu::getWlanMode sa returneze
+            STA_IF daca wifi este activa si conectata
+            sau AP_IF daca AP este activa
+            sau None 
+    
+0.2.2-202109-3
+    - jssr
+        - adaugat mqtt mqtta mqttht la lista excludere start
+        - startup.run adaugat variabila mpu la interpretarea, alaturi de dev
+    - main
+        - adaugat authmode=4 la STA pt securitate
+        - daca nu avem setarile de hotspot facute suprascriu runas pt mod config
+        - nu mai pun main/station in mpu.wifi (ramane initializarea jssr)
+            - pun doar jssr.mpu.wlanMode tip AP sau STA
+    
+2021-09-02
+    - jsu/prepareStringSequence - testare '==' la testare enumarare parametri
+    - jsu/testStringSequence - testare '==' la apelarea performOperationFromString
+2021-08-25
+    - jsu modificat sa accepte si pargs si kargs pe langa dev la apelarea unui observable ()fie watcher sau trigger
+        - ON(rawMessage[0=DISPLAY]):  dev[2]/show(text=pargs[1])
+            unde pargs[1] este parametrul mesaj 
+    - modificat la testare conditie trigger - operator din 2 caractere
+        operatii suportate == <= >= != <> >> si <<
+        EX:
+            ON(rawMessage[0==DISPLAY,1!=NU]):  dev[2]/show(text=pargs[1])
+2021-08-22-1
+    - adaugat isconnected la mqtta
+2021-08-22
+    - mqtt curatare cateva linii cod ramase degeaba
+    - mqtta functional cu reconectare server / wifi :)
+2021-08-20-1
+    - devconfTopicHandler scos din jssr si commonMqttUtils(localizeddevconfTopicHandler)
+    - mqttht cu timer hardware
+        functional inclusiv la reconectare
+2021-08-20
+    - mqtta este modul cu threads, merge in paralel cu accel si stimer
+    - mqtt este modulul standard, poate fi folosit pentu a comunica si controla;
+    - mqttt/ mqttv
+        - de facut varianta cu run executat in callbck stimer sau vtimer 
+2021-08-19
+    mqtt varianta functionala fara _thread
+        clasa a fost derivata din umqtt.simple
+        de refacut varianta 17.1 la fel ca aceasta si testat cum merge pe robust
+2021-08-17-1
+    - set custom config key "additionalTopics" pt a declara topicuri aditionale
+    - adaugat exncapsulate in TrueValues ca sa faca verificarea din reguli
+2021-08-17
+    rezolvat 08-16 cu reconnect si finisat subscribe
+2021-08-16
+    mqtt merge pe send dar da erori la primire mesaje si subscribe topics
+2021-08-15
+    slimmqtt si mqtt drivers
+        - fix la send pe topic defuale sau custom
+        - adaugat optiune encapsulate la send care trimite json cu unique id si altele sau mesaj simplu
+2021-08-14
+    main modificat sa mearga cu switch pt conf/mqttsetup
+    conf - valori default pt btn
+    mpu6050 driver - adaugat comanda toggle
+    realbutton(debutton) merge bine in mod mqtt dar da "maximum recursion depth exceeded"
+        in mod config
+2021-08-11
+    vtimer prima versiune functionala
+2021-05-05
+    messager-adaugat comanda receiveMessage
+    jssr - startup si mqttsetup scripts cu POST
+2021-05-04
+    jss facut cu POST multipart si urlencoded
+    functii js de impachetare date pt ajax post si str2bts pt transmitere tip bytes din python
+    decodare cu str.decode() si replace la ',' care e separator
