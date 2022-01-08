@@ -1,3 +1,6 @@
+0.3.5
+    mqttr fix la handler peripheral command verificarea se face dupa cmdto.__class \
+    pt ca pe pid 0 nu executa comanda
 0.3.4
     adaugat driver periferic servo
     

@@ -78,7 +78,7 @@ def peripheralDirectCommandHandler(topic, message, mqttDriver):
                 cmdName = msgjs["cmd"]
                 cmdOptions = msgjs["opt"] if "opt" in msgjs else False
 
-                if cmdto and cmdName:
+                if cmdto.__class__ == int and cmdName:
                     if cmdName in mpu.peripherals[int(cmdto)].commandsList():
                         if(int(cmdto) < len(mpu.peripherals)):
                             try:

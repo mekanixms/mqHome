@@ -1,8 +1,5 @@
 [
     {
-        "type": "stimer"
-    },
-    {
         "type": "fet",
         "initOptions": {
             "alias": "onboardLED",
@@ -21,5 +18,25 @@
     },
     {
         "type": "receiver"
-    }
+    },
+    [
+        {
+            "type": "stimer",
+            "initOptions": {
+                "id": 1,
+                "minutes": true,
+                "alias": "Timer#HW1"
+            }
+        },
+        {
+            "type": "servo",
+            "initOptions": {
+                "angle": 180,
+                "min_us": 600,
+                "pin": 21,
+                "freq": 50,
+                "max_us": 2400
+            }
+        }
+    ]
 ]
