@@ -7,7 +7,7 @@ def setAngle(s, to=None):
     if to:
         s.angle = to
 
-    return s.anlge
+    return s.angle
 
 
 def setUs(s, to=None):

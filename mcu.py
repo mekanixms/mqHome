@@ -84,7 +84,7 @@ class mcu:
         if thisOne.get("type") in ["relay", "fet", "relfet", "stimer", "emiter",
                                    "receiver", "mpu6050", "bts7960",
                                    "realbutton", "realbuttonv2", "rotencoder",
-                                   "nokiadisplay", "mqtt", "mqtta", "mqttht", "messager", "servo"]:
+                                   "nokiadisplay", "mqtt", "mqtta", "mqttht", "messager", "servo", "digital_in"]:
             pt = thisOne.get("type")
             driverClass = getattr(__import__(pt), pt)
 

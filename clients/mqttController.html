@@ -69,10 +69,12 @@
         receiver: receiverAddUIEvents,
         bts7960: bts7960AddUIEvents,
         servo: servoAddUIEvents,
+        digital_in: digital_inAddUIEvents,
         realbutton: realbuttonAddUIEvents,
         realbuttonv2: realbuttonAddUIEvents,
         mqtt: mqttAddUIEvents,
         mqtta: mqttAddUIEvents,
+        mqttht: mqttAddUIEvents,
         messager: mqttAddUIEvents,
         nokiadisplay: nokiadisplayAddUIEvents,
         rotencoder: rotencoderAddUIEvents,
@@ -89,10 +91,12 @@
         receiver: function () {},
         bts7960: function () {},
         servo: function () {},
+        digital_in: function () {},
         realbutton: function () {},
         realbuttonv2: function () {},
         mqtt: function () {},
         mqtta: function () {},
+        mqttht: function () {},
         messager: function () {},
         nokiadisplay: function () {},
         rotencoder: function () {},
@@ -412,6 +416,8 @@
 
       function servoAddUIEvents() {}
 
+      function digital_inAddUIEvents() {}
+
       function realbuttonAddUIEvents(p, s) {
         // var state = s.state;
         // $(this).append(JSON.stringify(state));
@@ -470,6 +476,8 @@
       }
 
       function displayPeripheral(targetContainer, peripheral) {
+        console.info("new peripheral");
+        console.log(peripheral);
         var pdiv = document.createElement("div");
         pdiv.setAttribute("align", "center");
         pdiv.setAttribute("style", "v-align:middle;");

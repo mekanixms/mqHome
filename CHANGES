@@ -1,3 +1,8 @@
+0.3.7-2022-01-10
+    - adaugat driver digital_in
+0.3.6
+    servo.py - bug, schimbat angle de la anlge
+
 0.3.5
     mqttr fix la handler peripheral command verificarea se face dupa cmdto.__class \
     pt ca pe pid 0 nu executa comanda

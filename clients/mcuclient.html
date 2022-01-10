@@ -572,6 +572,7 @@
         receiver: `<div align="center" class="receiver"></div>`,
         bts7960: `<div align="center" class="bts7960"></div>`,
         servo: `<div align="center" class="servo"></div>`,
+        digital_in: `<div align="center" class="digital_in"></div>`,
         realbutton: `<div align="center" class="realbutton"></div>`,
         realbuttonv2: `<div align="center" class="realbuttonv2"></div>`,
         mqtt: `<div align="center" class="mqtt">
@@ -1666,6 +1667,8 @@
 
       function servoAddUIEvents() {}
 
+      function digital_inAddUIEvents() {}
+
       function realbuttonAddUIEvents(p, s) {
         // var state = s.state;
         // $(this).append(JSON.stringify(state));
@@ -1796,6 +1799,12 @@
         $(this).html(JSON.stringify(state));
       }
 
+      function updatedigital_inContainer(p, s) {
+        var state = s.state;
+
+        $(this).html(JSON.stringify(state));
+      }
+
       function updaterealbuttonContainer(p, s) {
         var state = s.state;
 
@@ -1847,6 +1856,7 @@
         receiver: updateReceiverContainer,
         bts7960: updatebts7960Container,
         servo: updateservoContainer,
+        digital_in: updatedigital_inContainer,
         realbutton: updaterealbuttonContainer,
         realbuttonv2: updaterealbuttonContainer,
         mqtt: updateMqttContainer,
@@ -1872,6 +1882,7 @@
         receiver: receiverAddUIEvents,
         bts7960: bts7960AddUIEvents,
         servo: servoAddUIEvents,
+        digital_in: digital_inAddUIEvents,
         realbutton: realbuttonAddUIEvents,
         realbuttonv2: realbuttonAddUIEvents,
         mqtt: mqttAddUIEvents,

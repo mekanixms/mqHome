@@ -129,3 +129,5 @@ EX cu evaluare:
         WHEN(position[]): dev[2]/clearChar(col=3,row=3) dev[2]/clearChar(col=4,row=3) dev[2]/show(text=str(pargs[0]),col=3,row=3)
         ON(rawMessage[0==T61]):  dev[2]/clearRow(row=4) dev[2]/show(text=pargs[1],col=4,row=4)
 
+        WHEN(inclination[0<<90]):  dev[2]/angle(to=dev[1].inclination)
+        WHEN(inclination[0>>90]):  dev[2]/angle(to=180-dev[1].inclination)
