@@ -540,7 +540,14 @@
         });
       }
 
-      function devicecontroller_displayPeripherals(devid, peripherals) {
+      function devicecontroller_displayPeripherals(
+        devid,
+        peripherals,
+        defaultPeripheral = null
+      ) {
+        var activePeripheral = 0;
+        if (defaultPeripheral) activePeripheral = parseInt(defaultPeripheral);
+
         var goAhead = false;
         var accordionTarget = $("div[role=tabpanel]#" + devid).find(
           "#peripherals"
@@ -554,11 +561,16 @@
         if (goAhead)
           if (peripherals.length) {
             peripherals.forEach(function (el) {
+              if (defaultPeripheral)
+                if (parseInt(defaultPeripheral) == el.id)
+                  activePeripheral = el.id;
+
               if (el.hasOwnProperty("commands") && el["commands"].length > 0)
                 displayPeripheral(accordionTarget, el);
             });
             accordionTarget.accordion({
               heightStyle: "content",
+              active: activePeripheral,
               activate: peripheralsOnActivate,
             });
           } else
@@ -692,7 +704,8 @@
               );
               devicecontroller_displayPeripherals(
                 jsonmsg["from"],
-                devices[jsonmsg["from"]]["config"]["peripherals"]
+                devices[jsonmsg["from"]]["config"]["peripherals"],
+                devices[jsonmsg["from"]]["config"]["defaultPeripheral"]
               );
             }
         }

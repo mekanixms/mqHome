@@ -119,6 +119,7 @@ def devconfTopicHandler(topic, message, mqttDriver):
 
             toSend = {
                 "peripherals": [],
+                "defaultPeripheral": conf.jsonConfig["defaultPeripheral"] if "defaultPeripheral" in conf.jsonConfig else 0,
                 "byType": byType,
                 "byAlias": byAlias,
                 "muid": mpu.unique_id,
