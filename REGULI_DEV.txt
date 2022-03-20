@@ -11,3 +11,8 @@
     mqtt
         ON(rawMessage[0=T51,1=blink]):  dev[0]/start(period=0.1,enabled=True)
         ON(rawMessage[0=T51,1=stop]):  dev[0]/stop()
+
+
+Trimite mesaje cu mqtt
+WHEN(temperature[0>>25]):  dev[0]/send(topic=DISPLAY,msg=pargs[0])
+WHEN(temperature[0<<26]):  dev[0]/send(to=a4cf126ca224,topic=DISPLAY,msg=pargs[0],encapsulate=FALSE)

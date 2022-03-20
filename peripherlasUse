@@ -131,3 +131,15 @@ EX cu evaluare:
 
         WHEN(inclination[0<<90]):  dev[2]/angle(to=dev[1].inclination)
         WHEN(inclination[0>>90]):  dev[2]/angle(to=180-dev[1].inclination)
+
+
+WHEN(temperature[0>>25]):  dev[0]/send(topic=DISPLAY,msg=str(pargs[0]),encapsulate=False)
+WHEN(temperature[0<<26]):  dev[0]/send(topic=DISPLAY,msg=str(pargs[0]),encapsulate=False)
+WHEN(temperature[0>>22]):  dev[0]/send(topic=DISPLAY,msg="T:"+str(pargs[0]),encapsulate=False) dev[0]/send(topic=INCALZIRE,msg=OFF,encapsulate=False)
+WHEN(temperature[0<<21]):  dev[0]/send(topic=DISPLAY,msg="T:"+str(pargs[0]),encapsulate=False) dev[0]/send(topic=INCALZIRE,msg=ON,encapsulate=False)
+
+sau
+WHEN(temperature[0>>25]):  dev[0]/send(topic=DISPLAY,msg=str(pargs[0]))
+WHEN(temperature[0<<26]):  dev[0]/send(topic=DISPLAY,msg=str(pargs[0]))
+    pt mesaj de genul
+    {"data": 21.68827, "from": "mq10521c67d1b0", "to": "*"}

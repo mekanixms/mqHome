@@ -13,6 +13,7 @@
         background-color: lightgreen;
       }
     </style>
+
     <script src="paho-mqtt/mqttws31.min.js" type="text/javascript"></script>
     <script
       type="text/javascript"
@@ -68,6 +69,7 @@
         emiter: emiterAddUIEvents,
         receiver: receiverAddUIEvents,
         bts7960: bts7960AddUIEvents,
+        aht10: aht10AddUIEvents,
         servo: servoAddUIEvents,
         digital_in: digital_inAddUIEvents,
         realbutton: realbuttonAddUIEvents,
@@ -90,6 +92,7 @@
         emiter: function () {},
         receiver: function () {},
         bts7960: function () {},
+        aht10: function () {},
         servo: function () {},
         digital_in: function () {},
         realbutton: function () {},
@@ -413,6 +416,8 @@
       function receiverAddUIEvents() {}
 
       function bts7960AddUIEvents() {}
+
+      function aht10AddUIEvents() {}
 
       function servoAddUIEvents() {}
 

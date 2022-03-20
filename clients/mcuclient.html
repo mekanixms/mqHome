@@ -571,6 +571,7 @@
         emiter: `<div align="center" class="emiter"></div>`,
         receiver: `<div align="center" class="receiver"></div>`,
         bts7960: `<div align="center" class="bts7960"></div>`,
+        aht10: `<div align="center" class="aht10"></div>`,
         servo: `<div align="center" class="servo"></div>`,
         digital_in: `<div align="center" class="digital_in"></div>`,
         realbutton: `<div align="center" class="realbutton"></div>`,
@@ -1665,6 +1666,8 @@
 
       function bts7960AddUIEvents() {}
 
+      function aht10AddUIEvents() {}
+
       function servoAddUIEvents() {}
 
       function digital_inAddUIEvents() {}
@@ -1793,6 +1796,12 @@
         $(this).html(JSON.stringify(state));
       }
 
+      function updateaht10Container(p, s) {
+        var state = s.state;
+
+        $(this).html(JSON.stringify(state));
+      }
+      
       function updateservoContainer(p, s) {
         var state = s.state;
 
@@ -1855,6 +1864,7 @@
         emiter: updateEmiterContainer,
         receiver: updateReceiverContainer,
         bts7960: updatebts7960Container,
+        aht10: updateaht10Container,
         servo: updateservoContainer,
         digital_in: updatedigital_inContainer,
         realbutton: updaterealbuttonContainer,
@@ -1874,13 +1884,14 @@
           // $(this).append(JSON.stringify(peripheric));
           console.log(peripheric);
           console.log(state);
-        },
+        }
       };
 
       var makeContainerInteractive = {
         emiter: emiterAddUIEvents,
         receiver: receiverAddUIEvents,
         bts7960: bts7960AddUIEvents,
+        aht10: aht10AddUIEvents,
         servo: servoAddUIEvents,
         digital_in: digital_inAddUIEvents,
         realbutton: realbuttonAddUIEvents,

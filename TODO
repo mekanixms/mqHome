@@ -1,3 +1,8 @@
+PERIFERIC DE TIP VARIABILA
+  - Sa pot seta valoarea cu un al periceric si citi de la un altul
+    ex: la aht10 amd periferic DAYTIME si setez NOAPTE SAU ZI
+              CAND CITESTE TEMP porneste incalzire doar daca este zi
+
 mqttr -
 servoDriver - scrie metode pentru deplasare cu viteza variabila
 se foloseste \_thread >>> for a in range(122,30,-1):
