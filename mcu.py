@@ -33,6 +33,7 @@ class mcu:
     peripherals = []
     peripheralsByType = {}
     peripheralsByAlias = {}
+    userVariables = {}
 
     def __init__(self):
         # if hasattr(machine, "unique_id"):
@@ -48,7 +49,7 @@ class mcu:
     def uptime(self):
         return (current_milli_time()-self.start_time)/1000
 
-    def reboot():
+    def reboot(self):
         reset()
 
     def wlanSetMode(self, mode=None, enable=False):
@@ -82,7 +83,7 @@ class mcu:
 
     def addPeripheral(self, thisOne={"type": "relfet", "initOptions": {"pinOut": 14}}):
         if thisOne.get("type") in ["relay", "fet", "relfet", "stimer", "emiter",
-                                   "receiver", "mpu6050", "bts7960","aht10",
+                                   "receiver", "mpu6050", "bts7960", "aht10",
                                    "realbutton", "realbuttonv2", "rotencoder",
                                    "nokiadisplay", "mqtt", "mqtta", "mqttht",
                                    "messager", "servo", "digital_in"]:

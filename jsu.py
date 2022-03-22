@@ -251,7 +251,7 @@ def nEsInterz(expr):
     return True
 
 
-def evalParams(p2eval, ps, triggerPositionalParameters, triggerKeywordParameters):
+def evalParams(p2eval, ps, triggerPositionalParameters, triggerKeywordParameters, userVars):
     toRet = {}
 
     # TODO match la string sa scot functiile periculoase
@@ -260,9 +260,11 @@ def evalParams(p2eval, ps, triggerPositionalParameters, triggerKeywordParameters
         for k in p2eval.keys():
             if nEsInterz(p2eval.get(k)):
                 try:
-                    if p2eval.get(k).find("dev[") != -1 or p2eval.get(k).find("pargs[") != -1 or p2eval.get(k).find("kargs[") != -1:
+                    if p2eval.get(k).find("dev[") != -1 or p2eval.get(k).find("pargs[") != -1 or p2eval.get(k).find("kargs[") != -1 or p2eval.get(k).find("context[") != -1:
+                        # TODO adauga aici, ca si periphericele, niste variabile, atasate MCU, care sunt accesibile oricarui eriferic
+                        # de ex var daytime [zi, noapte] si aht10 comanda on doar daca var are val noapte
                         toRet[k] = eval(p2eval.get(k), {}, {
-                                        "dev": ps, "pargs": triggerPositionalParameters, "kargs": triggerKeywordParameters
+                                        "dev": ps, "pargs": triggerPositionalParameters, "kargs": triggerKeywordParameters, "context": userVars
                                         })
                     else:
                         toRet[k] = p2eval.get(k)
@@ -272,7 +274,101 @@ def evalParams(p2eval, ps, triggerPositionalParameters, triggerKeywordParameters
     return toRet
 
 
-def lmbd(testCondition, pee, mpu):
+def lmbdForPeripheralObservable(testCondition, pee, mpu):
+    # m.peripherals[0].command("duty",{"value":256})
+    # pee["pid"], pee["cmd"], pee["params"])
+    def lF(*args, **kwargs):
+        # if len(args) > 0:
+        #     print("LAMDA LIST ARGUMENTS: ")
+        #     print(ujson.dumps(args))
+        # if len(kwargs) > 0:
+        #     print("LAMDA keyway ARGUMENTS: ")
+        #     print(ujson.dumps(kwargs))
+
+        lFRet = None
+
+        executePeripheralCommand = True
+
+        if testCondition:
+            testForValue = testStringSequence(testCondition, args, kwargs)
+
+            if testForValue:
+                executePeripheralCommand = True
+            else:
+                executePeripheralCommand = False
+                # print(str(args[0]) + " == " + (args[0]).__class__.__name__ + "("+testCondition+")" +
+                #       " not passed \n NotExecuted:"+ujson.dumps(pee))
+        else:
+            executePeripheralCommand = True
+
+        # dev[numeric] execut comanda periferic
+        if executePeripheralCommand:
+            # # topic=DISPLAY,msg="T:"+str(pargs[0]),encapsulate=False
+            commandParams = buildParametersFromString(pee["params"])
+            if len(commandParams) == 0:
+                lFRet = mpu.peripherals[int(
+                    pee["pid"])].command(pee["cmd"])
+            else:
+                lFRet = mpu.peripherals[int(pee["pid"])].command(
+                    pee["cmd"], evalParams(commandParams, mpu.peripherals, args, kwargs, mpu.userVariables))
+
+        return lFRet
+
+    return lF
+
+
+def lmbdForContext(testCondition, pee, mpu):
+    def lF(*args, **kwargs):
+        # if len(args) > 0:
+        #     print("LAMDA LIST ARGUMENTS: ")
+        #     print(ujson.dumps(args))
+        # if len(kwargs) > 0:
+        #     print("LAMDA keyway ARGUMENTS: ")
+        #     print(ujson.dumps(kwargs))
+
+        lFRet = {}
+
+        executeCommand = True
+
+        if testCondition:
+            testForValue = testStringSequence(testCondition, args, kwargs)
+
+            if testForValue:
+                executeCommand = True
+            else:
+                executeCommand = False
+                # print(str(args[0]) + " == " + (args[0]).__class__.__name__ + "("+testCondition+")" +
+                #       " not passed \n NotExecuted:"+ujson.dumps(pee))
+        else:
+            executeCommand = True
+
+        # dev[numeric] execut comanda periferic
+        if executeCommand:
+            # # topic=DISPLAY,msg="T:"+str(pargs[0]),encapsulate=False
+            commandParams = buildParametersFromString(pee["params"])
+            if len(commandParams) > 0:
+                evaluatedParams = evalParams(
+                    commandParams, mpu.peripherals, args, kwargs, mpu.userVariables)
+
+                for k in evaluatedParams.keys():
+                    mpu.userVariables[k] = evaluatedParams[k]
+                    lFRet[k] = evaluatedParams[k]
+
+        return lFRet
+
+    return lF
+
+
+def dictAddItemAtBegining(toThisDict, addThis):
+    newDict = addThis
+
+    for k in toThisDict:
+        newDict[k] = toThisDict[k]
+
+    return newDict
+
+
+def lmbdForMpu(testCondition, pee, mpu):
     # m.peripherals[0].command("duty",{"value":256})
     # pee["pid"], pee["cmd"], pee["params"])
     def lF(*args, **kwargs):
@@ -300,13 +396,22 @@ def lmbd(testCondition, pee, mpu):
             executePeripheralCommand = True
 
         if executePeripheralCommand:
+            # # topic=DISPLAY,msg="T:"+str(pargs[0]),encapsulate=False
             commandParams = buildParametersFromString(pee["params"])
-            if len(commandParams) == 0:
-                lFRet = mpu.peripherals[int(
-                    pee["pid"])].command(pee["cmd"])
-            else:
-                lFRet = mpu.peripherals[int(pee["pid"])].command(
-                    pee["cmd"], evalParams(commandParams, mpu.peripherals, args, kwargs))
+            # acces prop metode obiect mcu
+            # mcu.__dict__["uptime"]
+            #   uptime este functie
+            # testez asa: callable(mcu.__dict__["uptime"])
+            # sau asa: mcu.__dict__["uptime"].__class__.__name__ == 'function'
+            if pee["cmd"] in mpu.__class__.__dict__ and callable(mpu.__class__.__dict__[pee["cmd"]]):
+                mpuCmd = mpu.__class__.__dict__[pee["cmd"]]
+
+                mpuCmdParams = evalParams(
+                    commandParams, mpu.peripherals, args, kwargs, mpu.userVariables)
+                mpuCmdParamsWithSelf = dictAddItemAtBegining(
+                    mpuCmdParams, {"self": mpu})
+
+                lFRet = mpuCmd(**mpuCmdParamsWithSelf)
 
         return lFRet
 
@@ -314,6 +419,9 @@ def lmbd(testCondition, pee, mpu):
 
 
 def applyObservablesFromJson(deviceID, obsrvbToExec, mpu):
+    # pornesc  de la
+    # dev[0]/send(topic=DISPLAY,msg="T:"+str(pargs[0]),encapsulate=False)
+    # si trebuie sa execut asa
     # mpu.peripherals[deviceID].addTrigger("relayToggle", "AFTER", d)
     for whichObsrvbl in obsrvbToExec:
         if whichObsrvbl == "triggers":
@@ -355,10 +463,45 @@ def applyObservablesFromJson(deviceID, obsrvbToExec, mpu):
             if len(pTest) > 0:
                 print("ON: "+pMethod)
 
-            for pE in pExec:
-                # exThisOne(mthd, when, lambda *args, **kwargs: print("lambda cbk: farg="+str(args[0])+"\t"+sendToLambda))
-                print("add "+whichObsrvbl+" for " +
-                      " "+mthd+" "+when+" " +
-                      "dev[{}] {}({})".format(pE["pid"], pE["cmd"], pE["params"]))
+            # model pE
+            #         "execute": [
+            #             {
+            #                 "pid": "2",
+            #                 "params": "text=pargs[1],col=1,row=1",
+            #                 "cmd": "show"
+            #             },
+            #             {
+            #                 "pid": "context",
+            #                 "params": "topic=DISPLAY",
+            #                 "cmd": "set"
+            #             },
+            #             {
+            #                 "pid": "mpu",
+            #                 "params": "topic=DISPLAY,ceva=valoare",
+            #                 "cmd": "metodaMpu"
+            #             }
+            #         ]
 
-                exThisOne(mthd, when, lmbd(pTest, pE, mpu))
+            for pE in pExec:
+                cmdTarget = pE["pid"]
+
+                if cmdTarget == "context":
+                    # exThisOne pe datele din context
+                    # adauga lambda la triggers sau watcher
+                    exThisOne(mthd, when, lmbdForContext(pTest, pE, mpu))
+                else:
+                    if cmdTarget == "mpu":
+                        # exThisOne pe datele din context
+                        # adauga lambda la triggers sau watcher
+                        exThisOne(mthd, when, lmbdForMpu(pTest, pE, mpu))
+                    else:
+                        # este comanda catre device
+                        print("add "+whichObsrvbl+" for " +
+                              " "+mthd+" "+when+" " +
+                              "dev[{}] {}({})".format(pE["pid"], pE["cmd"], pE["params"]))
+                        # pE["pid"] == "context" si nu este numeric?? dev[context] execut ceva pt mpu??
+                        #   ATENTIE: pid poate fi doar numeric, asa vine din js (Animation/Save)
+                        #
+                        # altfel, este comanda pt periferic, adaug trigger sau watcher:
+                        exThisOne(
+                            mthd, when, lmbdForPeripheralObservable(pTest, pE, mpu))

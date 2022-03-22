@@ -3,6 +3,18 @@ from peripheral import peripheral, TrueValues
 from aht10driver import AHT10
 from machine import Pin, SoftI2C
 from jsu import FalseValues
+import ujson
+
+def all(s):
+    # scriu valoarea ca sa pot folosi watcher
+    s.temperature = s.temperature
+    s.humidity = s.humidity
+
+    return ujson.dumps({
+            "humidity": s.humidity,
+            "temperature": s.temperature,
+            "mode": s.mode
+        })
 
 def temperature(s):
     # scriu valoarea ca sa pot folosi watcher

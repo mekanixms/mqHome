@@ -1244,11 +1244,42 @@
             //  var todoActions = lm[1].trim().replace(/\s\s+/g, ' ').split(" ");
 
             var todoActionsFixed = lm[1].trim().replace(/\s\s+/g, " ") + " ";
-
             var todoActions = [];
-            var ress = /^(dev\[\d\]\/\w*\(.*?\))\s/i;
-            while (todoActionsFixed.match(ress) != null) {
-              var tdaf = todoActionsFixed.match(ress);
+
+            // gaseste formate de genul dev[0]/send(topic=DISPLAY,msg="T:"+str(pargs[0]),encapsulate=False)
+            var peripheralCommandFinder = /^(dev\[\d\]\/\w*\(.*?\))\s/i;
+            var peripheral_re = /^dev\[(\d)\]\/(\w*)\((.*?)\)$/i;
+
+            // gaseste format de genul context/set(topic=DISPLAY) la inceput string
+            // unde DISPLAY este evaluata si asignata mpu.userVariables[topic]
+            // pt access variabile context pt periferice
+            var contextFinder = /^(context\/\w*\(.*?\))\s/i;
+            //pt scoatere parametri si comanda
+            var contextAct_re = /^context\/(\w*)\((.*?)\)$/i;
+
+            // gaseste format mpu/set(topic=DISPLAY,ceva=valoare)
+            //pt comenzi directe mpu
+            var mpuCommandFinder = /^(mpu\/\w*\(.*?\))\s/i;
+            //pt scoatere parametri si comanda
+            var mpuAct_re = /^mpu\/(\w*)\((.*?)\)$/i;
+
+            // while (todoActionsFixed.match(peripheralCommandFinder) != null) {
+            //   var tdaf = todoActionsFixed.match(peripheralCommandFinder);
+            //   todoActions.push(tdaf[0].trim());
+            //   todoActionsFixed = todoActionsFixed.substr(tdaf[0].length);
+            //   todoActionsFixed.trimStart();
+            // }
+
+            var useThisRegex = "";
+            while (todoActionsFixed.length > 0) {
+              if (todoActionsFixed.match(peripheralCommandFinder) != null)
+                useThisRegex = peripheralCommandFinder;
+              if (todoActionsFixed.match(contextFinder) != null)
+                useThisRegex = contextFinder;
+              if (todoActionsFixed.match(mpuCommandFinder) != null)
+                useThisRegex = mpuCommandFinder;
+
+              var tdaf = todoActionsFixed.match(useThisRegex);
               todoActions.push(tdaf[0].trim());
               todoActionsFixed = todoActionsFixed.substr(tdaf[0].length);
               todoActionsFixed.trimStart();
@@ -1256,16 +1287,36 @@
 
             console.log(todoActions);
 
+            var devAction = {};
+
             todoActions.forEach(function (todo) {
-              var devAction = {};
-              //model : dev[0]/off(3)
-              var devact_re = /^dev\[(\d)\]\/(\w*)\((.*?)\)$/i;
-              //[0=stringCompelt,1=devid, 2=commanda,3 params]
-              var devIdandCommand = todo.match(devact_re);
-              devAction["pid"] = devIdandCommand[1];
-              devAction["cmd"] = devIdandCommand[2];
-              devAction["params"] = devIdandCommand[3];
-              eol["execute"].push(devAction);
+              devAction = {};
+
+              if (todo.match(peripheral_re) != null) {
+                //model : dev[0]/off(3)
+                //[0=stringComplet,1=devid, 2=commanda,3 params]
+                var devIdandCommand = todo.match(peripheral_re);
+                devAction["pid"] = devIdandCommand[1];
+                devAction["cmd"] = devIdandCommand[2];
+                devAction["params"] = devIdandCommand[3];
+                eol["execute"].push(devAction);
+              } else if (todo.match(contextAct_re) != null) {
+                //model: context/set(topic=DISPLAY)
+                // [0=stringComplet,1=set, 2=topic=DISPLAY]
+                var devIdandCommand = todo.match(contextAct_re);
+                devAction["pid"] = "context";
+                devAction["cmd"] = devIdandCommand[1];
+                devAction["params"] = devIdandCommand[2];
+                eol["execute"].push(devAction);
+              } else if (todo.match(mpuAct_re) != null) {
+                // model: mpu/mpuMethod(topic=DISPLAY,ceva=valoare)
+                // [0=stringComplet,1=mpuMethod, 2=topic=DISPLAY,ceva=valoare]
+                devAction["pid"] = "mpu";
+                var devIdandCommand = todo.match(mpuAct_re);
+                devAction["cmd"] = devIdandCommand[1];
+                devAction["params"] = devIdandCommand[2];
+                eol["execute"].push(devAction);
+              }
             });
 
             if (!observables[addTo].hasOwnProperty(el.id))
@@ -1801,7 +1852,7 @@
 
         $(this).html(JSON.stringify(state));
       }
-      
+
       function updateservoContainer(p, s) {
         var state = s.state;
 
@@ -1884,7 +1935,7 @@
           // $(this).append(JSON.stringify(peripheric));
           console.log(peripheric);
           console.log(state);
-        }
+        },
       };
 
       var makeContainerInteractive = {

@@ -1,4 +1,24 @@
-0.4-2022-03-20"
+0.5-2022-03-22
+    - adaugat target actiuni mpu si context (dev[] fiind initial)
+    ## DETALIAT ##
+# operatori conditii: == >> << >= <= != sau <>
+# 
+# target actiuni sunt:
+#   dev[]/comanda(param)
+#   mpu/metoda(param)
+#   context/set(numeVar1=ValVar1,numeVar2=ValVar2,...)
+# 
+# evaluarea parametrilor actiunilor se face cu context
+# "dev[" "pargs[" "kargs[" "context["
+# unde pargs si kargs sunt parametrii (positional si key) primiti de conditie actiune
+    # ex rawMessage[0==DISPLAY,1!=NU] 0 si 1 sunt pargs[0] si pargs[1]
+
+    ## EXEMPLU ##
+ON(rawMessage[0==UPTIME]):  dev[0]/toggle() mpu/reboot()
+ON(rawMessage[0==CONTEXT]):    context/set(topic=pargs[0]+' '+pargs[1]+" "+str(dev[0].value),CLIENT=dev[2].CLIENT_ID)
+ON(rawMessage[0==SEND]):    dev[2]/send(topic=DISPLAY,msg=context['topic']+" "+context['CLIENT'])
+
+0.4-2022-03-20
     - adaugat driver sensor temp/umiditate aht10
     
 0.3.9-2022-01-26

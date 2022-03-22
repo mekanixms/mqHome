@@ -1,3 +1,6 @@
+from multiprocessing import context
+
+
 peripheric mqtt
     primire mesaj:
         ON(rawMessage[0=TESTNOU]):  dev[2]/on()
@@ -96,6 +99,9 @@ WHEN(duty[0>10]):  dev[2]/on()
 WHEN(duty[7]):  dev[2]/toggle()
 WHEN(duty[1=7]):  dev[2]/toggle()
 
+
+dev, pargs, kwargs sunt interpretate in jsu/evalParams
+
 KWargs
 CONDITIE(duty[a=7,b>0]):  dev[2]/toggle()
 
@@ -135,11 +141,44 @@ EX cu evaluare:
 
 WHEN(temperature[0>>25]):  dev[0]/send(topic=DISPLAY,msg=str(pargs[0]),encapsulate=False)
 WHEN(temperature[0<<26]):  dev[0]/send(topic=DISPLAY,msg=str(pargs[0]),encapsulate=False)
-WHEN(temperature[0>>22]):  dev[0]/send(topic=DISPLAY,msg="T:"+str(pargs[0]),encapsulate=False) dev[0]/send(topic=INCALZIRE,msg=OFF,encapsulate=False)
-WHEN(temperature[0<<21]):  dev[0]/send(topic=DISPLAY,msg="T:"+str(pargs[0]),encapsulate=False) dev[0]/send(topic=INCALZIRE,msg=ON,encapsulate=False)
+WHEN(temperature[0>>19]):  dev[0]/send(topic=DISPLAY,msg="T:"+str(pargs[0]),encapsulate=False) dev[0]/send(topic=INCALZIRE,msg=OFF,encapsulate=False)
+WHEN(temperature[0<<15]):  dev[0]/send(topic=DISPLAY,msg="T:"+str(pargs[0]),encapsulate=False) dev[0]/send(topic=INCALZIRE,msg=ON,encapsulate=False)
 
 sau
 WHEN(temperature[0>>25]):  dev[0]/send(topic=DISPLAY,msg=str(pargs[0]))
 WHEN(temperature[0<<26]):  dev[0]/send(topic=DISPLAY,msg=str(pargs[0]))
     pt mesaj de genul
     {"data": 21.68827, "from": "mq10521c67d1b0", "to": "*"}
+
+
+
+# DIsplay Nokia
+ON(rawMessage[0==DISPLAY,1!=NU]):   dev[2]/clearRow(row=1) dev[2]/show(text=pargs[1],col=1,row=1)
+ON(rawMessage[0==DISPLAY,1==RESET,1!=NU]):   dev[2]/resetCursor()  dev[2]/clear()
+ON(rawMessage[0==T61]):    dev[2]/clearRow(row=4)  dev[2]/show(text=pargs[1],col=1,row=4)
+
+
+# Model test
+# operatori conditii: == >> << >= <= != sau <>
+# 
+# target actiuni sunt:
+#   dev[]/comanda(param)
+#   mpu/metoda(param)
+#   context/set(numeVar1=ValVar1,numeVar2=ValVar2,...)
+# 
+# evaluarea parametrilor actiunilor se face cu context
+# "dev[" "pargs[" "kargs[" "context["
+# unde pargs si kargs sunt parametrii (positional si key) primiti de conditie actiune
+    # ex rawMessage[0==DISPLAY,1!=NU] 0 si 1 sunt pargs[0] si pargs[1]
+
+ON(rawMessage[0==DISPLAY,1!=NU]):   dev[2]/clearRow(row=1) dev[2]/show(text=pargs[1],col=1,row=1)
+ON(rawMessage[0==DISPLAY,1==RESET,1!=NU]):   mpu/metodaMpu(topic=DISPLAY,ceva=valoare)
+ON(rawMessage[0==T61]):    dev[2]/clearRow(row=4)  context/set(topic=DISPLAY)
+
+ON(rawMessage[0==UPTIME]):   mpu/reboot()
+ON(rawMessage[0==CONTEXT]):    context/set(topic=DISPLAY)
+ON(rawMessage[0==SEND]):    dev[0]/send(topic=DISPLAY,msg=TESTPTCONTEXT"]))
+
+ON(rawMessage[0==UPTIME]):  dev[0]/toggle() mpu/reboot()
+ON(rawMessage[0==CONTEXT]):    context/set(topic=pargs[0]+' '+pargs[1]+" "+str(dev[0].value),CLIENT=dev[2].CLIENT_ID)
+ON(rawMessage[0==SEND]):    dev[2]/send(topic=DISPLAY,msg=context['topic']+" "+context['CLIENT'])
