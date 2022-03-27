@@ -43,7 +43,12 @@ class relay(peripheral):
         self.commands["toggle"] = relayToggle
         self.commands["value"] = relayValue
 
-        self.po = Pin(int(self.settings.get("pinOut")), Pin.OUT)
+        self.po = Pin(
+            int(self.settings.get("pinOut")),
+            Pin.OUT,
+            -1,
+            value=None if "default" not in self.settings else self.settings["default"]
+        )
 
     @property
     def value(self):

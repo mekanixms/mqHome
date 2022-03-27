@@ -1,4 +1,16 @@
-PERIFERIC DE TIP VARIABILA
+Dirvere pt:
+  -citiror RFID
+  - higrometru
+  
+
+
+mqtt2.html
+  mqttPub sa primeasca, optional si un callback care sa fie executat cand/daca se primeste raspuns la mesajul publicat
+    - generez un nr aleator, unic, la trimiterea mesajului si pun callback in dictionar
+    - daca primesc mesaj cu acelasi nr aleator, execut callback 
+
+- Done pe model context
+PERIFERIC DE TIP VARIABILA 
   - Sa pot seta valoarea cu un al periceric si citi de la un altul
     ex: la aht10 amd periferic DAYTIME si setez NOAPTE SAU ZI
               CAND CITESTE TEMP porneste incalzire doar daca este zi

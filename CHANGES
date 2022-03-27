@@ -1,3 +1,7 @@
+0.5.1-2022-03-27
+    - redenumire client default mcu2 si mqtt2
+    - relay: adaugat initOption default ca valoare la initializare Pin
+    - mcu/addPeripheral: param,etri impliciti schimbat din relfet in relay[pinOut=5]
 0.5-2022-03-22
     - adaugat target actiuni mpu si context (dev[] fiind initial)
     ## DETALIAT ##
@@ -16,7 +20,7 @@
     ## EXEMPLU ##
 ON(rawMessage[0==UPTIME]):  dev[0]/toggle() mpu/reboot()
 ON(rawMessage[0==CONTEXT]):    context/set(topic=pargs[0]+' '+pargs[1]+" "+str(dev[0].value),CLIENT=dev[2].CLIENT_ID)
-ON(rawMessage[0==SEND]):    dev[2]/send(topic=DISPLAY,msg=context['topic']+" "+context['CLIENT'])
+ON(rawMessage[0==SEND]):    dev[2]/send(topic=DISPLAY,msg=context['topic']+" "+context['CLIENT'],encapsulate=FALSE)
 
 0.4-2022-03-20
     - adaugat driver sensor temp/umiditate aht10

@@ -81,7 +81,7 @@ class mcu:
             else:
                 return None
 
-    def addPeripheral(self, thisOne={"type": "relfet", "initOptions": {"pinOut": 14}}):
+    def addPeripheral(self, thisOne={"type": "relay", "initOptions": {"pinOut": 5}}):
         if thisOne.get("type") in ["relay", "fet", "relfet", "stimer", "emiter",
                                    "receiver", "mpu6050", "bts7960", "aht10",
                                    "realbutton", "realbuttonv2", "rotencoder",
