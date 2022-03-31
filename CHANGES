@@ -1,3 +1,10 @@
+0.5.3-2022-03-31
+    - SoftI2C in loc de I2C ca sa evit erorare "Guru Meditation Error: Core  1 panic'ed (StoreProhibited). Exception was unhandled."
+        vezi: https://forum.micropython.org/viewtopic.php?f=15&t=12192&p=66187#p66153
+    - functional cu module frozen pe 1.18
+    
+0.5.2-2022-03-27
+    - analog_in
 0.5.1-2022-03-27
     - redenumire client default mcu2 si mqtt2
     - relay: adaugat initOption default ca valoare la initializare Pin

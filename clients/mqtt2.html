@@ -72,6 +72,7 @@
         aht10: aht10AddUIEvents,
         servo: servoAddUIEvents,
         digital_in: digital_inAddUIEvents,
+        analog_in: analog_inAddUIEvents,
         realbutton: realbuttonAddUIEvents,
         realbuttonv2: realbuttonAddUIEvents,
         mqtt: mqttAddUIEvents,
@@ -95,6 +96,7 @@
         aht10: function () {},
         servo: function () {},
         digital_in: function () {},
+        analog_in: function () {},
         realbutton: function () {},
         realbuttonv2: function () {},
         mqtt: function () {},
@@ -422,6 +424,8 @@
       function servoAddUIEvents() {}
 
       function digital_inAddUIEvents() {}
+
+      function analog_inAddUIEvents() {}
 
       function realbuttonAddUIEvents(p, s) {
         // var state = s.state;

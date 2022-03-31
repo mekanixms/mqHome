@@ -1,5 +1,6 @@
 from peripheral import peripheral, TrueValues
 from machine import Pin
+# TODO PULL_UP PULL_DOWN la initializare
 
 
 class digital_in(peripheral):
@@ -9,9 +10,11 @@ class digital_in(peripheral):
         self.pType = "digital_in"
         self.pClass = "IN"
 
-        # self.commands["value"] = relayValue
+        self.po = Pin(
+            int(self.settings.get("pinOut")),
+            Pin.IN,
+            pull=None if "pull" not in self.settings else self.settings["pull"])
 
-        self.po = Pin(int(self.settings.get("pinOut")), Pin.IN)
         self.po.irq(handler=self._switch_change,
                     trigger=Pin.IRQ_FALLING | Pin.IRQ_RISING)
 

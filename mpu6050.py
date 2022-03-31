@@ -1,5 +1,5 @@
 from peripheral import peripheral, TrueValues
-from machine import I2C, Pin, Timer
+from machine import SoftI2C, Pin, Timer
 from imu import MPU6050
 from sys import platform
 
@@ -42,13 +42,22 @@ class mpu6050(peripheral):
         self.pClass = "INPUT"
 
         if self.isESP8266:
-            self.i2c = I2C(scl=Pin(5), sda=Pin(4))
-            print("ESP8266 i2c init")
+            scl = 5 if "scl" not in self.settings else int(
+                self.settings["scl"])
+            sda = 4 if "sda" not in self.settings else int(
+                self.settings["sda"])
+
+            self.i2c = SoftI2C(scl=Pin(scl), sda=Pin(sda))
         else:
             if self.isESP32:
                 # hardware i2c canal 1 scl 18 sda 19
-                print("ESP32 i2c init")
-                self.i2c = I2C(0)
+                # self.i2c = I2C(0)
+                scl = 18 if "scl" not in self.settings else int(
+                    self.settings["scl"])
+                sda = 19 if "sda" not in self.settings else int(
+                    self.settings["sda"])
+
+                self.i2c = SoftI2C(scl=Pin(scl), sda=Pin(sda))
 
         self.imu = MPU6050(self.i2c)
         self.__inclination = 0
