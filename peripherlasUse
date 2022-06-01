@@ -170,7 +170,7 @@ ON(rawMessage[0==T61]):    dev[2]/clearRow(row=4)  dev[2]/show(text=pargs[1],col
 # "dev[" "pargs[" "kargs[" "context["
 # unde pargs si kargs sunt parametrii (positional si key) primiti de conditie actiune
     # ex rawMessage[0==DISPLAY,1!=NU] 0 si 1 sunt pargs[0] si pargs[1]
-
+EXEMPLE:
 ON(rawMessage[0==DISPLAY,1!=NU]):   dev[2]/clearRow(row=1) dev[2]/show(text=pargs[1],col=1,row=1)
 ON(rawMessage[0==DISPLAY,1==RESET,1!=NU]):   mpu/metodaMpu(topic=DISPLAY,ceva=valoare)
 ON(rawMessage[0==T61]):    dev[2]/clearRow(row=4)  context/set(topic=DISPLAY)
@@ -179,7 +179,13 @@ ON(rawMessage[0==UPTIME]):   mpu/reboot()
 ON(rawMessage[0==CONTEXT]):    context/set(topic=DISPLAY)
 ON(rawMessage[0==SEND]):    dev[0]/send(topic=DISPLAY,msg=TESTPTCONTEXT"]))
 
-ON(rawMessage[0==UPTIME]):  dev[0]/toggle() mpu/reboot()
+ON(rawMessage[0==REBOOT]):  mpu/reboot()
+ON(rawMessage[0==UPTIME]):  dev[0]/toggle() dev[2]/send(topic=DISPLAY,msg="CLK: "+str(context['clicked']),encapsulate=false)
 ON(rawMessage[0==CONTEXT]):    context/set(topic=pargs[0]+' '+pargs[1]+" "+str(dev[0].value),CLIENT=dev[2].CLIENT_ID)
-ON(rawMessage[0==SEND]):    dev[2]/send(topic=DISPLAY,msg=context['topic']+" "+context['CLIENT'])
-ON(rawMessage[0==RELSTATUS]):    dev[2]/send(topic=DISPLAY,msg="REL="+str(context['TCHBTN']))
+ON(rawMessage[0==CLIENTID]):    dev[2]/send(topic=DISPLAY,msg=context['topic']+" "+context['CLIENT'])
+ON(rawMessage[0==RELSTATUS]):    dev[2]/send(topic=DISPLAY,msg="REL "+context['topic'],encapsulate=false)
+
+
+senzorMiscare
+ON(changed[1]): context/set(count=context['count']+1)  dev[2]/send(topic=DRIVE,msg=ON,encapsulate=false)
+ON(changed[0]): dev[2]/send(topic=DRIVE,msg=OFF,encapsulate=false)

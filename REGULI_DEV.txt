@@ -16,3 +16,6 @@
 Trimite mesaje cu mqtt
 WHEN(temperature[0>>25]):  dev[0]/send(topic=DISPLAY,msg=pargs[0])
 WHEN(temperature[0<<26]):  dev[0]/send(to=a4cf126ca224,topic=DISPLAY,msg=pargs[0],encapsulate=FALSE)
+
+ON(changed[1]): context/set(count=context['count']+1)  dev[2]/send(topic=DRIVE,msg=ON,encapsulate=false)
+ON(changed[0]): dev[2]/send(topic=DRIVE,msg=OFF,encapsulate=false)

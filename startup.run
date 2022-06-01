@@ -1,0 +1,9 @@
+#Script context variables
+#"dev": mpu.peripherals
+#"mpu": mpu
+#"runMode": "mqtt"
+
+#Example
+# dev[3].setTimer(True,period=200)
+#mpu.userVariables["clicked"] = 0
+#dev[2].start()

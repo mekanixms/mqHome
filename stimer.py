@@ -61,7 +61,7 @@ class stimer(peripheral):
     def timcbk(self, t):
         self.heartbeat = not self.heartbeat
 
-        if len(self.timerExecute) > 0:
+        if "function" in self.timerExecute and "arguments" in self.timerExecute:
             f = self.timerExecute["function"]
             if callable(f) and f is not None:
                 if self.timerExecute["arguments"] == None:
