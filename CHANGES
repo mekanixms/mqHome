@@ -1,3 +1,12 @@
+0.5.6-2022-06-19
+    jssr and mqttr:
+        conf.jsonConfig.get("executeStartupFile")
+            and 
+        conf.jsonConfig.get("applyObservablesOnBoot")
+            syntax
+                scriptFilename|scriptFilename 
+                or bool
+
 0.5.5-2022-06-18
     - sters deviceTypesTopics din apl.json; nefolosit
             pinOutStatusLED = 4

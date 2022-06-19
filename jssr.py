@@ -507,7 +507,22 @@ if type(conf.jsonConfig["peripherals"]) is list and len(conf.jsonConfig["periphe
         mpu.addPeripheral(epfcfg)
 
 
-if "applyObservablesOnBoot" in conf.jsonConfig and conf.jsonConfig["applyObservablesOnBoot"]:
+
+applyObservables = False
+scriptFilename = __file__.split('.')[0]
+
+if "applyObservablesOnBoot" in conf.jsonConfig:
+    if conf.jsonConfig["applyObservablesOnBoot"].__class__.__name__ == 'str':
+        if scriptFilename in conf.jsonConfig["applyObservablesOnBoot"].split("|"):
+            applyObservables = True
+        else:
+            if conf.jsonConfig.get("applyObservablesOnBoot") in jsu.TrueValues:
+                applyObservables = True
+    else:
+        if conf.jsonConfig["applyObservablesOnBoot"].__class__.__name__ == 'bool':
+            applyObservables = conf.jsonConfig["applyObservablesOnBoot"]
+
+if applyObservables:
     oconf = ujson.loads(jsu.getObservablesFileContent(conf.observablesFile))
 
     for xi in range(len(mpu.peripherals)):
@@ -517,24 +532,45 @@ if "applyObservablesOnBoot" in conf.jsonConfig and conf.jsonConfig["applyObserva
             jsu.applyObservablesFromJson(xi, obsrvbToExec, mpu)
         else:
             print("\t\tNone found for it")
+else:
+    print("\t\tObservables not applied")
 
-if conf.startupFile:
-    if file_exists(conf.startupFile):
-        # incarc fisier configurare
-        scfg = open(conf.startupFile, "r")
-        scfgContent = scfg.readlines()
-        scfg.close()
 
-        if len(scfgContent) > 0:
-            print("Running Startup script")
-            try:
-                exec("".join(scfgContent), {
-                     "dev": mpu.peripherals,
-                     "mpu": mpu,
-                     "runMode": "config"
-                     })
-            except:
-                print("\tError, Bad script")
+
+
+
+executeStartupFile = True
+
+if "executeStartupFile" in conf.jsonConfig:
+    if conf.jsonConfig.get("executeStartupFile").__class__.__name__ == 'str':
+        if scriptFilename not in conf.jsonConfig.get("executeStartupFile").split("|"):
+            executeStartupFile = False
+        else:
+            if conf.jsonConfig.get("executeStartupFile") in jsu.FalseValues:
+                executeStartupFile = False
+    else:
+        if conf.jsonConfig.get("executeStartupFile").__class__.__name__ == 'bool':
+            executeStartupFile = conf.jsonConfig.get("executeStartupFile")
+
+if executeStartupFile:
+    if conf.startupFile:
+        if file_exists(conf.startupFile):
+            scfg = open(conf.startupFile, "r")
+            scfgContent = scfg.readlines()
+            scfg.close()
+
+            if len(scfgContent) > 0:
+                print("Running Startup script")
+                try:
+                    exec("".join(scfgContent), {
+                        "dev": mpu.peripherals,
+                        "mpu": mpu,
+                        "runMode": "config"
+                        })
+                except:
+                    print("\tError, Bad script")
+else:
+    print("\tStartup script skipped")
 
 
 j.route["/"] = homeHandler

@@ -3,7 +3,7 @@ from mcu import mcu
 import network
 import ujson
 from os import listdir
-from jsu import getObservablesFileContent, applyObservablesFromJson
+from jsu import getObservablesFileContent, applyObservablesFromJson, TrueValues, FalseValues
 from commonMqttUtils import messageIsForMe
 
 
@@ -165,7 +165,30 @@ if type(conf.jsonConfig["peripherals"]) is list and len(conf.jsonConfig["periphe
         if epfcfg["type"] in ["mqtt", "mqtta", "mqttht"]:
             mqtt = mpu.peripherals[-1]
 
-if "applyObservablesOnBoot" in conf.jsonConfig and conf.jsonConfig["applyObservablesOnBoot"]:
+if mqtt.__class__.__bases__[0].__name__ == 'peripheral':
+    print("MQTT driver found, attaching predefined topic handlers")
+    mqtt.topicHandlers[conf.DEVICE_CONFIG] = devconfTopicHandler
+    mqtt.topicHandlers[conf.PERIPHERAL_CMDS] = peripheralDirectCommandHandler
+    mqtt.topicHandlers[conf.DEVICE_CMDS] = deviceDirectCommandHandler
+    mqtt.topicHandlers[conf.STATUS_UPDATE_TOPIC] = deviceStatusCommandHandler
+
+
+
+applyObservables = False
+scriptFilename = __file__.split('.')[0]
+
+if "applyObservablesOnBoot" in conf.jsonConfig:
+    if conf.jsonConfig["applyObservablesOnBoot"].__class__.__name__ == 'str':
+        if scriptFilename in conf.jsonConfig["applyObservablesOnBoot"].split("|"):
+            applyObservables = True
+        else:
+            if conf.jsonConfig.get("applyObservablesOnBoot") in TrueValues:
+                applyObservables = True
+    else:
+        if conf.jsonConfig["applyObservablesOnBoot"].__class__.__name__ == 'bool':
+            applyObservables = conf.jsonConfig["applyObservablesOnBoot"]
+
+if applyObservables:
     oconf = ujson.loads(getObservablesFileContent(conf.observablesFile))
 
     for xi in range(len(mpu.peripherals)):
@@ -175,28 +198,42 @@ if "applyObservablesOnBoot" in conf.jsonConfig and conf.jsonConfig["applyObserva
             applyObservablesFromJson(xi, obsrvbToExec, mpu)
         else:
             print("\t\tNone found for it")
+else:
+    print("\t\tObservables not applied")
 
-if mqtt.__class__.__bases__[0].__name__ == 'peripheral':
-    print("MQTT driver found, attaching predefined topic handlers")
-    mqtt.topicHandlers[conf.DEVICE_CONFIG] = devconfTopicHandler
-    mqtt.topicHandlers[conf.PERIPHERAL_CMDS] = peripheralDirectCommandHandler
-    mqtt.topicHandlers[conf.DEVICE_CMDS] = deviceDirectCommandHandler
-    mqtt.topicHandlers[conf.STATUS_UPDATE_TOPIC] = deviceStatusCommandHandler
 
-if conf.startupFile:
-    if file_exists(conf.startupFile):
-        # incarc fisier configurare
-        scfg = open(conf.startupFile, "r")
-        scfgContent = scfg.readlines()
-        scfg.close()
 
-        if len(scfgContent) > 0:
-            print("Running Startup script")
-            try:
-                exec("".join(scfgContent), {
-                     "dev": mpu.peripherals,
-                     "mpu": mpu,
-                     "runMode": "mqtt"
-                     })
-            except:
-                print("\tError, Bad script")
+
+
+executeStartupFile = True
+
+if "executeStartupFile" in conf.jsonConfig:
+    if conf.jsonConfig.get("executeStartupFile").__class__.__name__ == 'str':
+        if scriptFilename not in conf.jsonConfig.get("executeStartupFile").split("|"):
+            executeStartupFile = False
+        else:
+            if conf.jsonConfig.get("executeStartupFile") in FalseValues:
+                executeStartupFile = False
+    else:
+        if conf.jsonConfig.get("executeStartupFile").__class__.__name__ == 'bool':
+            executeStartupFile = conf.jsonConfig.get("executeStartupFile")
+
+if executeStartupFile:
+    if conf.startupFile:
+        if file_exists(conf.startupFile):
+            scfg = open(conf.startupFile, "r")
+            scfgContent = scfg.readlines()
+            scfg.close()
+
+            if len(scfgContent) > 0:
+                print("Running Startup script")
+                try:
+                    exec("".join(scfgContent), {
+                        "dev": mpu.peripherals,
+                        "mpu": mpu,
+                        "runMode": "mqtt"
+                        })
+                except:
+                    print("\tError, Bad script")
+else:
+    print("\tStartup script skipped")

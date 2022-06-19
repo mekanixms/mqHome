@@ -134,7 +134,7 @@ More info on [precompiled modules](https://docs.micropython.org/en/latest/refere
   "mqtta" threaded implementation
   "mqttht" hardware timer implementation (default uses timer id 2)
 
-* topicHandlers builtin and attto the last mqtt type peripheral
+* topicHandlers builtin and add to the last mqtt type peripheral
   
   BROADCAST_ONLINE = "DEVONLINE"
   BROADCAST_LASTWILL = "DEVLASTWILL"
@@ -263,6 +263,11 @@ Where options are: set (json text), apply,load,reset
 * /net/ap/started
 * /net/st/list
 *returns wifi.scan()*
+
+```bash
+curl http://localAddress:8080/net/st/list
+```
+
 * /net/st/connected
 * /net/st/enable
 *connects to what is saved with /conf/st/save*
@@ -286,7 +291,11 @@ Where options are: set (json text), apply,load,reset
 * /conf/alias/aliasName
 
 * /conf/key/set/keyName?value=...
-* *set a variable to value in apl.json*
+*set a variable to value in apl.json*
+```bash
+curl http://localAddress:8080/st/save/myWifiNetwork/myWifiPass
+curl http://localAddress:8080/conf/key/set/run?value=mqtt/sta
+```
 
 * /conf/key/get/keyName
 *get the value of keyName from apl.json*

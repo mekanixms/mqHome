@@ -1,0 +1,7 @@
+2022-06-19:
+    jssr and mqttr:
+        conf.jsonConfig.get("executeStartupFile")
+            and 
+        conf.jsonConfig.get("applyObservablesOnBoot")
+            only work when set to scriptFilename|scriptFilename syntax
+                    not when set to a bool value
