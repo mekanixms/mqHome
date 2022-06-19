@@ -1,3 +1,35 @@
+
+main.py
+  deinitializare modeSwitch btn1 btn2 devStatusLED
+    inainte de lansare script pricipal (jssr/mqtt)
+
+integrare ESPNow pt comunicatii, ca alternativa la mqtt
+  https://micropython-glenn20.readthedocs.io/en/latest/library/espnow.html
+
+Integrare yee light
+  https://www.yeelight.com/faqs/lan_control
+  https://www.yeelight.com/en_US/developer
+
+
+jssr.py:
+  - dupa if "applyObservablesOnBoot" verific file_exists(conf.observablesFile)
+  
+  - ca sa pot initializa observables pe script "applyObservablesOnBoot"
+      - citesc din apl.json ca bool (backwards compatible) sau  text|text unde text poate fi numele scriptului curent
+
+  - initializare periferice similara cu applyObservablesOnBoot
+
+  - mqttsetupHandler verific file exist ("handler-"+topic+".def") la get si set
+        
+
+mqttr.py
+  - ca sa pot initializa observables pe script "applyObservablesOnBoot"
+      - citesc din apl.json ca bool (backwards compatible) sau  text|text unde text poate fi numele scriptului curent
+
+  - initializare periferice similara cu applyObservablesOnBoot
+
+  - peripheralDirectCommandHandler / testeaza if not cmdOptions in var if cmdOptions si   inversate conditiile
+
 Dirvere pt:
   - citiror RFID
   - higrometru

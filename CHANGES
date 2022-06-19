@@ -1,3 +1,14 @@
+0.5.5-2022-06-18
+    - sters deviceTypesTopics din apl.json; nefolosit
+            pinOutStatusLED = 4
+    - jssr 
+        - in /observable/?what=methods fixed Key error if what not give
+                -TODO: test it
+        - configHandler removed /conf/group/group1,group2,... use instead /conf/key/get/group?value=GR1%20GR2,GR3....
+
+0.5.4
+    fix stimer in timcbk imbunatarire verificare self.timerExecute
+        adaugat "function" in self.timerExecute
 0.5.3-2022-03-31
     - SoftI2C in loc de I2C ca sa evit erorare "Guru Meditation Error: Core  1 panic'ed (StoreProhibited). Exception was unhandled."
         vezi: https://forum.micropython.org/viewtopic.php?f=15&t=12192&p=66187#p66153

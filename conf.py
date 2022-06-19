@@ -36,9 +36,6 @@ pinModeSwitch = 35
 pinBtn1 = 25
 pinBtn2 = 27
 pinDevStatusLED = 2
-pinOutStatusLED = 4
-
-deviceTypesTopics = {"relay": "remrelay", "fet": "remfet"}
 
 
 def file_exists(f):

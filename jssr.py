@@ -36,10 +36,6 @@ def configHandler(REQUEST):
             #   /conf/st/saved
             #   /conf/st/static?toip=..&netmask=...&gw=...&dns=...
             #   /conf/st/dhcp
-            #   /conf/group/group1,group2,...
-            #   /conf/mqtt/10.11.1.115
-            #   /conf/run/standalone sau mqtt
-            #   /conf/alias/aliasName
             if todo == "st":
                 whattodo = p[2]
                 if whattodo == "static":
@@ -68,21 +64,12 @@ def configHandler(REQUEST):
                     toSend["aps"] = conf.jsonConfig["aps"] if "aps" in conf.jsonConfig.keys(
                     ) else None
 
-            if todo == "group":
-                groups = p[2].replace("%20", " ").replace(",", " ").strip(" ")
-                conf.jsonConfig["group"] = groups
-                conf.configFileSave()
-
             toSend["do"] = whattodo
             toSend["done"] = done
 
     if not done:
         if len(p) == 4:
-            # avem /conf/st/save/ssidName/parola
-            # se poate sterge sectiunea
             done = True
-            #   /conf/ap/ssid/numeRetea
-            #   /conf/ap/pass/parola
             #   /conf/key/set/numek?value=
             #   /conf/key/get/numek
             whattodo = p[2].strip(" ")
@@ -303,10 +290,13 @@ def commandHandler(REQUEST):
         # "/observable/?what=properties"
         # "/observable/?what=methods"
         if cmdName == "observable":
-            if REQUEST["GET"]["what"] == "methods":
-                toSend["methods"] = mpu.peripherals[deviceID].getObservableMethods()
-            if REQUEST["GET"]["what"] == "properties":
-                toSend["properties"] = mpu.peripherals[deviceID].getObservableProperties()
+            if "what" in REQUEST["GET"]:
+                if REQUEST["GET"]["what"] == "methods":
+                    toSend["methods"] = mpu.peripherals[deviceID].getObservableMethods()
+                if REQUEST["GET"]["what"] == "properties":
+                    toSend["properties"] = mpu.peripherals[deviceID].getObservableProperties()
+            else:
+                toSend["properties"] = [""]
         else:
             if cmdName == "observables":
 
