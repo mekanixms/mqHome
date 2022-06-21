@@ -49,13 +49,13 @@ class peripheral:
 
             if "BEFORE" in executeThese and len(executeThese["BEFORE"]) > 0:
                 for ebf in executeThese["BEFORE"]:
-                    ebf(*args)
+                    ebf(*args, **kwargs)
 
             out = func(self, *args, **kwargs)
 
             if "AFTER" in executeThese and len(executeThese["AFTER"]) > 0:
                 for ebf in executeThese["AFTER"]:
-                    ebf(*args)
+                    ebf(*args, **kwargs)
 
             return out
         return wrapper

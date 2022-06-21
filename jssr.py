@@ -507,6 +507,10 @@ if type(conf.jsonConfig["peripherals"]) is list and len(conf.jsonConfig["periphe
         mpu.addPeripheral(epfcfg)
 
 
+TrueValues = jsu.TrueValues
+FalseValues = jsu.FalseValues
+
+
 
 applyObservables = False
 scriptFilename = __file__.split('.')[0]
@@ -516,7 +520,7 @@ if "applyObservablesOnBoot" in conf.jsonConfig:
         if scriptFilename in conf.jsonConfig["applyObservablesOnBoot"].split("|"):
             applyObservables = True
         else:
-            if conf.jsonConfig.get("applyObservablesOnBoot") in jsu.TrueValues:
+            if conf.jsonConfig.get("applyObservablesOnBoot") in TrueValues:
                 applyObservables = True
     else:
         if conf.jsonConfig["applyObservablesOnBoot"].__class__.__name__ == 'bool':
@@ -546,7 +550,7 @@ if "executeStartupFile" in conf.jsonConfig:
         if scriptFilename not in conf.jsonConfig.get("executeStartupFile").split("|"):
             executeStartupFile = False
         else:
-            if conf.jsonConfig.get("executeStartupFile") in jsu.FalseValues:
+            if conf.jsonConfig.get("executeStartupFile") in FalseValues:
                 executeStartupFile = False
     else:
         if conf.jsonConfig.get("executeStartupFile").__class__.__name__ == 'bool':

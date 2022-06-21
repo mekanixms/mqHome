@@ -15,7 +15,7 @@ jssr.py:
   - dupa if "applyObservablesOnBoot" verific file_exists(conf.observablesFile)
       - nu este necesar jsu.getObservablesFileContent intoarce {} daca nu exista
   
-  - ca sa pot initializa observables pe script "applyObservablesOnBoot"
+  - DONE ca sa pot initializa observables pe script "applyObservablesOnBoot"
       - citesc din apl.json ca bool (backwards compatible) sau  text|text unde text poate fi numele scriptului curent
 
   - initializare periferice similara cu applyObservablesOnBoot
@@ -24,7 +24,7 @@ jssr.py:
         
 
 mqttr.py
-  - ca sa pot initializa observables pe script "applyObservablesOnBoot"
+  - DONE ca sa pot initializa observables pe script "applyObservablesOnBoot"
       - citesc din apl.json ca bool (backwards compatible) sau  text|text unde text poate fi numele scriptului curent
 
   - initializare periferice similara cu applyObservablesOnBoot

@@ -1,3 +1,12 @@
+0.6-2022-06-20
+    iruart.py
+        IR uart driver first version, with _thread
+        TODO: learn
+    peripheral.py
+        _watch callback add **kwargs (missing here but not in _trigger)
+        to test: was it because watch are for properties and triggers for functions/methods?
+
+
 0.5.6-2022-06-19
     jssr and mqttr:
         conf.jsonConfig.get("executeStartupFile")

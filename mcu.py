@@ -86,7 +86,8 @@ class mcu:
                                    "receiver", "mpu6050", "bts7960", "aht10",
                                    "realbutton", "realbuttonv2", "rotencoder",
                                    "nokiadisplay", "mqtt", "mqtta", "mqttht",
-                                   "messager", "servo", "digital_in", "analog_in"]:
+                                   "messager", "servo", "digital_in", "analog_in",
+                                   "iruart"]:
             pt = thisOne.get("type")
             driverClass = getattr(__import__(pt), pt)
 
