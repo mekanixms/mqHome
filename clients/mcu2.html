@@ -575,6 +575,7 @@
         servo: `<div align="center" class="servo"></div>`,
         digital_in: `<div align="center" class="digital_in"></div>`,
         analog_in: `<div align="center" class="analog_in"></div>`,
+        iruart: `<div align="center" class="iruart"></div>`,
         realbutton: `<div align="center" class="realbutton"></div>`,
         realbuttonv2: `<div align="center" class="realbuttonv2"></div>`,
         mqtt: `<div align="center" class="mqtt">
@@ -1726,6 +1727,8 @@
 
       function analog_inAddUIEvents() {}
 
+      function iruartAddUIEvents() {}
+
       function realbuttonAddUIEvents(p, s) {
         // var state = s.state;
         // $(this).append(JSON.stringify(state));
@@ -1874,6 +1877,12 @@
         $(this).html(JSON.stringify(state));
       }
 
+      function updateiruartContainer(p, s) {
+        var state = s.state;
+
+        $(this).html(JSON.stringify(state));
+      }
+
       function updaterealbuttonContainer(p, s) {
         var state = s.state;
 
@@ -1928,6 +1937,7 @@
         servo: updateservoContainer,
         digital_in: updatedigital_inContainer,
         analog_in: updateanalog_inContainer,
+        iruart: updateiruartContainer,
         realbutton: updaterealbuttonContainer,
         realbuttonv2: updaterealbuttonContainer,
         mqtt: updateMqttContainer,
@@ -1956,6 +1966,7 @@
         servo: servoAddUIEvents,
         digital_in: digital_inAddUIEvents,
         analog_in: analog_inAddUIEvents,
+        iruart: iruartAddUIEvents,
         realbutton: realbuttonAddUIEvents,
         realbuttonv2: realbuttonAddUIEvents,
         mqtt: mqttAddUIEvents,

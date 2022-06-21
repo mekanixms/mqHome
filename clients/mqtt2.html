@@ -73,6 +73,7 @@
         servo: servoAddUIEvents,
         digital_in: digital_inAddUIEvents,
         analog_in: analog_inAddUIEvents,
+        iruart: iruartAddUIEvents,
         realbutton: realbuttonAddUIEvents,
         realbuttonv2: realbuttonAddUIEvents,
         mqtt: mqttAddUIEvents,
@@ -97,6 +98,12 @@
         servo: function () {},
         digital_in: function () {},
         analog_in: function () {},
+        iruart: function (did, pid, state) {
+          console.info("TODO Continua cu implementarea celorlalte ca aici")
+          // devices[did].config.peripherals[pid].type
+          console.log(this);
+          console.log(state);
+        },
         realbutton: function () {},
         realbuttonv2: function () {},
         mqtt: function () {},
@@ -110,10 +117,12 @@
         relay: function () {},
         stimer: function () {},
         mpu6050: function () {},
-        model: function (peripheric, state) {
+        model: function (did, pid, state) {
+          // devices[did].config.peripherals[pid].type
+          // function called
+            // pcbk.apply(panel, [did, pid, data]);
+            // this is the ui tab panel of the peripheral
           // $(this).append(JSON.stringify(peripheric));
-          console.log(peripheric);
-          console.log(state);
         },
       };
 
@@ -427,6 +436,8 @@
 
       function analog_inAddUIEvents() {}
 
+      function iruartAddUIEvents() {}
+
       function realbuttonAddUIEvents(p, s) {
         // var state = s.state;
         // $(this).append(JSON.stringify(state));
@@ -448,11 +459,17 @@
       }
 
       function updatePeripheralUI(did, pid, data) {
-        // var panel = $("#peripherals").find("div[role=tabpanel][aria-labelledby=" + id + "]");
-        // var pcbk = peripheralsStateUpdateCallback[peripherals[id]["type"]];
-        // if (panel.length == 1)
-        //     panel.get(0).PERIPHERAL_STATE = data;
-        // pcbk.apply(panel, [peripherals[id], data]);
+        var panel = $("div#" + did + "[peripherals]")
+          .find("div[role=tabpanel][aria-labelledby=" + pid + "]")
+          .get(0);
+
+          var pcbk =
+          peripheralsStateUpdateCallback[
+            devices[did].config.peripherals[pid].type
+          ];
+
+        panel.PERIPHERAL_STATE = data;
+        pcbk.apply(panel, [did, pid, data]);
       }
 
       function peripheralsOnActivate(event, ui) {
@@ -470,14 +487,20 @@
             '"}',
           STATUS_UPDATE_TOPIC
         );
-        // updatePeripheralUI(activeDeviceId, activePeripheral, {});
+
+        updatePeripheralUI(activeDeviceId, activePeripheral, peripheralsState[activeDeviceId][activePeripheral]);
+        
         if (
           peripheralsState.hasOwnProperty(activeDeviceId) &&
           peripheralsState[activeDeviceId].hasOwnProperty(activePeripheral)
-        )
+        ) {
+          
+          // TODO sterge la finalizarea implementarii peripheralsStateUpdateCallback
           $("#peripheralState", ui.newPanel).text(
             JSON.stringify(peripheralsState[activeDeviceId][activePeripheral])
           );
+        }
+
         if (activeDevice.attr("peripherals") == "NONE")
           ui.newHeader
             .get(0)
@@ -506,7 +529,7 @@
         $(pdiv).append(
           '<input type="text" id="params" placeholder="parameters"/>'
         );
-        
+
         var br = document.createElement("br");
         pdiv.appendChild(br);
         var gobtn = document.createElement("button");

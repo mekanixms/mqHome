@@ -82,7 +82,10 @@ class iruart(peripheral):
         self.dictionary = newDict
 
     def getState(self):
-        return {"value": self.value}
+        if self.value.__class__.__name__ == 'bytes':
+            return {"value": self.value.encode('ascii')}
+        else:
+            return {"value": self.value}
 
     def getObservableMethods(self):
         return ["command", "emit"]

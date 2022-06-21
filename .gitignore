@@ -4,3 +4,4 @@ tests/
 .ipynb_checkpoints/
 __pycache__/
 formatter.json
+INFO/
