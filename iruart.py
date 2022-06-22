@@ -2,6 +2,9 @@ from peripheral import peripheral, TrueValues
 from machine import Pin, UART
 from time import sleep_ms
 import _thread
+from ubinascii import hexlify
+
+_thread.stack_size(4096*2)
 
 
 @peripheral._trigger
@@ -83,7 +86,13 @@ class iruart(peripheral):
 
     def getState(self):
         if self.value.__class__.__name__ == 'bytes':
-            return {"value": self.value.encode('ascii')}
+            try:
+                toRet = hexlify(self.value).decode('utf-8')
+            except UnicodeError as u:
+                toRet = "Error "+u
+
+            return {"value": toRet}
+            # return {"value": hexlify(self.value).decode('utf-8')}
         else:
             return {"value": self.value}
 

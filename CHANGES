@@ -1,8 +1,16 @@
+0.6.2-2022-06-22
+    iruart:
+        reboot un uart trash data
+            doubled thread stack size
+            handle exception on getState
+
 0.6.1-2022-06-22
     iuart
         fix return bytes getState
     mqtt2
         fix updatePeripheralUI; TODO continue to implement peripheralsStateUpdateCallback
+
+
 0.6-2022-06-20
     iruart.py
         IR uart driver first version, with _thread

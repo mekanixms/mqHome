@@ -5,3 +5,18 @@
         conf.jsonConfig.get("applyObservablesOnBoot")
             only work when set to scriptFilename|scriptFilename syntax
                     not when set to a bool value
+
+
+iruart:
+    Reboot un trash data binary decode; solved in 0.6.2
+        ***ERROR*** A stack overflow in task mp_thread has been detected.
+        Backtrace:0x40081b92:0x3ffd9d100x400952f5:0x3ffd9d30 0x40098446:0x3ffd9d50 0x40096f5c:0x3ffd9dc0 0x400953f4:0x3ffd9de0 0x400953a6:0x3ffd9dd8  |<-CORRUPTED
+
+
+        si
+
+
+        W (54) boot.esp32: PRO CPU has been reset by WDT.
+        W (54) boot.esp32: WDT reset info: PRO CPU PC=0x40098349
+        W (56) boot.esp32: WDT reset info: APP CPU PC=0x40008547
+
