@@ -575,7 +575,7 @@
         servo: `<div align="center" class="servo"></div>`,
         digital_in: `<div align="center" class="digital_in"></div>`,
         analog_in: `<div align="center" class="analog_in"></div>`,
-        iruart: `<div align="center" class="iruart"><select id="irDictNameSelector"></select><select id="irCmdSelector"></select><button id="irSendSignal">Send</button><br/><input type="text" id="irLearnDictName" placeholder="Dictionary"/><input placeholder="Command name" type="text" id="irLearnCmdId"/><button id="irLearnRelearn">Learn</button></div>`,
+        iruart: `<div align="center" class="iruart"><select id="irDictNameSelector"></select><select id="irCmdSelector"></select><button id="irSendSignal">Send</button><button id="irSetDictPrefix">Prefix</button><br/><input size="5" type="text" id="irLearnDictName" placeholder="Dictionary"/><input placeholder="Command name" size="5" type="text" id="irLearnCmdId"/><button id="irLearnRelearn">Learn</button></div>`,
         realbutton: `<div align="center" class="realbutton"></div>`,
         realbuttonv2: `<div align="center" class="realbuttonv2"></div>`,
         mqtt: `<div align="center" class="mqtt">
@@ -1750,6 +1750,15 @@
           );
         });
 
+        $("#irCmdSelector", irHtmlContainer).on("change", function () {
+          $("#console").html(
+            "Code for " +
+              this.options[this.options.selectedIndex].textContent +
+              " is " +
+              this.options[this.options.selectedIndex].value
+          );
+        });
+
         $("button#irSendSignal", this).click(function () {
           var swbtn = this;
           var cc = getControlsAccordionContainer(this);
@@ -1825,11 +1834,7 @@
                 "X-Requested-With": "XmlHttpRequest",
               },
               success: function (data) {
-                // console.log("TOGGLE " + spid);
-                console.log(data);
-                // data.result
-                //   ? $(swbtn).addClass("on")
-                //   : $(swbtn).removeClass("on");
+                $("#console").html(JSON.stringify(data));
               },
               // /cmd/devid/cmdName/?options
               // options: key, dictionary
@@ -1847,10 +1852,67 @@
           else
             $("#console").html("Dictionary and command fields cannot be empty");
         });
+
+        $("button#irSetDictPrefix", this).click(function () {
+          var swbtn = this;
+          var cc = getControlsAccordionContainer(this);
+          var spid = cc.getAttribute("aria-labelledby");
+
+          var dictionarySelectElement = $(
+            "#irLearnDictName",
+            irHtmlContainer
+          ).get(0);
+          var cmdSelectElement = $("#irLearnCmdId", irHtmlContainer).get(0);
+
+          var selectedDictionary = dictionarySelectElement.value;
+          var prefixFromPrevStateRequest = false;
+
+          if ("irDictionaries" in $("#irDictNameSelector", irHtmlContainer).get(0))
+            prefixFromPrevStateRequest = $("#irDictNameSelector", irHtmlContainer).get(0)
+              .irDictionaries[selectedDictionary]["prefix"];
+
+          var newPrefix = prompt(
+            "Enter the new prefix",
+            prefixFromPrevStateRequest ? prefixFromPrevStateRequest : "a1f1"
+          );
+
+          if (selectedDictionary && !isEmpty(newPrefix))
+            $.ajax({
+              type: "GET",
+              dataType: "json",
+              crossDomain: true,
+              headers: {
+                Accept: "application/json",
+                "Content-Type": "text/plain",
+                "X-Requested-With": "XmlHttpRequest",
+              },
+              success: function (data) {
+                $("#console").html(JSON.stringify(data));
+              },
+              // /cmd/devid/cmdName/?options
+              // options: key, dictionary
+              // EX
+              // http://192.168.88.45:8080/cmd/1/prefix?dictionary=default&prefix=...
+              url:
+                mcu +
+                "/cmd/" +
+                spid +
+                "/prefix/?dictionary=" +
+                selectedDictionary +
+                "&prefix=" +
+                newPrefix,
+            });
+          else
+            $("#console").html("Dictionary and prefix cannot be empty");
+        });
       }
 
       function updateiruartContainer(p, s) {
         var state = s.state;
+
+        $("#irDictNameSelector", this).get(0).irDictionaries = state.dicts;
+        this.irDictionaries = state.dicts;
+
         $("#irDictNameSelector", this).empty();
         $("#irCmdSelector", this).empty();
 
@@ -1862,7 +1924,7 @@
           $("#irDictNameSelector", this).get(0).appendChild(opt);
         }
 
-        $("#console").html(JSON.stringify(state));
+        $("#console").html(JSON.stringify(state.result));
       }
 
       function realbuttonAddUIEvents(p, s) {

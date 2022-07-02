@@ -17,7 +17,12 @@ def sendSignal(s, key, dictionary="default"):
 
 @peripheral._trigger
 def learnSignal(s, key, dictionary="default"):
-    return s.send(key, dictionary)
+    return s.learn(key, dictionary)
+
+
+@peripheral._trigger
+def learnPrefix(s, prefix, dictionary="default"):
+    return s.setPrefix(prefix, dictionary)
 
 
 def filesListAllType(dir="/", typeFilter="ir"):
@@ -58,7 +63,7 @@ def importJsonDictionaryFromFile(cfgf):
 
 class iruart(peripheral):
 
-    version = 0.2
+    version = 0.3
 
     def __init__(self, options={
         "id": 2,
@@ -74,18 +79,9 @@ class iruart(peripheral):
 
         self.commands["emit"] = sendSignal
         self.commands["learn"] = learnSignal
+        self.commands["prefix"] = learnPrefix
 
-        self.dictionary = {
-            # "default": {
-            #     "prefix": 'a1f1',
-            #     "commands": {
-            #         "POWER": '04fb08',
-            #         "CHUP": '04fb00',
-            #         "CHDOWN": '04fb01',
-            #         "MUTE": '04fb09',
-            #     }
-            # }
-        }
+        self.dictionary = {}
 
         for cdfs in filesListAllType():
             if file_exists(cdfs+".ir"):
@@ -127,6 +123,17 @@ class iruart(peripheral):
     def value(self, val):
         self.__lastRead = val
 
+        if self.learnThis.__class__.__name__ is "dict":
+            tlDictName = list(self.learnThis.keys())[0]
+            tlKeyName = self.learnThis[tlDictName]
+            if tlDictName not in self.dictionary.keys():
+                self.dictionary[tlDictName] = {
+                    "prefix": "a1f1", "commands": {}}
+            self.dictionary[tlDictName]["commands"][tlKeyName] = self.decodedValue()
+            exportJsonDictionary(tlDictName+".ir", self.dictionary[tlDictName])
+
+            self.learnThis = False
+
     def decodedValue(self):
         toRet = False
 
@@ -157,11 +164,24 @@ class iruart(peripheral):
         self.uart.write(key)
 
     @peripheral._trigger
+    def setPrefix(self, prefix, dictionary):
+        if dictionary in self.dictionary.keys():
+            if len(prefix) % 2 == 0:
+                self.dictionary[dictionary]["prefix"] = prefix
+                exportJsonDictionary(
+                    dictionary+".ir", self.dictionary[dictionary])
+                return {"prefix": "set to "+prefix}
+
+        return {"error": "could not set prefix "+prefix+" for "+dictionary}
+
+    @peripheral._trigger
     def learn(self, key, dictionary):
-        self.learnThis = {dictionary:key}
+        self.learnThis = {dictionary: key}
+
+        return {"learning": "press a key on the remote"}
 
     def loadDictionary(self, newDict={}):
-        self.dictionary = newDict
+        pass
 
     def getState(self):
         return {
