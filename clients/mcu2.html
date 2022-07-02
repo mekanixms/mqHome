@@ -575,7 +575,7 @@
         servo: `<div align="center" class="servo"></div>`,
         digital_in: `<div align="center" class="digital_in"></div>`,
         analog_in: `<div align="center" class="analog_in"></div>`,
-        iruart: `<div align="center" class="iruart"></div>`,
+        iruart: `<div align="center" class="iruart"><select id="irDictNameSelector"></select><select id="irCmdSelector"></select><button id="irSendSignal">Send</button><br/><input type="text" id="irLearnDictName" placeholder="Dictionary"/><input placeholder="Command name" type="text" id="irLearnCmdId"/><button id="irLearnRelearn">Learn</button></div>`,
         realbutton: `<div align="center" class="realbutton"></div>`,
         realbuttonv2: `<div align="center" class="realbuttonv2"></div>`,
         mqtt: `<div align="center" class="mqtt">
@@ -1727,7 +1727,143 @@
 
       function analog_inAddUIEvents() {}
 
-      function iruartAddUIEvents() {}
+      function iruartAddUIEvents(p, s) {
+        var irHtmlContainer = this;
+
+        $("#irDictNameSelector", this).on("change", function () {
+          var selectElement = this;
+
+          var dictCommandsIR =
+            this.options[this.options.selectedIndex].commands;
+
+          $("#irCmdSelector", irHtmlContainer).empty();
+
+          for (irCMD in dictCommandsIR) {
+            var irCMDOption = document.createElement("option");
+            irCMDOption.textContent = irCMD;
+            irCMDOption.value = dictCommandsIR[irCMD];
+            $("#irCmdSelector", irHtmlContainer).get(0).add(irCMDOption);
+          }
+
+          $("#irLearnDictName", irHtmlContainer).val(
+            this.options[this.options.selectedIndex].textContent
+          );
+        });
+
+        $("button#irSendSignal", this).click(function () {
+          var swbtn = this;
+          var cc = getControlsAccordionContainer(this);
+          var spid = cc.getAttribute("aria-labelledby");
+
+          var dictionarySelectElement = $(
+            "#irDictNameSelector",
+            irHtmlContainer
+          ).get(0);
+          var cmdSelectElement = $("#irCmdSelector", irHtmlContainer).get(0);
+
+          var selectedDictionary =
+            dictionarySelectElement.options[
+              dictionarySelectElement.options.selectedIndex
+            ].textContent;
+          var selectedCommand =
+            cmdSelectElement.options[cmdSelectElement.options.selectedIndex]
+              .textContent;
+
+          $.ajax({
+            type: "GET",
+            dataType: "json",
+            crossDomain: true,
+            headers: {
+              Accept: "application/json",
+              "Content-Type": "text/plain",
+              "X-Requested-With": "XmlHttpRequest",
+            },
+            success: function (data) {
+              // console.log("TOGGLE " + spid);
+              console.log(data);
+              // data.result
+              //   ? $(swbtn).addClass("on")
+              //   : $(swbtn).removeClass("on");
+            },
+            // /cmd/devid/cmdName/?options
+            // options: key, dictionary
+            // EX
+            // http://192.168.88.45:8080/cmd/1/emit?dictionary=default&key=POWER
+            url:
+              mcu +
+              "/cmd/" +
+              spid +
+              "/emit/?dictionary=" +
+              selectedDictionary +
+              "&key=" +
+              selectedCommand,
+          });
+        });
+
+        $("button#irLearnRelearn", this).click(function () {
+          var swbtn = this;
+          var cc = getControlsAccordionContainer(this);
+          var spid = cc.getAttribute("aria-labelledby");
+
+          var dictionarySelectElement = $(
+            "#irLearnDictName",
+            irHtmlContainer
+          ).get(0);
+          var cmdSelectElement = $("#irLearnCmdId", irHtmlContainer).get(0);
+
+          var selectedDictionary = dictionarySelectElement.value;
+          var selectedCommand = cmdSelectElement.value;
+
+          if (selectedDictionary && selectedCommand)
+            $.ajax({
+              type: "GET",
+              dataType: "json",
+              crossDomain: true,
+              headers: {
+                Accept: "application/json",
+                "Content-Type": "text/plain",
+                "X-Requested-With": "XmlHttpRequest",
+              },
+              success: function (data) {
+                // console.log("TOGGLE " + spid);
+                console.log(data);
+                // data.result
+                //   ? $(swbtn).addClass("on")
+                //   : $(swbtn).removeClass("on");
+              },
+              // /cmd/devid/cmdName/?options
+              // options: key, dictionary
+              // EX
+              // http://192.168.88.45:8080/cmd/1/learn?dictionary=default&key=POWER
+              url:
+                mcu +
+                "/cmd/" +
+                spid +
+                "/learn/?dictionary=" +
+                selectedDictionary +
+                "&key=" +
+                selectedCommand,
+            });
+          else
+            $("#console").html("Dictionary and command fields cannot be empty");
+        });
+      }
+
+      function updateiruartContainer(p, s) {
+        var state = s.state;
+        $("#irDictNameSelector", this).empty();
+        $("#irCmdSelector", this).empty();
+
+        for (dictionaryName in s.state.dicts) {
+          var opt = document.createElement("option");
+          opt.textContent = dictionaryName;
+          opt.setAttribute("value", dictionaryName);
+          opt.commands = s.state.dicts[dictionaryName]["commands"];
+          $("#irDictNameSelector", this).get(0).appendChild(opt);
+        }
+
+        $("#console").html(JSON.stringify(state));
+      }
 
       function realbuttonAddUIEvents(p, s) {
         // var state = s.state;
@@ -1850,43 +1986,37 @@
       function updatebts7960Container(p, s) {
         var state = s.state;
 
-        $(this).html(JSON.stringify(state));
+        $("#console").html(JSON.stringify(state));
       }
 
       function updateaht10Container(p, s) {
         var state = s.state;
 
-        $(this).html(JSON.stringify(state));
+        $("#console").html(JSON.stringify(state));
       }
 
       function updateservoContainer(p, s) {
         var state = s.state;
 
-        $(this).html(JSON.stringify(state));
+        $("#console").html(JSON.stringify(state));
       }
 
       function updatedigital_inContainer(p, s) {
         var state = s.state;
 
-        $(this).html(JSON.stringify(state));
+        $("#console").html(JSON.stringify(state));
       }
 
       function updateanalog_inContainer(p, s) {
         var state = s.state;
 
-        $(this).html(JSON.stringify(state));
-      }
-
-      function updateiruartContainer(p, s) {
-        var state = s.state;
-
-        $(this).html(JSON.stringify(state));
+        $("#console").html(JSON.stringify(state));
       }
 
       function updaterealbuttonContainer(p, s) {
         var state = s.state;
 
-        $(this).html(JSON.stringify(state));
+        $("#console").html(JSON.stringify(state));
       }
 
       function updateMqttContainer(p, s) {
@@ -1909,23 +2039,23 @@
       function updateMessagerContainer(p, s) {
         var state = s.state;
 
-        $(this).html(JSON.stringify(state));
+        $("#console").html(JSON.stringify(state));
       }
       function updateMqttaContainer(p, s) {
         var state = s.state;
 
-        $(this).html(JSON.stringify(state));
+        $("#console").html(JSON.stringify(state));
       }
       function updatenokiadisplayContainer(p, s) {
         var state = s.state;
 
-        $(this).html(JSON.stringify(state));
+        $("#console").html(JSON.stringify(state));
       }
 
       function updaterotencoderContainer(p, s) {
         var state = s.state;
 
-        $(this).html(JSON.stringify(state));
+        $("#console").html(JSON.stringify(state));
         // var sbtn = $("button#switch", this);
         // var modeSelector = $("select#pwm", this).get(0);
       }
