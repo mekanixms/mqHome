@@ -323,12 +323,17 @@ def commandHandler(REQUEST):
                     toSend["observables"] = "applied"
                     oconf = ujson.loads(
                         jsu.getObservablesFileContent(conf.observablesFile))
-                    obsrvbToExec = oconf["observables"][str(deviceID)]
-                    print(obsrvbToExec)
 
-                    toSend["applied"] = obsrvbToExec
+                    if str(deviceID) in oconf["observables"].keys():
+                        obsrvbToExec = oconf["observables"][str(deviceID)]
+                        print(obsrvbToExec)
 
-                    jsu.applyObservablesFromJson(deviceID, obsrvbToExec, mpu)
+                        toSend["applied"] = obsrvbToExec
+
+                        jsu.applyObservablesFromJson(
+                            deviceID, obsrvbToExec, mpu)
+                    else:
+                        print("\tNone found for "+str(deviceID))
 
                 if resetObservables:
                     toSend["reset"] = {"peripheral": REQUEST["GET"]["reset"]}
@@ -511,7 +516,6 @@ TrueValues = jsu.TrueValues
 FalseValues = jsu.FalseValues
 
 
-
 applyObservables = False
 scriptFilename = __file__.split('.')[0]
 
@@ -530,17 +534,14 @@ if applyObservables:
     oconf = ujson.loads(jsu.getObservablesFileContent(conf.observablesFile))
 
     for xi in range(len(mpu.peripherals)):
-        print("\t Applying observables at boot for peripheral "+str(xi))
+        print("Applying observables at boot for peripheral "+str(xi))
         if str(xi) in oconf["observables"] and len(oconf["observables"][str(xi)]) > 0:
             obsrvbToExec = oconf["observables"][str(xi)]
             jsu.applyObservablesFromJson(xi, obsrvbToExec, mpu)
         else:
-            print("\t\tNone found for it")
+            print("\tNone found for it")
 else:
-    print("\t\tObservables not applied")
-
-
-
+    print("\tObservables not applied")
 
 
 executeStartupFile = True
@@ -570,11 +571,11 @@ if executeStartupFile:
                         "dev": mpu.peripherals,
                         "mpu": mpu,
                         "runMode": "config"
-                        })
+                    })
                 except:
                     print("\tError, Bad script")
 else:
-    print("\tStartup script skipped")
+    print("Startup script skipped")
 
 
 j.route["/"] = homeHandler

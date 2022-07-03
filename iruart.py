@@ -45,7 +45,6 @@ def exportJsonDictionary(cfn, obj):
 
 def importJsonDictionaryFromFile(cfgf):
     if file_exists(cfgf):
-        # incarc fisier configurare
         configFile = open(cfgf, "r")
         configFileContent = configFile.readlines()
 
@@ -119,9 +118,9 @@ class iruart(peripheral):
         return self.__lastRead
 
     @value.setter
-    @peripheral._watch
     def value(self, val):
         self.__lastRead = val
+        self.rvalue(self.decodedValue())
 
         if self.learnThis.__class__.__name__ is "dict":
             tlDictName = list(self.learnThis.keys())[0]
@@ -144,6 +143,10 @@ class iruart(peripheral):
                 toRet = "Error "+u
 
         return toRet
+
+    @peripheral._trigger
+    def rvalue(self, rvalue):
+        pass
 
     @peripheral._trigger
     def send(self, key, dictionary="default"):
@@ -190,7 +193,7 @@ class iruart(peripheral):
         }
 
     def getObservableMethods(self):
-        return ["command", "emit"]
+        return ["command", "emit", "rvalue"]
 
     def getObservableProperties(self):
-        return ["value"]
+        return []

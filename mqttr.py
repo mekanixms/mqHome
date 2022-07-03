@@ -192,14 +192,14 @@ if applyObservables:
     oconf = ujson.loads(getObservablesFileContent(conf.observablesFile))
 
     for xi in range(len(mpu.peripherals)):
-        print("\t Applying observables at boot for peripheral "+str(xi))
+        print("Applying observables at boot for peripheral "+str(xi))
         if str(xi) in oconf["observables"] and len(oconf["observables"][str(xi)]) > 0:
             obsrvbToExec = oconf["observables"][str(xi)]
             applyObservablesFromJson(xi, obsrvbToExec, mpu)
         else:
-            print("\t\tNone found for it")
+            print("\tNone found for it")
 else:
-    print("\t\tObservables not applied")
+    print("\tObservables not applied")
 
 
 

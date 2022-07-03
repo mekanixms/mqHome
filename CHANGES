@@ -1,3 +1,12 @@
+0.6.5-2022-07-03
+    jssr:
+        bug fix on no observables set for peripheral but click apply
+    iuart:
+        observable method rvalue for animation - rvalue=readable value
+        Ex:
+            ON(rvalue[0==04fb09]):  dev[0]/toggle()
+
+
 0.6.4-2022-07-02
     iruart and mcu2:
         learn

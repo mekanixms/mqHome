@@ -430,13 +430,13 @@ def applyObservablesFromJson(deviceID, obsrvbToExec, mpu):
         else:
             exThisOne = mpu.peripherals[int(
                 deviceID)].addWatcher
-        print("Preparing observable for " +
+        print("\tPreparing observable for " +
               str(deviceID)+" "+whichObsrvbl)
 
         for pMethod in obsrvbToExec[whichObsrvbl]:
             # 0 : before sau after, 1 numeMethod
             # daca are un singur element este numele metodei si before este default
-            print("Create "+pMethod +
+            print("\tCreate "+pMethod +
                   " for peripheral " + str(deviceID))
 
             when = "BEFORE"
@@ -461,7 +461,7 @@ def applyObservablesFromJson(deviceID, obsrvbToExec, mpu):
             pExec = obsrvbToExec[whichObsrvbl][pMethod]["execute"]
 
             if len(pTest) > 0:
-                print("ON: "+pMethod)
+                print("\t\tON: "+pMethod)
 
             # model pE
             #         "execute": [
@@ -496,7 +496,7 @@ def applyObservablesFromJson(deviceID, obsrvbToExec, mpu):
                         exThisOne(mthd, when, lmbdForMpu(pTest, pE, mpu))
                     else:
                         # este comanda catre device
-                        print("add "+whichObsrvbl+" for " +
+                        print("\t\tadd "+whichObsrvbl+" for " +
                               " "+mthd+" "+when+" " +
                               "dev[{}] {}({})".format(pE["pid"], pE["cmd"], pE["params"]))
                         # pE["pid"] == "context" si nu este numeric?? dev[context] execut ceva pt mpu??
