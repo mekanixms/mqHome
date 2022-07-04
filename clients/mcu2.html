@@ -575,7 +575,30 @@
         servo: `<div align="center" class="servo"></div>`,
         digital_in: `<div align="center" class="digital_in"></div>`,
         analog_in: `<div align="center" class="analog_in"></div>`,
-        iruart: `<div align="center" class="iruart"><select id="irDictNameSelector"></select><select id="irCmdSelector"></select><button id="irSendSignal">Send</button><button id="irSetDictPrefix">Prefix</button><br/><input size="5" type="text" id="irLearnDictName" placeholder="Dictionary"/><input placeholder="Command name" size="5" type="text" id="irLearnCmdId"/><button id="irLearnRelearn">Learn</button></div>`,
+        iruart: `
+        <div align="center" class="iruart">
+        <table>
+            <thead>
+                <td align="center">Dict</td>
+                <td align="center">Key</td>
+                <td></td>
+                <td></td>
+            </thead>
+            <tr>
+                <td align="center"><select id="irDictNameSelector"></select></td>
+                <td align="center"><select id="irCmdSelector"></select></td>
+                <td><button id="irSendSignal">Send</button></td>
+                <td><button id="irSetDictPrefix">Prefix</button></td>
+            </tr>
+            <tr>
+                <td align="center"><input size="5" type="text" id="irLearnDictName" placeholder="Dictionary" /></td>
+                <td align="center"><input placeholder="Command name" size="5" type="text" id="irLearnCmdId" /></td>
+                <td></td>
+                <td><button id="irLearnRelearn">Learn</button></td>
+            </tr>
+        </table>
+    </div>
+        `,
         realbutton: `<div align="center" class="realbutton"></div>`,
         realbuttonv2: `<div align="center" class="realbuttonv2"></div>`,
         mqtt: `<div align="center" class="mqtt">
