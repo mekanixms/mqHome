@@ -11,8 +11,8 @@ _thread.stack_size(4096*2)
 
 
 @peripheral._trigger
-def sendSignal(s, key, dictionary="default"):
-    return s.send(key, dictionary)
+def sendSignal(s, key, dictionary="default", repeat=1):
+    return s.send(key, dictionary, repeat)
 
 
 @peripheral._trigger
@@ -149,7 +149,7 @@ class iruart(peripheral):
         pass
 
     @peripheral._trigger
-    def send(self, key, dictionary="default"):
+    def send(self, key, dictionary="default", repeat=1):
         if dictionary in self.dictionary.keys():
             jsonDict = self.dictionary.get(dictionary)
             if key in jsonDict["commands"].keys():
@@ -157,7 +157,21 @@ class iruart(peripheral):
                 cmd = jsonDict["commands"].get(key)
                 signal = unhexlify(prefix)+unhexlify(cmd)
 
-                self.uart.write(signal)
+                r = 1
+
+                if repeat.__class__.__name__ == "str" and repeat.isdigit():
+                    r = int(repeat)
+                else:
+                    if repeat.__class__.__name__ == "float":
+                        r = int(repeat)
+
+                if r < 1:
+                    r = 1
+
+                for a in range(0, r):
+                    self.uart.write(signal)
+                    if r > 1:
+                        sleep_ms(500)
 
                 return {"sent": {dictionary: key}}
 
