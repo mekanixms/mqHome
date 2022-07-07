@@ -3,7 +3,7 @@ from machine import Pin, UART
 from time import sleep_ms
 import _thread
 from ubinascii import hexlify, unhexlify
-from jsu import file_exists
+from jsu import file_exists, importJsonDictionaryFromFile
 import json
 from os import listdir
 
@@ -41,23 +41,6 @@ def exportJsonDictionary(cfn, obj):
     configFile = open(cfn, "w")
     configFile.write(json.dumps(obj))
     configFile.close()
-
-
-def importJsonDictionaryFromFile(cfgf):
-    if file_exists(cfgf):
-        configFile = open(cfgf, "r")
-        configFileContent = configFile.readlines()
-
-        if len(configFileContent) > 0:
-            jsonConfig = json.loads("".join(configFileContent))
-        else:
-            jsonConfig = {cfgf: {}}
-
-        configFile.close()
-    else:
-        jsonConfig = {cfgf: {}}
-
-    return jsonConfig
 
 
 class iruart(peripheral):

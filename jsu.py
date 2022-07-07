@@ -26,6 +26,23 @@ def file_exists(f):
         return False
 
 
+def importJsonDictionaryFromFile(cfgf):
+    if file_exists(cfgf):
+        configFile = open(cfgf, "r")
+        configFileContent = configFile.readlines()
+
+        if len(configFileContent) > 0:
+            jsonConfig = ujson.loads("".join(configFileContent))
+        else:
+            jsonConfig = {cfgf: {}}
+
+        configFile.close()
+    else:
+        jsonConfig = {cfgf: {}}
+
+    return jsonConfig
+
+
 def current_milli_time(): return int(round(time() * 1000))
 
 
