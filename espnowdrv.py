@@ -2,7 +2,7 @@ from peripheral import peripheral
 from time import sleep
 import _thread
 import ujson
-from jsu import TrueValues, file_exists, importJsonDictionaryFromFile
+from jsu import TrueValues, importJsonDictionaryFromFile
 
 import network
 import espnow
@@ -177,15 +177,19 @@ class espnowdrv(peripheral):
                     except ValueError:
                         rcvdMsg = {"message": msg.decode("utf-8")}
                         if rcvdMsg["message"] == "BCAST_REG_PEER":
-                            self.loadPeer(self.__decodeHexBytes(host))
+                            schedule(self.loadPeer,
+                                     self.__decodeHexBytes(host))
+                            # self.loadPeer(self.__decodeHexBytes(host))
                     except:
                         rcvdMsg = {"error": "other"}
 
                     rcvdMsg["FROM"] = self.__decodeHexBytes(host)
 
-                    self.rawMessage(rcvdMsg["FROM"], msg.decode("utf-8"))
+                    def re(m):
+                        self.rawMessage(rcvdMsg["FROM"], msg.decode("utf-8"))
+                        self.message = rcvdMsg
 
-                    self.message = rcvdMsg
+                    schedule(re, rcvdMsg)
 
                 if self.stop:
                     break
