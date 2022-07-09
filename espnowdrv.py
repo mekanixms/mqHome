@@ -14,6 +14,14 @@ from micropython import schedule
 _thread.stack_size(4096*2)
 
 
+def addpeer(s, mac):
+    return s.loadPeer(mac)
+
+
+def removepeer(s, mac):
+    return s.removePeer(mac)
+
+
 def send(s, msg, to="*"):
     return s.send(msg, to)
 
@@ -46,6 +54,8 @@ class espnowdrv(peripheral):
 
         self.commands["send"] = send
         self.commands["connect"] = enable
+        self.commands["addPeer"] = addpeer
+        self.commands["removePeer"] = removepeer
         self.commands["disconnect"] = disable
 
         if options["autostart"]:
@@ -201,7 +211,7 @@ class espnowdrv(peripheral):
         response = False
 
         if to == "*":
-            self.espnow.send(msg)
+            response = self.espnow.send(msg)
         else:
             if len(to) == 12:
                 encTo = self.__encodeHexBytes(to)
