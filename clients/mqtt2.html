@@ -74,6 +74,7 @@
         digital_in: digital_inAddUIEvents,
         analog_in: analog_inAddUIEvents,
         iruart: iruartAddUIEvents,
+        espnowdrv: espnowdrvAddUIEvents,
         realbutton: realbuttonAddUIEvents,
         realbuttonv2: realbuttonAddUIEvents,
         mqtt: mqttAddUIEvents,
@@ -98,6 +99,7 @@
         servo: function () {},
         digital_in: function () {},
         analog_in: function () {},
+        espnowdrv: function () {},
         iruart: function (did, pid, state) {
           console.info("TODO Continua cu implementarea celorlalte ca aici");
           // devices[did].config.peripherals[pid].type
@@ -437,6 +439,8 @@
       function analog_inAddUIEvents() {}
 
       function iruartAddUIEvents() {}
+
+      function espnowdrvAddUIEvents() {}
 
       function realbuttonAddUIEvents(p, s) {
         // var state = s.state;

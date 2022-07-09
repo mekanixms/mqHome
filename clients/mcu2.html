@@ -575,6 +575,7 @@
         servo: `<div align="center" class="servo"></div>`,
         digital_in: `<div align="center" class="digital_in"></div>`,
         analog_in: `<div align="center" class="analog_in"></div>`,
+        espnowdrv: `<div align="center" class="espnowdrv"></div>`,
         iruart: `
         <div align="center" class="iruart">
         <table>
@@ -1750,6 +1751,8 @@
 
       function analog_inAddUIEvents() {}
 
+      function espnowdrvAddUIEvents() {}
+
       function iruartAddUIEvents(p, s) {
         var irHtmlContainer = this;
 
@@ -1890,9 +1893,13 @@
           var selectedDictionary = dictionarySelectElement.value;
           var prefixFromPrevStateRequest = false;
 
-          if ("irDictionaries" in $("#irDictNameSelector", irHtmlContainer).get(0))
-            prefixFromPrevStateRequest = $("#irDictNameSelector", irHtmlContainer).get(0)
-              .irDictionaries[selectedDictionary]["prefix"];
+          if (
+            "irDictionaries" in $("#irDictNameSelector", irHtmlContainer).get(0)
+          )
+            prefixFromPrevStateRequest = $(
+              "#irDictNameSelector",
+              irHtmlContainer
+            ).get(0).irDictionaries[selectedDictionary]["prefix"];
 
           var newPrefix = prompt(
             "Enter the new prefix",
@@ -1925,8 +1932,7 @@
                 "&prefix=" +
                 newPrefix,
             });
-          else
-            $("#console").html("Dictionary and prefix cannot be empty");
+          else $("#console").html("Dictionary and prefix cannot be empty");
         });
       }
 
@@ -2098,6 +2104,12 @@
         $("#console").html(JSON.stringify(state));
       }
 
+      function updateespnowdrv_inContainer(p, s) {
+        var state = s.state;
+
+        $("#console").html(JSON.stringify(state));
+      }
+
       function updaterealbuttonContainer(p, s) {
         var state = s.state;
 
@@ -2152,6 +2164,7 @@
         servo: updateservoContainer,
         digital_in: updatedigital_inContainer,
         analog_in: updateanalog_inContainer,
+        espnowdrv: updateespnowdrv_inContainer,
         iruart: updateiruartContainer,
         realbutton: updaterealbuttonContainer,
         realbuttonv2: updaterealbuttonContainer,
@@ -2181,6 +2194,7 @@
         servo: servoAddUIEvents,
         digital_in: digital_inAddUIEvents,
         analog_in: analog_inAddUIEvents,
+        espnowdrv: espnowdrvAddUIEvents,
         iruart: iruartAddUIEvents,
         realbutton: realbuttonAddUIEvents,
         realbuttonv2: realbuttonAddUIEvents,

@@ -1,3 +1,9 @@
+0.7.0-2022-07-09
+    espnowdrv:
+        loadPeer,removePeer,peerInfo,getPeersByMac
+        run/loadPeer(host) when message is BCAST_REG_PEER
+        mcu2/mqtt2 with espnowdrv 
+
 0.6.6-2022-07-04
     iruart:
         send(repeat)

@@ -1,4 +1,7 @@
 
+jsu/importJsonDictionaryFromFile
+  sa returneze {} daca nu exista, eventual predefinit ca parametru al functiei ca sa pot modificat OTF
+
 main.py
   deinitializare modeSwitch btn1 btn2 devStatusLED
     inainte de lansare script pricipal (jssr/mqtt)
