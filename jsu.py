@@ -73,21 +73,17 @@ def performOperationFromString(o1, o2, op):
 
 
 def prepareStringSequence(testCondition):
-    import ure
     testSeq = []
 
-    # print("TEXT CONDITION:\t"+testCondition)
     if testCondition:
         # pt inline test
         i = 0
 
         allParamExpression = '(.*)\s*([!=<>]+[<>=]+)\s*(\w*)'
 
-        # print("Lambda test:\t"+testCondition)
         for tline in testCondition.split(","):
             ctline = tline.strip()
 
-            # print("Testing sequence member:\t"+ctline)
             paramsDefinitionCheck = ure.match(allParamExpression, ctline)
             if paramsDefinitionCheck is not None:
                 paramsNumber = int(
@@ -98,15 +94,7 @@ def prepareStringSequence(testCondition):
                     testArg = paramsDefinitionCheck.group(1)
                     operator = paramsDefinitionCheck.group(2)
                     testVal = paramsDefinitionCheck.group(3)
-
                     # 0<val1,3=val2
-                    # print("Positional args")
-                    # print("arg["+testArg+"]\t"+operator+"\t"+testVal)
-                    # sau
-                    # var1>=val,var2=val
-                    # print("KW args")
-                    # print("kwArg["+testArg+"]\t"+operator+"\t"+testVal)
-
                     testMember = {
                         "o1": testArg,
                         "o2": testVal,
@@ -114,9 +102,6 @@ def prepareStringSequence(testCondition):
                     }
             else:
                 # val1,val2,val3...
-                # print("Inline args test")
-                # print(ctline)
-
                 testMember = {
                     "o1": str(i),
                     "o2": ctline,
@@ -131,12 +116,10 @@ def prepareStringSequence(testCondition):
 
 
 def testStringSequence(testCondition, args, kwargs):
-    import ure
     testResult = True
 
-    # print("\t\ttestStringSequence method call for")
-    # print(ujson.dumps(testCondition))
     for tline in testCondition:
+        tr = False
         # testMember = {
         #     "o1": testArg,
         #     "o2": testVal,
@@ -147,53 +130,93 @@ def testStringSequence(testCondition, args, kwargs):
         testVal = tline["o2"]
 
         if testArg.isdigit():
-            # print("inline or ARG test")
-            # print("\t list#" + testArg+"\t with value" +
-            #   str(args[int(testArg)])+" | operation " + operator + " testVal "+ujson.dumps(testVal))
-            # 0<val1,3=val2
-            # print("Positional args")
-            # print("arg["+testArg+"]\t"+operator+"\t"+testVal)
-
-            # val1,val2,val3...
-            # print("Inline args test")
-            # print(ctline)
-
+            # ON(rawMessage[1==TOGGLE]): dev[1]/toggle()
             if len(args) > 0:
+
+                # print("\t"+testArg + "\t"+operator+"\t"+testVal)
+
                 if int(testArg) >= 0 and int(testArg) < len(args):
                     if type(args[int(testArg)]) == bool:
-                        # print("\tArgument is Bool value")
-                        testResult = testResult and performOperationFromString(whichBool(testVal), whichBool(
-                            args[int(testArg)]), "==")
+                        tr = args[int(testArg)] and whichBool(testVal)
                     else:
-                        # print("\tArgument is Numeric")
                         tr = performOperationFromString(
                             args[int(testArg)], (args[int(testArg)]).__class__(testVal), operator)
-                        testResult = testResult and tr
-                    # print("\t\tRESULT:\t"+str(testResult))
-                # else:
-                    # print("could not match param id '"+testArg +
-                    #   "' / pair in Args list with len "+str(len(args)))
-                    # print("\tSkipping")
+
+        else:
+            # ON(rawMessage[message==TOGGLE]): dev[1]/toggle()
+            if testArg in kwargs.keys():
+
+                # print("\t"+kwargs.get(testArg) + "\t"+operator+"\t"+testVal)
+
+                if type(kwargs.get(testArg)) is bool:
+                    tr = kwargs.get(testArg) and whichBool(testVal)
+                else:
+                    tr = performOperationFromString(
+                        kwargs.get(testArg), (kwargs.get(testArg)).__class__(testVal), operator)
 
             else:
-                # print("KW test")
-                # print("\t"+ testArg+" operation "+ operator+ " testVal "+ujson.dumps(testVal))
-                # var1>=val,var2=val
-                # print("KW args")
-                # print("kwArg["+testArg+"]\t"+operator+"\t"+testVal)
-                if len(kwargs) > 0:
-                    # print("is "+testArg + " in "+",".join(kwargs))
-                    if testArg in kwargs:
-                        if type(kwargs.get(testArg)) == bool:
-                            # print("\tKW Argument is Bool value")
-                            testResult = testResult and performOperationFromString(
-                                whichBool(testVal), whichBool(kwargs.get(testArg)), "==")
-                        else:
-                            # print("\tKW Argument is Numeric")
-                            tr = performOperationFromString(
-                                kwargs.get(testArg), (kwargs.get(testArg)).__class__(testVal), operator)
-                            testResult = testResult and tr
-                        # print("\t\tRESULT:\t"+str(testResult))
+                # ON(rawMessage[jsonmessage/data==TOGGLE]):  dev[1]/toggle()
+                # ON(rawMessage[jsonmessage/0==TOGGLE]):  dev[1]/toggle()
+                testArgSplit = testArg.split("/")
+                if len(testArgSplit) == 2:
+                    neededArgName = testArgSplit[0]
+                    if neededArgName in kwargs.keys():
+                        neededArg = kwargs.get(neededArgName)
+                        neededArgKey = testArgSplit[1]
+                        # ON(rawMessage[jsonmessage/data==TOGGLE]):  dev[1]/toggle()
+                        if type(neededArg) is dict:
+                            if neededArgKey in neededArg.keys():
+
+                                # print("\t"+neededArgName+"/" + neededArgKey + "\t"+operator+"\t"+testVal)
+
+                                requiredArgValue = neededArg.get(neededArgKey)
+
+                                try:
+                                    evaluatedTestVal = eval(testVal)
+                                except:
+                                    evaluatedTestVal = testVal
+
+                                if type(requiredArgValue) == bool:
+                                    tr = requiredArgValue and whichBool(
+                                        evaluatedTestVal)
+                                else:
+                                    try:
+                                        # o==int("alphanumeric")
+                                        tr = performOperationFromString(
+                                            requiredArgValue, (requiredArgValue).__class__(
+                                                evaluatedTestVal), operator
+                                        )
+                                    except ValueError:
+                                        tr = False
+
+                        # ON(rawMessage[jsonmessage/0==TOGGLE]):  dev[1]/toggle()
+                        if type(neededArg) is list:
+                            if neededArgKey.isdigit():
+
+                                # print("\t"+neededArgName+"/" + neededArgKey + "\t"+operator+"\t"+testVal)
+
+                                neededArgKey = int(neededArgKey)
+                                if neededArgKey < len(neededArg):
+
+                                    requiredArgValue = neededArg[neededArgKey]
+
+                                    try:
+                                        evaluatedTestVal = eval(testVal)
+                                    except:
+                                        evaluatedTestVal = testVal
+
+                                    if type(requiredArgValue) is bool:
+                                        tr = requiredArgValue and whichBool(
+                                            evaluatedTestVal)
+                                    else:
+                                        try:
+                                            # o==int("alphanumeric")
+                                            tr = performOperationFromString(
+                                                requiredArgValue, (requiredArgValue).__class__(evaluatedTestVal), operator)
+                                        except ValueError:
+                                            tr = False
+
+        testResult = testResult and tr
 
     return testResult
 
@@ -205,9 +228,7 @@ def saveJsonToObservablesFile(obj, conf):
 
 
 def getObservablesFileContent(conf):
-    # import continut json in var jsonConfig
     if file_exists(conf):
-        # incarc fisier configurare
         configFile = open(conf, "r")
         configFileContent = configFile.readlines()
         configFile.close()
@@ -292,16 +313,8 @@ def evalParams(p2eval, ps, triggerPositionalParameters, triggerKeywordParameters
 
 
 def lmbdForPeripheralObservable(testCondition, pee, mpu):
-    # m.peripherals[0].command("duty",{"value":256})
-    # pee["pid"], pee["cmd"], pee["params"])
-    def lF(*args, **kwargs):
-        # if len(args) > 0:
-        #     print("LAMDA LIST ARGUMENTS: ")
-        #     print(ujson.dumps(args))
-        # if len(kwargs) > 0:
-        #     print("LAMDA keyway ARGUMENTS: ")
-        #     print(ujson.dumps(kwargs))
 
+    def lF(*args, **kwargs):
         lFRet = None
 
         executePeripheralCommand = True
@@ -313,8 +326,7 @@ def lmbdForPeripheralObservable(testCondition, pee, mpu):
                 executePeripheralCommand = True
             else:
                 executePeripheralCommand = False
-                # print(str(args[0]) + " == " + (args[0]).__class__.__name__ + "("+testCondition+")" +
-                #       " not passed \n NotExecuted:"+ujson.dumps(pee))
+
         else:
             executePeripheralCommand = True
 
@@ -336,12 +348,6 @@ def lmbdForPeripheralObservable(testCondition, pee, mpu):
 
 def lmbdForContext(testCondition, pee, mpu):
     def lF(*args, **kwargs):
-        # if len(args) > 0:
-        #     print("LAMDA LIST ARGUMENTS: ")
-        #     print(ujson.dumps(args))
-        # if len(kwargs) > 0:
-        #     print("LAMDA keyway ARGUMENTS: ")
-        #     print(ujson.dumps(kwargs))
 
         lFRet = {}
 
@@ -386,15 +392,8 @@ def dictAddItemAtBegining(toThisDict, addThis):
 
 
 def lmbdForMpu(testCondition, pee, mpu):
-    # m.peripherals[0].command("duty",{"value":256})
-    # pee["pid"], pee["cmd"], pee["params"])
+
     def lF(*args, **kwargs):
-        # if len(args) > 0:
-        #     print("LAMDA LIST ARGUMENTS: ")
-        #     print(ujson.dumps(args))
-        # if len(kwargs) > 0:
-        #     print("LAMDA keyway ARGUMENTS: ")
-        #     print(ujson.dumps(kwargs))
 
         lFRet = None
 

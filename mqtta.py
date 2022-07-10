@@ -118,7 +118,7 @@ class mqtta(peripheral):
         self.__msg = val
 
     @peripheral._trigger
-    def rawMessage(self, topic, message):
+    def rawMessage(self, topic, message, jsonmessage):
         # print("Raw message")
         # print("\ttopic: " + topic)
         # print("\tmessage: " + message)
@@ -218,54 +218,45 @@ class mqtta(peripheral):
         }
 
     def sub_cb(self, topic, msg):
-        go = False
-        skipMessage = False
 
-        if self.mqttInstance.__class__ is MQTTClient:
+        if type(self.mqttInstance) is MQTTClient:
 
             decodedTopic = topic.decode('utf-8')
-            self.rawMessage(decodedTopic, msg.decode("utf-8"))
+
+            try:
+                msgjs = ujson.loads(msg.decode("utf-8"))
+            except ValueError:
+                msgjs = {}
+
+            if type(msgjs) is dict:
+                if "data" in msgjs:
+                    if type(msgjs["data"]) is str:
+                        try:
+                            msgjs["data"] = ujson.loads(msgjs["data"])
+                        except ValueError:
+                            pass
+
+            self.rawMessage(decodedTopic, msg.decode("utf-8"), msgjs)
 
             if decodedTopic == conf.PRESENCE:
-                # raspund automat la PRESENCE
                 self.mqttInstance.publish(
                     conf.BROADCAST_ONLINE, self.online_mesg, retain=True, qos=0)
             else:
                 if decodedTopic == conf.defaultTopic:
-                    # topic default interceptez cu observables in message
-                    #  si prelucrez acolo; trimit datele doar json
-                    try:
-                        msgjs = ujson.loads(msg.decode("utf-8"))
-                    except ValueError:
-                        skipMessage = True
+                    go = False
 
                     if "from" in msgjs:
                         if msgjs["from"] == self.CLIENT_ID:
-                            skipMessage = True
-                    else:
-                        skipMessage = True
+                            go = True
 
-                    if not skipMessage:
-                        # print("mqtt Msg to "+self.CLIENT_ID+"\tTopic: " +
-                        #       topic.decode('utf-8')+"\n\t content:\t"+msg.decode("utf-8"))
-                        # daca este pentru mine sau pt toate deviceurile sau pentru toate relele :)
-                        if "to" in msgjs:
-                            if msgjs["to"] == self.CLIENT_ID or msgjs["to"] == "*":
-                                go = True
-                            else:
-                                go = False
-                                # print("Not for me, skipping")
+                    if "to" in msgjs:
+                        if msgjs["to"] == self.CLIENT_ID or msgjs["to"] == "*":
+                            go = True
 
                         if go:
-                            self.message = msgjs["data"]
+                            self.message = msgjs
                 else:
-                    # oricare al topic folosesc handler
-                    # si apelez cu param topic si message
-                    # daca mesajul este json parsez si trimit
-                    # daca nu trimit text
-                    try:
-                        msgjs = ujson.loads(msg.decode("utf-8"))
-                    except ValueError:
+                    if msgjs == {}:
                         msgjs = msg.decode("utf-8")
 
                     if decodedTopic in self.topicHandlers:
