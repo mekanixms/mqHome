@@ -222,6 +222,7 @@ class mqtta(peripheral):
         if type(self.mqttInstance) is MQTTClient:
 
             decodedTopic = topic.decode('utf-8')
+            decodedMessage = msg.decode("utf-8")
 
             try:
                 msgjs = ujson.loads(msg.decode("utf-8"))
@@ -236,7 +237,22 @@ class mqtta(peripheral):
                         except ValueError:
                             pass
 
-            self.rawMessage(decodedTopic, msg.decode("utf-8"), msgjs)
+            rawMessagePosArgs = [decodedTopic, decodedMessage]
+            rawMessageKwArgs = {
+                "topic": decodedTopic,
+                "message": decodedMessage
+            }
+
+            if type(msgjs) is dict:
+                rawMessageKwArgs["jsonmessage"] = msgjs
+            else:
+                rawMessagePosArgs[2] = msgjs
+
+            try:
+                self.rawMessage(*rawMessagePosArgs, **rawMessageKwArgs)
+            except TypeError as e:
+                pass
+                # print("\trawMessage call exception: "+"\n\t".join(e.args))
 
             if decodedTopic == conf.PRESENCE:
                 self.mqttInstance.publish(
