@@ -191,11 +191,10 @@ ON(changed[1]): context/set(count=context['count']+1)  dev[2]/send(topic=DRIVE,m
 ON(changed[0]): dev[2]/send(topic=DRIVE,msg=OFF,encapsulate=false)
 
 
-FUNCTIONALA Apelarea kwargs din 0.8-2022-07-10
-    inclusiv co json (vezi rawMessage(topic,message,jsonmessage))
-    EX:
-        ON(rawMessage[jsonmessage/data==TOGGLE,topic==comutator]):  dev[1]/toggle()
-    TODO:
-        verifica eroare 
-            File "peripheral.py", line 34, in wrapper
-            TypeError: function got multiple values for argument 'jsonmessage'
+
+POS ARGS / KW ARGS and jsonmessage/key calls
+    ON(rawMessage[jsonmessage/data==TOGGLE,1==comutator]):  dev[1]/toggle()
+    ON(rawMessage[1==ON,topic==comutator]):  dev[1]/on()
+    ON(rawMessage[message==OFF,0==comutator]):  dev[1]/off()`
+
+    Note: combination jsonmessage/data with positional args does not work; KB 2 / 0.8-2022-07-10

@@ -65,37 +65,35 @@ def peripheralDirectCommandHandler(topic, message, mqttDriver):
     # din slimmqtt vine:
     # {"data": "relon", "to": "mqac67b22cca0c", "from": "altClientNume"}
     global mpu
-    if val.__class__ is dict and "data" in val:
+    if type(val) is dict and "data" in val.keys():
         if messageIsForMe(message, mqttDriver.CLIENT_ID):
-            try:
-                msgjs = ujson.loads(val["data"])
-            except ValueError:
-                print("Wrong JSON format")
-            except:
-                print("Other error")
-            finally:
-                cmdto = int(msgjs["pid"])
-                cmdName = msgjs["cmd"]
-                cmdOptions = msgjs["opt"] if "opt" in msgjs else False
+            # try:
+            msgjs = val["data"]
+            # except ValueError:
+            #     print("Wrong JSON format")
+            # finally:
+            cmdto = int(msgjs["pid"])
+            cmdName = msgjs["cmd"]
+            cmdOptions = msgjs["opt"] if "opt" in msgjs else False
 
-                if cmdto.__class__ == int and cmdName:
-                    if cmdName in mpu.peripherals[int(cmdto)].commandsList():
-                        if(int(cmdto) < len(mpu.peripherals)):
-                            try:
-                                if not cmdOptions:
-                                    mpu.peripherals[int(cmdto)].command(
-                                        cmdName)
-                                else:
-                                    mpu.peripherals[int(cmdto)].command(
-                                        cmdName, cmdOptions)
-                            except Exception as e:
-                                # except Exception as e:
-                                print("Error while executing: " + str(e).upper())
-                                print("\tCOMMAND: " + cmdName +
-                                      "\twith OPTIONS " + "for dev["+str(cmdto)+"]")
-                                print("\t"+val["data"])
-                    else:
-                        print("Not in commands list")
+            if cmdto.__class__ == int and cmdName:
+                if cmdName in mpu.peripherals[int(cmdto)].commandsList():
+                    if(int(cmdto) < len(mpu.peripherals)):
+                        try:
+                            if not cmdOptions:
+                                mpu.peripherals[int(cmdto)].command(
+                                    cmdName)
+                            else:
+                                mpu.peripherals[int(cmdto)].command(
+                                    cmdName, cmdOptions)
+                        except Exception as e:
+                            # except Exception as e:
+                            print("Error while executing: " + str(e).upper())
+                            print("\tCOMMAND: " + cmdName +
+                                    "\twith OPTIONS " + "for dev["+str(cmdto)+"]")
+                            print("\t"+val["data"])
+                else:
+                    print("Not in commands list")
 
 
 def devconfTopicHandler(topic, message, mqttDriver):
@@ -173,7 +171,6 @@ if mqtt.__class__.__bases__[0].__name__ == 'peripheral':
     mqtt.topicHandlers[conf.STATUS_UPDATE_TOPIC] = deviceStatusCommandHandler
 
 
-
 applyObservables = False
 scriptFilename = __file__.split('.')[0]
 
@@ -200,9 +197,6 @@ if applyObservables:
             print("\tNone found for it")
 else:
     print("\tObservables not applied")
-
-
-
 
 
 executeStartupFile = True
@@ -232,7 +226,7 @@ if executeStartupFile:
                         "dev": mpu.peripherals,
                         "mpu": mpu,
                         "runMode": "mqtt"
-                        })
+                    })
                 except:
                     print("\tError, Bad script")
 else:
