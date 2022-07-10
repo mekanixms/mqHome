@@ -1,3 +1,4 @@
+import conf
 from peripheral import peripheral
 from time import sleep
 import _thread
@@ -14,24 +15,52 @@ from micropython import schedule
 _thread.stack_size(4096*2)
 
 
+def rebootAs(s, mode):
+    if mode in ["mqtt/sta", "config/sta", "config/ap"]:
+        # if "from" in message:
+        print("Reboot request from ")
+        conf.jsonConfig["run"] = mode
+        conf.configFileSave()
+        print("\tRebooting in "+mode+" mode")
+        from machine import reset
+        reset()
+        # else:
+        #     print("Reboot in "+message["data"]+" mode request skipped")
+        #     print("\tfrom label not present")
+
+
+def broadcastForRegistration(s):
+    mac = "ffffffffffff"
+
+    s.loadPeer(mac)
+    result = s.send(msg="BCAST_REG_PEER", to=mac)
+    s.removePeer(mac)
+
+    return {"result": result}
+
+
 def addpeer(s, mac):
-    return s.loadPeer(mac)
+    return {"result": s.loadPeer(mac)}
 
 
 def removepeer(s, mac):
-    return s.removePeer(mac)
+    return {"result": s.removePeer(mac)}
 
 
 def send(s, msg, to="*"):
-    return s.send(msg, to)
+    return {"result": s.send(msg, to)}
 
 
 def enable(s):
-    return s.start()
+    return {"result": s.start()}
 
 
 def disable(s):
-    return s.deinit()
+    return {"result": s.deinit()}
+
+
+def savePeers(s):
+    return {"result": s.savePeersToFile()}
 
 # https://micropython-glenn20.readthedocs.io/en/latest/library/espnow.html#espnow-and-wifi-operation
 
@@ -55,8 +84,11 @@ class espnowdrv(peripheral):
         self.commands["send"] = send
         self.commands["connect"] = enable
         self.commands["addPeer"] = addpeer
+        self.commands["broadcastRegister"] = broadcastForRegistration
         self.commands["removePeer"] = removepeer
         self.commands["disconnect"] = disable
+        self.commands["rebootAs"] = rebootAs
+        self.commands["savePeers"] = savePeers
 
         if options["autostart"]:
             print("Autostart enabled")
@@ -83,6 +115,20 @@ class espnowdrv(peripheral):
 
         return peers
 
+    def savePeersToFile(self):
+        peersOut = {}
+        peers = self.getPeersByMac()
+        i = 0
+        for id in peers:
+            peersOut[i] = id
+            i += 1
+
+        configFile = open("peers.json", "w")
+        configFile.write(ujson.dumps(peersOut))
+        configFile.close()
+
+        return peers
+
     def loadPeer(self, peer):
         success = True
 
@@ -90,6 +136,8 @@ class espnowdrv(peripheral):
             self.espnow.add_peer(self.__encodeHexBytes(peer))
         except:
             success = False
+
+        self.savePeersToFile()
 
         return success
 
@@ -100,6 +148,8 @@ class espnowdrv(peripheral):
             self.espnow.del_peer(self.__encodeHexBytes(peer))
         except:
             success = False
+
+        self.savePeersToFile()
 
         return success
 
@@ -134,8 +184,7 @@ class espnowdrv(peripheral):
 
     @peripheral._trigger
     def rawMessage(self, source, message):
-        print(source)
-        print(message)
+        pass
 
     def getPeersByMac(self):
         peers = []
@@ -148,7 +197,7 @@ class espnowdrv(peripheral):
 
     def getState(self):
         return {
-            "connected": self.isconnected(),
+            "connected": self.espnow.active(),
             "peers": self.getPeersByMac(),
             "stats": self.espnow.stats()
         }
@@ -196,7 +245,13 @@ class espnowdrv(peripheral):
                     rcvdMsg["FROM"] = self.__decodeHexBytes(host)
 
                     def re(m):
-                        self.rawMessage(rcvdMsg["FROM"], msg.decode("utf-8"))
+                        rmpa = [rcvdMsg["FROM"], msg.decode("utf-8")]
+                        rmkwa = {"source": rmpa[0], "message": rmpa[1]}
+                        try:
+                            self.rawMessage(*rmpa, **rmkwa)
+                        except TypeError as e:
+                            pass
+
                         self.message = rcvdMsg
 
                     schedule(re, rcvdMsg)
@@ -210,12 +265,15 @@ class espnowdrv(peripheral):
 
         response = False
 
-        if to == "*":
-            response = self.espnow.send(msg)
-        else:
-            if len(to) == 12:
-                encTo = self.__encodeHexBytes(to)
-                response = self.espnow.send(encTo, msg, sync)
+        try:
+            if to == "*":
+                response = self.espnow.send(msg)
+            else:
+                if len(to) == 12:
+                    encTo = self.__encodeHexBytes(to)
+                    response = self.espnow.send(encTo, msg, sync)
+        except OSError as ose:
+            response = str(ose.args[0]) + " : "+str(ose.args[1])
 
         return {
             "to": to,
