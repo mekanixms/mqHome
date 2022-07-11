@@ -135,6 +135,9 @@ def main():
         if runAs == "mqtt":
             print("MQTT mode")
             import mqttr
+        if runAs == "espnow":
+            print("ESPNOW mode")
+            import espnowr
 
 
 main()

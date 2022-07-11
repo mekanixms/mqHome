@@ -3,6 +3,7 @@ from peripheral import peripheral
 from time import sleep
 import _thread
 import ujson
+import gc
 from jsu import TrueValues, importJsonDictionaryFromFile
 
 import network
@@ -10,9 +11,6 @@ import espnow
 import ubinascii
 
 from micropython import schedule
-
-
-_thread.stack_size(4096*2)
 
 
 def rebootAs(s, mode):
@@ -62,6 +60,12 @@ def disable(s):
 def savePeers(s):
     return {"result": s.savePeersToFile()}
 
+
+def mem_manage():
+    gc.collect()
+    gc.threshold(gc.mem_free() // 4 + gc.mem_alloc())
+
+
 # https://micropython-glenn20.readthedocs.io/en/latest/library/espnow.html#espnow-and-wifi-operation
 
 
@@ -70,6 +74,7 @@ class espnowdrv(peripheral):
     peers = {}
     stop = False
     broadcast = 'ffffffffffff'
+    version = 0.1
 
     def __init__(self, options={"autostart": True}):
         super().__init__(options)
@@ -103,10 +108,16 @@ class espnowdrv(peripheral):
 
         self.loadPeers()
 
-        try:
-            self.thread = _thread.start_new_thread(self.run, ())
-        except Exception:
-            print("THREAD EXCEPTION")
+        if "on_recv" in dir(self.espnow):
+            self.espnow.on_recv(self.onrcvcbk)
+            print("\tespnow driver running in on_recv mode")
+        else:
+            _thread.stack_size(4096*2)
+            try:
+                self.thread = _thread.start_new_thread(self.run, ())
+                print("\tespnow driver running in thread mode")
+            except Exception:
+                print("THREAD EXCEPTION")
 
     def loadPeers(self):
         peers = importJsonDictionaryFromFile("peers.json")
@@ -223,38 +234,49 @@ class espnowdrv(peripheral):
     def __encodeHexBytes(self, val):
         return ubinascii.unhexlify(bytes(val, "utf-8"))
 
+    def __re(self, host, msg):
+
+        try:
+            m = ujson.loads(msg.decode("utf-8"))
+        except ValueError:
+            m = {"message": msg.decode("utf-8")}
+            if m["message"] == "BCAST_REG_PEER":
+                self.loadPeer(self.__decodeHexBytes(host))
+            if m["message"] == "BCAST_REG_ALIAS":
+                # TODO finalizare
+                pass
+        except:
+            m = {"error": "other"}
+
+        m["FROM"] = self.__decodeHexBytes(host)
+        if "message" not in m.keys():
+            m["message"] = msg.decode("utf-8")
+
+        rmpa = [m["FROM"], m["message"]]
+        rmkwa = {"source": rmpa[0], "message": rmpa[1]}
+
+        try:
+            self.rawMessage(**rmkwa)
+        except TypeError as e:
+            pass
+
+        self.message = m
+
+        mem_manage()
+
+    def onrcvcbk(self, enow):
+        host, msg = self.espnow.irecv(0)
+        if msg:
+            self.__re(host, msg)
+
     def run(self):
         a_lock = _thread.allocate_lock()
         while True:
             with a_lock:
-                host, msg = self.espnow.recv()
+                host, msg = self.espnow.irecv(0)
+
                 if msg:
-                    rcvdMsg = {}
-
-                    try:
-                        rcvdMsg = ujson.loads(msg.decode("utf-8"))
-                    except ValueError:
-                        rcvdMsg = {"message": msg.decode("utf-8")}
-                        if rcvdMsg["message"] == "BCAST_REG_PEER":
-                            schedule(self.loadPeer,
-                                     self.__decodeHexBytes(host))
-                            # self.loadPeer(self.__decodeHexBytes(host))
-                    except:
-                        rcvdMsg = {"error": "other"}
-
-                    rcvdMsg["FROM"] = self.__decodeHexBytes(host)
-
-                    def re(m):
-                        rmpa = [rcvdMsg["FROM"], msg.decode("utf-8")]
-                        rmkwa = {"source": rmpa[0], "message": rmpa[1]}
-                        try:
-                            self.rawMessage(*rmpa, **rmkwa)
-                        except TypeError as e:
-                            pass
-
-                        self.message = rcvdMsg
-
-                    schedule(re, rcvdMsg)
+                    self.__re(host, msg)
 
                 if self.stop:
                     break
