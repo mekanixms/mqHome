@@ -48,7 +48,7 @@ def send(s, msg, to="*"):
         m = urlStringDecode(msg.encode("utf-8"))
     else:
         m = msg
-    print("SEND cmd ", m, to)
+    
     return {"result": s.send(m, to)}
 
 
