@@ -43,7 +43,7 @@
                         <option confKeyModifier="alias">alias</option>
                         <option
                           confKeyModifier="run"
-                          vlist="config/ap|config/sta|mqtt/sta"
+                          vlist="config/ap|config/sta|mqtt/sta|espnow/ap|espnow/sta"
                         >
                           Standalone or Mqtt
                         </option>
@@ -584,7 +584,8 @@
                 <td><button id="sendMessage">Send message</button></td>
             </tr>
             <tr>
-                <td align="center"><input size="12" type="text" id="peerMac" placeholder="Peer MAC" colspan="2"/></td>
+                <td align="center"><input size="12" type="text" id="peerMac" placeholder="Peer MAC"/></td>
+                <td><button id="rebootPeer">Reboot Peer as</button></td>
                 <td><button id="deletePeer">Delete Peer</button></td>
                 <td><button id="addPeer">Add Peer</button></td>
                 
@@ -1774,9 +1775,9 @@
         var peerSelector = $("#peersList", espnowHtmlContainer).get(0);
 
         $("#peersList", this).on("change", function () {
-          $("#peerMac", espnowHtmlContainer).val(
-            peerSelector.options[peerSelector.options.selectedIndex].value
-          );
+          var selectedDeviceMacValue =
+            peerSelector.options[peerSelector.options.selectedIndex].value;
+          $("#peerMac", espnowHtmlContainer).val(selectedDeviceMacValue);
         });
 
         $("#sendMessage", this).click(function () {
@@ -1868,6 +1869,36 @@
               },
 
               url: mcu + "/cmd/" + spid + "/addPeer/?mac=" + newPeer,
+            });
+          else $("#console").html("Peer MAC cannot be empty");
+        });
+
+        $("#rebootPeer", this).click(function () {
+          var cc = getControlsAccordionContainer(this);
+          var spid = cc.getAttribute("aria-labelledby");
+          var newPeer = $("#peerMac", espnowHtmlContainer).val();
+
+          var modesList = $("option[confkeymodifier=run]")
+            .get(0)
+            .getAttribute("vlist");
+          var vlist = modesList.split("|");
+          var rebootToPrompt = prompt("Reboot to \n" + modesList);
+
+          if (newPeer && vlist.indexOf(rebootToPrompt) >= 0)
+            $.ajax({
+              type: "GET",
+              dataType: "json",
+              data: { msg: '{"rebootTo":"espnow/ap"}', to: newPeer },
+              crossDomain: true,
+              headers: {
+                Accept: "application/json",
+                "Content-Type": "text/plain",
+                "X-Requested-With": "XmlHttpRequest",
+              },
+              success: function (data) {
+                console.log(data);
+              },
+              url: mcu + "/cmd/" + spid + "/send/",
             });
           else $("#console").html("Peer MAC cannot be empty");
         });
@@ -2085,14 +2116,18 @@
         var container = this;
 
         container.lastState = state;
-        // {"connected":0,"stats":[0,0,0,0,0],"peers":["7c9ebd2887c4"]}
-        $("#peersList", container).empty();
-        state.peers.forEach(function (value, index) {
+        var peersListSelect = $("#peersList", container);
+        peersListSelect.empty();
+        peersListSelect.get(0).appendChild(document.createElement("option"));
+        state.peers.forEach(function (mac, index) {
           var option = document.createElement("option");
-          // TODO: adauga ca text alias al fiecarui device
-          option.textContent = value;
-          option.setAttribute("value", value);
-          $("#peersList", container).get(0).appendChild(option);
+
+          option.textContent = state.aliases.valueOf(mac)
+            ? state.aliases[mac]
+            : mac;
+
+          option.setAttribute("value", mac);
+          peersListSelect.get(0).appendChild(option);
         });
 
         $("#console").html(JSON.stringify(state));

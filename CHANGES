@@ -1,7 +1,23 @@
+0.8.5-2022-07-12
+    espnowr:
+        reboot to runMode on msg e.send('{"rebootTo":"config/sta"}')
+        alias set by sending BCAST_REG_ALIAS/myAlias
+
+    espnowdrv:
+        driver initialized by default
+            but autostart only starts on_recv or thread
+            offers ability to send messages while saving some processing power
+
+        fixed mcu2[espnow/send]
+            external cmd/send uses urlStringDecode to decode data
+                EX:
+                http://192.168.88.17:8080/cmd/3/send/?msg=msg={"rebootTo":"config/sta"}&to=94b97ee3b5c4
+                http://192.168.88.17:8080/cmd/3/send/?msg=TOGGLE&to=94b97ee3b5c4
+
 0.8.4-2022-07-11
     espnowdrv:
         option to run with threads or ESPNow::on_recv cbk
-        main: espnow mode
+    main: espnow mode
         self.rawMessage(**rmkwa) - calles only with KW args
 
 0.8.3-2022-07-10

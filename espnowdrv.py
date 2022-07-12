@@ -4,27 +4,21 @@ from time import sleep
 import _thread
 import ujson
 import gc
-from jsu import TrueValues, importJsonDictionaryFromFile
+from jsu import importJsonDictionaryFromFile, urlStringDecode
 
 import network
 import espnow
 import ubinascii
 
-from micropython import schedule
-
 
 def rebootAs(s, mode):
     if mode in ["mqtt/sta", "config/sta", "config/ap"]:
-        # if "from" in message:
         print("Reboot request from ")
         conf.jsonConfig["run"] = mode
         conf.configFileSave()
         print("\tRebooting in "+mode+" mode")
         from machine import reset
         reset()
-        # else:
-        #     print("Reboot in "+message["data"]+" mode request skipped")
-        #     print("\tfrom label not present")
 
 
 def broadcastForRegistration(s):
@@ -38,15 +32,24 @@ def broadcastForRegistration(s):
 
 
 def addpeer(s, mac):
-    return {"result": s.loadPeer(mac)}
+    toRet = s.loadPeer(mac)
+    s.savePeersToFile()
+    return {"result": toRet}
 
 
 def removepeer(s, mac):
-    return {"result": s.removePeer(mac)}
+    toRet = s.removePeer(mac)
+    s.savePeersToFile()
+    return {"result": toRet}
 
 
 def send(s, msg, to="*"):
-    return {"result": s.send(msg, to)}
+    if type(msg) is str:
+        m = urlStringDecode(msg.encode("utf-8"))
+    else:
+        m = msg
+    print("SEND cmd ", m, to)
+    return {"result": s.send(m, to)}
 
 
 def enable(s):
@@ -71,7 +74,7 @@ def mem_manage():
 
 class espnowdrv(peripheral):
     espnow = None
-    peers = {}
+    peersAlias = {}
     stop = False
     broadcast = 'ffffffffffff'
     version = 0.1
@@ -95,11 +98,6 @@ class espnowdrv(peripheral):
         self.commands["rebootAs"] = rebootAs
         self.commands["savePeers"] = savePeers
 
-        if options["autostart"]:
-            print("Autostart enabled")
-            self.start()
-
-    def start(self):
         if not self.isconnected():
             self.wifi.active(True)
 
@@ -108,6 +106,11 @@ class espnowdrv(peripheral):
 
         self.loadPeers()
 
+        if options["autostart"]:
+            print("Autostart enabled")
+            self.start()
+
+    def start(self):
         if "on_recv" in dir(self.espnow):
             self.espnow.on_recv(self.onrcvcbk)
             print("\tespnow driver running in on_recv mode")
@@ -123,6 +126,7 @@ class espnowdrv(peripheral):
         peers = importJsonDictionaryFromFile("peers.json")
         for peer in peers:
             self.loadPeer(peers.get(peer))
+            self.peersAlias[peers.get(peer)] = peer
 
         return peers
 
@@ -131,7 +135,11 @@ class espnowdrv(peripheral):
         peers = self.getPeersByMac()
         i = 0
         for id in peers:
-            peersOut[i] = id
+            label = i
+            if id in self.peersAlias.keys():
+                label = self.peersAlias.get(id)
+
+            peersOut[label] = id
             i += 1
 
         configFile = open("peers.json", "w")
@@ -148,8 +156,6 @@ class espnowdrv(peripheral):
         except:
             success = False
 
-        self.savePeersToFile()
-
         return success
 
     def removePeer(self, peer):
@@ -159,8 +165,6 @@ class espnowdrv(peripheral):
             self.espnow.del_peer(self.__encodeHexBytes(peer))
         except:
             success = False
-
-        self.savePeersToFile()
 
         return success
 
@@ -210,6 +214,7 @@ class espnowdrv(peripheral):
         return {
             "connected": self.espnow.active(),
             "peers": self.getPeersByMac(),
+            "aliases": self.peersAlias,
             "stats": self.espnow.stats()
         }
 
@@ -235,20 +240,27 @@ class espnowdrv(peripheral):
         return ubinascii.unhexlify(bytes(val, "utf-8"))
 
     def __re(self, host, msg):
+        decodedFromMac = self.__decodeHexBytes(host)
 
         try:
             m = ujson.loads(msg.decode("utf-8"))
         except ValueError:
             m = {"message": msg.decode("utf-8")}
+
             if m["message"] == "BCAST_REG_PEER":
-                self.loadPeer(self.__decodeHexBytes(host))
-            if m["message"] == "BCAST_REG_ALIAS":
-                # TODO finalizare
-                pass
+                self.loadPeer(decodedFromMac)
+                self.savePeersToFile()
+            if m["message"].startswith("BCAST_REG_ALIAS/"):
+                pAlias = m["message"].strip("BCAST_REG_ALIAS/")
+                if pAlias:
+                    self.peersAlias[decodedFromMac] = pAlias
+                    self.loadPeer(decodedFromMac)
+                    self.savePeersToFile()
+
         except:
             m = {"error": "other"}
 
-        m["FROM"] = self.__decodeHexBytes(host)
+        m["FROM"] = decodedFromMac
         if "message" not in m.keys():
             m["message"] = msg.decode("utf-8")
 

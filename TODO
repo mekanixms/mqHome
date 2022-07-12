@@ -2,6 +2,7 @@
 espnowdrv:
   initOption to switch between thread and on_recv
   reboot to option by espnow message
+  
 
 jsu/importJsonDictionaryFromFile
   sa returneze {} daca nu exista, eventual predefinit ca parametru al functiei ca sa pot modificat OTF

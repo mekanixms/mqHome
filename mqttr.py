@@ -16,7 +16,7 @@ def file_exists(f):
 
 def deviceDirectCommandHandler(topic, message, mqttDriver):
     if messageIsForMe(message, mqttDriver.CLIENT_ID):
-        if message["data"] in ["mqtt/sta", "config/sta", "config/ap"]:
+        if message["data"] in conf.runModes:
             if "from" in message:
                 print("Reboot request from "+message["from"])
                 conf.jsonConfig["run"] = message["data"]
@@ -90,7 +90,7 @@ def peripheralDirectCommandHandler(topic, message, mqttDriver):
                             # except Exception as e:
                             print("Error while executing: " + str(e).upper())
                             print("\tCOMMAND: " + cmdName +
-                                    "\twith OPTIONS " + "for dev["+str(cmdto)+"]")
+                                  "\twith OPTIONS " + "for dev["+str(cmdto)+"]")
                             print("\t"+val["data"])
                 else:
                     print("Not in commands list")

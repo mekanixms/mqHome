@@ -13,24 +13,51 @@ def file_exists(f):
         return False
 
 
+def mcuDoReboot(source, message):
+    try:
+        msg = ujson.loads(message)
+    except ValueError:
+        msg = message
 
-
+    if type(msg) is str:
+        if msg == "MPUREB":
+            mpu.reboot()
+    if type(msg) == dict:
+        if msg["rebootTo"] in conf.runModes:
+            print("Reboot request from "+source)
+            conf.jsonConfig["run"] = msg["rebootTo"]
+            conf.configFileSave()
+            print("\tRebooting in "+msg["rebootTo"]+" mode")
+            from machine import reset
+            reset()
+        else:
+            print("Reboot in "+msg["rebootTo"]+" mode request skipped")
 
 
 mpu = mcu()
 
+mpuAlias = conf.jsonConfig.get("executeStartupFile") if type(
+    conf.jsonConfig.get("executeStartupFile")) == str else mpu.unique_id
+
 w0 = network.WLAN(network.STA_IF)
 w0.active(True)
+espnowDriverInstance = None
 
 
 if type(conf.jsonConfig["peripherals"]) is list and len(conf.jsonConfig["peripherals"]) > 0:
     for epfcfg in conf.jsonConfig["peripherals"]:
         mpu.addPeripheral(epfcfg)
-        # if epfcfg["type"] in ["mqtt", "mqtta", "mqttht"]:
-        #     mqtt = mpu.peripherals[-1]
+        if epfcfg["type"] in ["espnowdrv"]:
+            espnowDriverInstance = mpu.peripherals[-1]
 
 
+if espnowDriverInstance.__class__.__name__ is "espnowdrv":
+    espnowDriverInstance.addTrigger("rawMessage", "AFTER", mcuDoReboot)
 
+    mac = "ffffffffffff"
+    espnowDriverInstance.loadPeer(mac)
+    espnowDriverInstance.send(msg="BCAST_REG_ALIAS/"+mpuAlias, to=mac)
+    espnowDriverInstance.removePeer(mac)
 
 
 applyObservables = False
@@ -61,9 +88,6 @@ else:
     print("\tObservables not applied")
 
 
-
-
-
 executeStartupFile = True
 
 if "executeStartupFile" in conf.jsonConfig:
@@ -90,8 +114,8 @@ if executeStartupFile:
                     exec("".join(scfgContent), {
                         "dev": mpu.peripherals,
                         "mpu": mpu,
-                        "runMode": "mqtt"
-                        })
+                        "runMode": "espnow"
+                    })
                 except:
                     print("\tError, Bad script")
 else:

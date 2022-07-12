@@ -30,6 +30,8 @@ DEVICE_CMDS = "mqdevcmds"
 defaultTopic = "mqhomeintercom"
 jsonConfig = {}
 
+runModes = ["mqtt/sta", "config/sta", "config/ap", "espnow/ap","espnow/sta"]
+
 
 # default valoarea pt releu
 pinModeSwitch = 35

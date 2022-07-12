@@ -8,6 +8,19 @@ FalseValues = ["False", "FALSE", "false",
                "OFF", "Off", "off", "0", 0, False, None]
 
 
+def urlStringDecode(aData: bytearray) -> str:
+    # Credits  https://github.com/micropython/micropython-lib/blob/master/urllib.parse/urllib/parse.py
+    Bits = aData.split(b'%')
+    Arr = [Bits[0]]
+    for Item in Bits[1:]:
+        Code = Item[:2]
+        Char = bytes([int(Code, 16)])
+        Arr.append(Char)
+        Arr.append(Item[2:].replace(b'+', b' '))
+    Res = b''.join(Arr)
+    return Res.decode('utf-8')
+
+
 def whichBool(val):
     # print("\t\tWhichbool testing "+str(val))
     if val in TrueValues:
