@@ -1,11 +1,14 @@
 
 espnowdrv:
   initOption to switch between thread and on_recv
-  reboot to option by espnow message
+  reboot to option by espnow message DONE
+  implementare channel:
+    recommend using w0.config(channel=X) to set the channel on the sender, instead of e.add_peer(peer, channel=X) 
   
 
 jsu/importJsonDictionaryFromFile
   sa returneze {} daca nu exista, eventual predefinit ca parametru al functiei ca sa pot modificat OTF
+  DONE , not tested
 
 main.py
   deinitializare modeSwitch btn1 btn2 devStatusLED

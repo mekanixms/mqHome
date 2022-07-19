@@ -39,7 +39,7 @@ def file_exists(f):
         return False
 
 
-def importJsonDictionaryFromFile(cfgf):
+def importJsonDictionaryFromFile(cfgf, notExists={"cfgf": {}}):
     if file_exists(cfgf):
         configFile = open(cfgf, "r")
         configFileContent = configFile.readlines()
@@ -47,11 +47,11 @@ def importJsonDictionaryFromFile(cfgf):
         if len(configFileContent) > 0:
             jsonConfig = ujson.loads("".join(configFileContent))
         else:
-            jsonConfig = {cfgf: {}}
+            jsonConfig = notExists
 
         configFile.close()
     else:
-        jsonConfig = {cfgf: {}}
+        jsonConfig = notExists
 
     return jsonConfig
 
