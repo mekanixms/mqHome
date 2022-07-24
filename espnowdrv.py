@@ -1,18 +1,16 @@
 import conf
 from peripheral import peripheral
-from time import sleep
 import _thread
 import ujson
 import gc
 from jsu import importJsonDictionaryFromFile, urlStringDecode
 
-import network
 import espnow
 import ubinascii
 
 
 def rebootAs(s, mode):
-    if mode in ["mqtt/sta", "config/sta", "config/ap"]:
+    if mode in ["mqtt/sta", "config/sta", "config/ap", "espnow/ap", "espnow/sta"]:
         print("Reboot request from ")
         conf.jsonConfig["run"] = mode
         conf.configFileSave()
@@ -48,7 +46,7 @@ def send(s, msg, to="*"):
         m = urlStringDecode(msg.encode("utf-8"))
     else:
         m = msg
-    
+
     return {"result": s.send(m, to)}
 
 
@@ -77,17 +75,15 @@ class espnowdrv(peripheral):
     peersAlias = {}
     stop = False
     broadcast = 'ffffffffffff'
-    version = 0.1
+    version = 0.11
 
-    def __init__(self, options={"autostart": True}):
+    def __init__(self, options={"autostart": True, "broadcast": True}):
         super().__init__(options)
 
         self.pType = self.__class__.__name__
         self.pClass = "VIRTUAL"
         self.__msg = ""
         self.thread = None
-
-        self.wifi = network.WLAN()
 
         self.commands["send"] = send
         self.commands["connect"] = enable
@@ -98,17 +94,20 @@ class espnowdrv(peripheral):
         self.commands["rebootAs"] = rebootAs
         self.commands["savePeers"] = savePeers
 
-        if not self.isconnected():
-            self.wifi.active(True)
-
         self.espnow = espnow.ESPNow()
         self.espnow.active(True)
 
         self.loadPeers()
 
-        if options["autostart"]:
-            print("Autostart enabled")
-            self.start()
+        if "broadcast" in options.keys():
+            if options["broadcast"]:
+                print("\tESPNOWDRV Broadcasting for registration")
+                broadcastForRegistration(self)
+
+        if "autostart" in options.keys():
+            if options["autostart"]:
+                print("Autostart enabled")
+                self.start()
 
     def start(self):
         if "on_recv" in dir(self.espnow):
@@ -223,15 +222,6 @@ class espnowdrv(peripheral):
 
     def getObservableProperties(self):
         return ["message"]
-
-    def isconnected(self):
-        if self.wifi.active():
-            if self.wifi.isconnected():
-                return network.STA_IF
-            else:
-                return network.AP_IF
-        else:
-            return None
 
     def __decodeHexBytes(self, val):
         return ubinascii.hexlify(val).decode("utf-8")

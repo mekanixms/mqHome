@@ -1,4 +1,8 @@
 
+custom Modes:
+  scripts to execut from main.py same as jssr mqttr or espnowr
+    but user defined/written
+
 espnowdrv:
   initOption to switch between thread and on_recv
   reboot to option by espnow message DONE

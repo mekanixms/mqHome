@@ -1,6 +1,4 @@
-import conf
 import ujson
-from time import time
 from jsu import current_milli_time
 from machine import reset
 from sys import platform
@@ -112,9 +110,9 @@ class mcu:
             if driverInstance.alias is not None:
                 self.peripheralsByAlias[driverInstance.alias] = driverInstance
 
-            print("new peripheral TYPE: "+driverInstance.pType)
-            print("with init options")
-            print(ujson.dumps(thisOne.get("initOptions")))
+            print("New peripheral TYPE: "+driverInstance.pType)
+            print("\twith init options")
+            print("\t\t"+ujson.dumps(thisOne.get("initOptions")))
             return driverInstance
         else:
             return False

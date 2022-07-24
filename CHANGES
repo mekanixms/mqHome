@@ -1,3 +1,10 @@
+0.8.7
+    espnowdrv:
+        broadcast
+        no network.WLAN
+    espnowr:
+        no network, handed in main.py
+        
 0.8.5-2022-07-12
     espnowr:
         reboot to runMode on msg e.send('{"rebootTo":"config/sta"}')

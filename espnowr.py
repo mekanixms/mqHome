@@ -1,6 +1,5 @@
 import conf
 from mcu import mcu
-import network
 import ujson
 from os import listdir
 from jsu import getObservablesFileContent, applyObservablesFromJson, TrueValues, FalseValues
@@ -39,10 +38,7 @@ mpu = mcu()
 mpuAlias = conf.jsonConfig.get("executeStartupFile") if type(
     conf.jsonConfig.get("executeStartupFile")) == str else mpu.unique_id
 
-w0 = network.WLAN(network.STA_IF)
-w0.active(True)
 espnowDriverInstance = None
-
 
 if type(conf.jsonConfig["peripherals"]) is list and len(conf.jsonConfig["peripherals"]) > 0:
     for epfcfg in conf.jsonConfig["peripherals"]:
