@@ -1,4 +1,5 @@
 import conf
+import network
 from mcu import mcu
 import ujson
 from os import listdir
@@ -32,6 +33,11 @@ def mcuDoReboot(source, message):
         else:
             print("Reboot in "+msg["rebootTo"]+" mode request skipped")
 
+
+wif = network.WLAN(network.STA_IF)
+wif.active(True)
+if(wif.isconnected()):
+    wif.disconnect()
 
 mpu = mcu()
 

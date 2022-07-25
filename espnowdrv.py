@@ -5,6 +5,7 @@ import ujson
 import gc
 from jsu import importJsonDictionaryFromFile, urlStringDecode
 
+import network
 import espnow
 import ubinascii
 
@@ -69,15 +70,15 @@ def mem_manage():
 
 # https://micropython-glenn20.readthedocs.io/en/latest/library/espnow.html#espnow-and-wifi-operation
 
-
 class espnowdrv(peripheral):
     espnow = None
     peersAlias = {}
     stop = False
-    broadcast = 'ffffffffffff'
-    version = 0.11
+    broadcast = 'ff'*6
+    version = 0.12
+    wap = network.WLAN(network.AP_IF)
 
-    def __init__(self, options={"autostart": True, "broadcast": True}):
+    def __init__(self, options={"autostart": True, "broadcast": True, "wap_channel": 6}):
         super().__init__(options)
 
         self.pType = self.__class__.__name__
@@ -93,6 +94,15 @@ class espnowdrv(peripheral):
         self.commands["disconnect"] = disable
         self.commands["rebootAs"] = rebootAs
         self.commands["savePeers"] = savePeers
+
+        self.wap.active(True)
+        if "wap_channel" in self.settings.keys():
+            wap_channel = int(self.settings["wap_channel"])
+        else:
+            wap_channel = 2
+
+        self.wap.config(channel=wap_channel)
+        print("\tESPNow AP channel="+str(wap_channel))
 
         self.espnow = espnow.ESPNow()
         self.espnow.active(True)

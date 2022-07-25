@@ -1,3 +1,14 @@
+0.8.8-2022-07-25
+    espnowdrv:
+         brings up / activates AP_IF
+        sets same channel with "wap_channel" initOption
+
+    espnowr:
+        brings up / activates STA_IF
+            peers_table only works
+                with both STA and AP active
+                STA can be disconnected
+                AP on the same channel for all devices
 0.8.7
     espnowdrv:
         broadcast
