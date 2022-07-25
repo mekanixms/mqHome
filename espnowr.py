@@ -43,8 +43,8 @@ if(wif.isconnected()):
 
 mpu = mcu()
 
-mpuAlias = conf.jsonConfig.get("executeStartupFile") if type(
-    conf.jsonConfig.get("executeStartupFile")) == str else mpu.unique_id
+mpuAlias = conf.jsonConfig.get("alias") if type(
+    conf.jsonConfig.get("alias")) == str else mpu.unique_id
 
 espnowDriverInstance = None
 

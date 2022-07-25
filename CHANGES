@@ -1,3 +1,6 @@
+0.9.0-2022-07-25
+    espnowr:
+        fixed mpuAlias sent for BCAST_REG_ALIAS
 0.8.9-2022-07-25
     main.py:
         cleaned code
