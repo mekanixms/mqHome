@@ -1,3 +1,8 @@
+0.8.9-2022-07-25
+    main.py:
+        cleaned code
+        runner is not one of the script loaded - config, mqttr, espnowr
+
 0.8.8-2022-07-25
     espnowdrv:
          brings up / activates AP_IF

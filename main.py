@@ -1,5 +1,4 @@
 import network
-import esp
 from ubinascii import hexlify
 import os
 from machine import idle, Pin
@@ -10,11 +9,6 @@ from sys import platform
 if_station = None
 if_ap = None
 wlanMode = None
-
-modeSwitch = Pin(int(conf.pinModeSwitch), Pin.IN)
-btn1 = Pin(int(conf.pinBtn1), Pin.IN)
-btn2 = Pin(int(conf.pinBtn2), Pin.IN)
-devStatusLED = Pin(int(conf.pinDevStatusLED), Pin.OUT)
 
 isESP8266 = True if platform == 'esp8266' else False
 isESP32 = True if platform == 'esp32' else False
@@ -78,15 +72,6 @@ def startSTA(cdata):
     print("IP Address:\t"+if_station.ifconfig()[0])
 
 
-def blinkWDLS(hb):
-    # blink watch dog LED standalone
-    global devStatusLED
-    if hb:
-        devStatusLED.on()
-    else:
-        devStatusLED.off()
-
-
 def isStationWifiSet():
     if "aps" in conf.jsonConfig.keys() and len(conf.jsonConfig["aps"]) > 0:
         return next(iter(conf.jsonConfig["aps"]))
@@ -95,8 +80,12 @@ def isStationWifiSet():
 
 
 def main():
-    global if_station, wlanMode
-    needsAPsSetup = False
+    global if_station, wlanMode, runner
+
+    modeSwitch = Pin(int(conf.pinModeSwitch), Pin.IN)
+    btn1 = Pin(int(conf.pinBtn1), Pin.IN)
+    btn2 = Pin(int(conf.pinBtn2), Pin.IN)
+    devStatusLED = Pin(int(conf.pinDevStatusLED), Pin.OUT)
 
     print("MAIN launched")
     # "config/ap|config/sta|mqtt/sta"
@@ -129,15 +118,15 @@ def main():
 
     if runAs == "config":
         print("CONFIG mode")
-        import jssr
-        jssr.mpu.wlanMode = wlanMode
+        import jssr as runner
+        runner.mpu.wlanMode = wlanMode
     else:
         if runAs == "mqtt":
             print("MQTT mode")
-            import mqttr
+            import mqttr as runner
         if runAs == "espnow":
             print("ESPNOW mode")
-            import espnowr
+            import espnowr as runner
 
 
 main()

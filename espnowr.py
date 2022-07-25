@@ -34,6 +34,8 @@ def mcuDoReboot(source, message):
             print("Reboot in "+msg["rebootTo"]+" mode request skipped")
 
 
+# both STA and AP if should be active;
+# STA can be disconnected from any routers
 wif = network.WLAN(network.STA_IF)
 wif.active(True)
 if(wif.isconnected()):
@@ -56,7 +58,7 @@ if type(conf.jsonConfig["peripherals"]) is list and len(conf.jsonConfig["periphe
 if espnowDriverInstance.__class__.__name__ is "espnowdrv":
     espnowDriverInstance.addTrigger("rawMessage", "AFTER", mcuDoReboot)
 
-    mac = "ffffffffffff"
+    mac = "ff"*6
     espnowDriverInstance.loadPeer(mac)
     espnowDriverInstance.send(msg="BCAST_REG_ALIAS/"+mpuAlias, to=mac)
     espnowDriverInstance.removePeer(mac)
