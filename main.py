@@ -93,7 +93,7 @@ def main():
     runAs, stationMode = conf.run.split("/")
 
     if modeSwitch.value() == 1:
-        # resore defaults - sterge apl.json,  observables si startup.ru
+        # resore defaults - sterge apl.json,  observables si startup.run
         pass
 
     if btn1.value() and btn2.value():
@@ -117,15 +117,10 @@ def main():
     if stationMode == "ap" or not wif.isconnected():
         startAP()
 
-    if runAs == "config":
-        print("CONFIG mode")
-        import configr as runner
-    if runAs == "mqtt":
-        print("MQTT mode")
-        import mqttr as runner
-    if runAs == "espnow":
-        print("ESPNOW mode")
-        import espnowr as runner
+    try:
+        runner = __import__(runAs+"r")
+    except ImportError as e:
+        print("\n\n\t"+e.value+"\n\n")
 
 
 main()

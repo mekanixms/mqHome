@@ -1,5 +1,10 @@
+0.9.3-2022-07-27
+    main.py:
+        import by script name+"r" to support custom scripts
+
 0.9.2-2022-07-27
-    jssr renamed to configr
+    jssr:
+        renamed to configr
 
 0.9.1-2022-07-27
     main, jssr, mqttr:
