@@ -119,7 +119,7 @@ def main():
 
     if runAs == "config":
         print("CONFIG mode")
-        import jssr as runner
+        import configr as runner
     if runAs == "mqtt":
         print("MQTT mode")
         import mqttr as runner
