@@ -1,6 +1,5 @@
 import conf
 from mcu import mcu
-import network
 import ujson
 from os import listdir
 from jsu import getObservablesFileContent, applyObservablesFromJson, TrueValues, FalseValues

@@ -6,8 +6,8 @@ import conf
 from time import sleep
 from sys import platform
 
-if_station = None
-if_ap = None
+wif = None
+wap = None
 wlanMode = None
 
 isESP8266 = True if platform == 'esp8266' else False
@@ -22,7 +22,7 @@ def file_exists(f):
 
 
 def startAP():
-    global if_station, wlanMode
+    global wap, wlanMode
 
     mac = hexlify(network.WLAN().config('mac'), ':')
     fid = str(mac.decode().replace(":", ""))
@@ -36,40 +36,41 @@ def startAP():
     if "apssid" in conf.jsonConfig.keys():
         ssid = conf.jsonConfig["apssid"]
 
-    if_ap = network.WLAN(network.AP_IF)
-    if_ap.active(True)
-    if_ap.config(essid=ssid, password=p, authmode=4)
-    print("Started Access Point "+ssid)
+    wap = network.WLAN(network.AP_IF)
+    wap.active(True)
 
-    # while not station.isconnected():
-    #     idle()
-    while if_ap.active() == False:
-        pass
+    if ssid and p:
+        wap.config(essid=ssid, password=p, authmode=4)
+        print("Started Access Point "+ssid)
+
+    while not wap.active():
+        idle()
+
     print("AP connected: "+ssid)
     wlanMode = network.AP_IF
     sleep(1)
 
 
 def startSTA(cdata):
-    global if_station, wlanMode
+    global wif, wlanMode
 
-    if_station = network.WLAN(network.STA_IF)
-    if_station.active(True)
+    wif = network.WLAN(network.STA_IF)
+    wif.active(True)
     sleep(2)
 
     if "staticip" in conf.jsonConfig.keys():
         if type(conf.jsonConfig["staticip"]) == list and len(conf.jsonConfig["staticip"]) == 4:
             print("Static IP: " + " / ".join(conf.jsonConfig["staticip"]))
-            if_station.ifconfig(conf.jsonConfig["staticip"])
+            wif.ifconfig(conf.jsonConfig["staticip"])
 
-    if not if_station.isconnected():
-        if_station.connect(cdata, conf.jsonConfig["aps"][cdata])
+    if not wif.isconnected():
+        wif.connect(cdata, conf.jsonConfig["aps"][cdata])
 
-    while not if_station.isconnected():
+    while not wif.isconnected():
         idle()
 
     wlanMode = network.STA_IF
-    print("IP Address:\t"+if_station.ifconfig()[0])
+    print("IP Address:\t"+wif.ifconfig()[0])
 
 
 def isStationWifiSet():
@@ -80,7 +81,7 @@ def isStationWifiSet():
 
 
 def main():
-    global if_station, wlanMode, runner
+    global wap, wif, wlanMode, runner
 
     modeSwitch = Pin(int(conf.pinModeSwitch), Pin.IN)
     btn1 = Pin(int(conf.pinBtn1), Pin.IN)
@@ -113,20 +114,18 @@ def main():
             stationMode = "ap"
             runAs = "config"
 
-    if stationMode == "ap" or not if_station.isconnected():
+    if stationMode == "ap" or not wif.isconnected():
         startAP()
 
     if runAs == "config":
         print("CONFIG mode")
         import jssr as runner
-        runner.mpu.wlanMode = wlanMode
-    else:
-        if runAs == "mqtt":
-            print("MQTT mode")
-            import mqttr as runner
-        if runAs == "espnow":
-            print("ESPNOW mode")
-            import espnowr as runner
+    if runAs == "mqtt":
+        print("MQTT mode")
+        import mqttr as runner
+    if runAs == "espnow":
+        print("ESPNOW mode")
+        import espnowr as runner
 
 
 main()

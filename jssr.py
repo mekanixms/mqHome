@@ -1,13 +1,10 @@
 import conf
 import jsu
-from os import remove
 from jss import jss
 from jssu import unquote
 from mcu import mcu
-import network
 import ujson
 from os import listdir
-from commonMqttUtils import messageIsForMe
 
 
 def configHandler(REQUEST):
