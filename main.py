@@ -117,6 +117,7 @@ def main():
     if stationMode == "ap" or not wif.isconnected():
         startAP()
 
+    print("\nRun mode: "+runAs+"\n")
     try:
         runner = __import__(runAs+"r")
     except ImportError as e:

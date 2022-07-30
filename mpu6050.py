@@ -2,6 +2,7 @@ from peripheral import peripheral, TrueValues
 from machine import SoftI2C, Pin, Timer
 from imu import MPU6050
 from sys import platform
+from math import atan, atan2, sqrt, pi
 
 
 def enable(s, period=1000):
@@ -61,17 +62,14 @@ class mpu6050(peripheral):
 
         self.imu = MPU6050(self.i2c)
         self.__inclination = 0
-        self.__inclination_avg = 0
         self.__azimuth = 0
-        self.__azimuth_avg = 0
         self.__elevation = 0
-        self.__elevation_avg = 0
+        self.__accel_xyz = 0
+        self.__gyro_xyz = 0
         self.__accel_ixyz = 0
-        self.__accel_ixyz_avg = 0
         self.__gyro_ixyz = 0
-        self.__gyro_ixyz_avg = 0
 
-        self.__period = 1000
+        self.period = 1000
         self.__stopTimer = True
         self.po = Timer(int(self.settings.get("id")))
         self.__heartbeat = True
@@ -87,105 +85,65 @@ class mpu6050(peripheral):
         pass
 
     def readData(self, t):
-        self.inclination = self.imu.accel.inclination
-        self.azimuth = self.imu.accel.azimuth
-        self.elevation = self.imu.accel.elevation
-        self.accel_ixyz = self.imu.accel.ixyz
-        self.gyro_ixyz = self.imu.gyro.ixyz
+        # self.inclinationChange(
+        #     inclination=self.imu.accel.inclination, imu=self.imu)
+        # self.azimuthChange(azimuth=self.imu.accel.azimuth, imu=self.imu)
+        # self.elevationChange(elevation=self.imu.accel.elevation, imu=self.imu)
+        xyz = self.imu.accel.xyz
+        self.accel_change(accel_xyz=xyz,
+                          gyro_xyz=self.imu.gyro.xyz,
+                          roll=self.roll(xyz),
+                          pitch=self.pitch(xyz),
+                          yaw=self.yaw(xyz),
+                          imu=self.imu)
+        # self.gyro_xyzChange(gyro_xyz=self.imu.gyro.xyz, imu=self.imu)
+        # self.accel_ixyzChange(accel_ixyz=self.imu.accel.ixyz, imu=self.imu)
+        # self.gyro_ixyzChange(gyro_ixyz=self.imu.gyro.ixyz, imu=self.imu)
+        self.heartbeat = not self.heartbeat
 
-    @property
-    def period(self):
-        return self.__period
+    @peripheral._trigger
+    def accel_change(self, accel_xyz, gyro_xyz, roll, pitch, yaw, imu):
+        pass
 
-    @period.setter
-    @peripheral._watch
-    def period(self, val):
-        self.__period = val
+    # @peripheral._trigger
+    # def inclinationChange(self, inclination, imu):
+    #     pass
 
-    @property
-    def inclination(self):
-        return self.__inclination
+    # @peripheral._trigger
+    # def azimuthChange(self, azimuth, imu):
+    #     pass
 
-    @inclination.setter
-    @peripheral._watch
-    def inclination(self, val):
-        if self.__inclination == 0:
-            self.__inclination_avg = self.__inclination
-        else:
-            # s = (abs(primaCitireInclinare) + abs(imu.accel.inclination))/2
-            self.__inclination_avg = (val+self.__inclination)/2
+    # @peripheral._trigger
+    # def elevationChange(self, elevation, imu):
+    #     pass
 
-        self.__inclination = val
+    # @peripheral._trigger
+    # def gyro_xyzChange(self, gyro_xyz, imu):
+    #     pass
 
-    @property
-    def azimuth(self):
-        return self.__azimuth
+    # @peripheral._trigger
+    # def accel_ixyzChange(self, accel_ixyz, imu):
+    #     pass
 
-    @azimuth.setter
-    @peripheral._watch
-    def azimuth(self, val):
-        if self.__azimuth == 0:
-            self.__azimuth_avg = self.__azimuth
-        else:
-            # s = (abs(primaCitireInclinare) + abs(imu.accel.inclination))/2
-            self.__azimuth_avg = (val+self.__azimuth)/2
+    # @peripheral._trigger
+    # def gyro_ixyzChange(self, gyro_ixyz, imu):
+    #     pass
 
-        self.__azimuth = val
+    def roll(self, xyz):
+        # x, y, z = self.imu.accel.xyz
+        x, y, z = xyz
+        return atan2(y, z) * 180.0 / pi
 
-    @property
-    def elevation(self):
-        return self.__elevation
+    def pitch(self, xyz):
+        # x, y, z = self.imu.accel.xyz
+        x, y, z = xyz
+        return atan2(-x, sqrt(y * y + z * z)) * 180.0 / pi
 
-    @elevation.setter
-    @peripheral._watch
-    def elevation(self, val):
-        if self.__elevation == 0:
-            self.__elevation_avg = self.__elevation
-        else:
-            # s = (abs(primaCitireInclinare) + abs(imu.accel.inclination))/2
-            self.__elevation_avg = (val+self.__elevation)/2
-
-        self.__elevation = val
-
-    @property
-    def accel_ixyz(self):
-        return self.__accel_ixyz
-
-    @accel_ixyz.setter
-    @peripheral._watch
-    def accel_ixyz(self, val):
-        if self.__accel_ixyz == 0:
-            self.__accel_ixyz_avg = self.__accel_ixyz
-        else:
-            # s = (abs(primaCitireInclinare) + abs(imu.accel.inclination))/2
-            iax, iay, iaz = val
-            self.__accel_ixyz_avg = [
-                (iax+self.__accel_ixyz[0])/2,
-                (iay+self.__accel_ixyz[1])/2,
-                (iaz+self.__accel_ixyz[2])/2
-            ]
-
-        self.__accel_ixyz = val
-
-    @property
-    def gyro_ixyz(self):
-        return self.__gyro_ixyz
-
-    @gyro_ixyz.setter
-    @peripheral._watch
-    def gyro_ixyz(self, val):
-        if self.__gyro_ixyz == 0:
-            self.__gyro_ixyz_avg = self.__gyro_ixyz
-        else:
-            # s = (abs(primaCitireInclinare) + abs(imu.accel.inclination))/2
-            igx, igy, igz = val
-            self.__gyro_ixyz_avg = [
-                (igx+self.__gyro_ixyz[0])/2,
-                (igy+self.__gyro_ixyz[1])/2,
-                (igz+self.__gyro_ixyz[2])/2
-            ]
-
-        self.__gyro_ixyz = val
+    def yaw(self, xyz):
+        # x, y, z = self.imu.accel.xyz
+        x, y, z = xyz
+        # yaw = 180 * atan (accelerationZ/sqrt(accelerationX*accelerationX + accelerationZ*accelerationZ))/M_PI;
+        return 180 * atan(z/sqrt(x*x + z*z)) / pi
 
     @property
     def stopTimer(self):
@@ -228,7 +186,11 @@ class mpu6050(peripheral):
         }
 
     def getObservableMethods(self):
-        return ["command"]
+        return ["command",
+                #  "inclinationChange", "azimuthChange", "elevationChange", "accel_ixyzChange", "gyro_ixyzChange",
+                "accel_change"
+                #  ,"gyro_xyzChange"
+                ]
 
     def getObservableProperties(self):
-        return ["inclination", "azimuth", "elevation", "accel_ixyz", "gyro_ixyz", "heartbeat", "stopTimer", "period"]
+        return ["heartbeat", "stopTimer", "period"]

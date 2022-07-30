@@ -1,3 +1,7 @@
+0.10.0-2022-07-30
+    mpu6050:
+        removed all other triggers and replaced with accel_change(self, accel_xyz, gyro_xyz, roll, pitch, yaw, imu)
+            it is called with kwargs and we have all data integrated
 0.9.3-2022-07-27
     main.py:
         import by script name+"r" to support custom scripts
