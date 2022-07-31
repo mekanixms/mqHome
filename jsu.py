@@ -62,6 +62,14 @@ def current_milli_time(): return int(round(time() * 1000))
 def performOperationFromString(o1, o2, op):
     res = None
 
+    # print("OpfromString: \t"+str(o1)+" "+str(op)+" "+str(o2)+":\t"+str(res))
+
+    try:
+        o2 = (o1).__class__(o2)
+    except:
+        print("could not convert "+o2.__class__.__name__ +
+              " to "+o1.__class__.__name__)
+
     if op.strip() == "==":
         res = o1 == o2
     else:
@@ -92,7 +100,7 @@ def prepareStringSequence(testCondition):
         # pt inline test
         i = 0
 
-        allParamExpression = '(.*)\s*([!=<>]+[<>=]+)\s*(\w*)'
+        allParamExpression = '(.*)\s*([!=<>]+[<>=]+)\s*(.*)'
 
         for tline in testCondition.split(","):
             ctline = tline.strip()
@@ -128,6 +136,16 @@ def prepareStringSequence(testCondition):
     return testSeq
 
 
+def getTestValEvaluated(testVal, ctx={}):
+
+    try:
+        evaluatedTestVal = eval(testVal, {}, ctx)
+    except:
+        evaluatedTestVal = testVal
+
+    return evaluatedTestVal
+
+
 def testStringSequence(testCondition, args, kwargs):
     testResult = True
 
@@ -146,14 +164,14 @@ def testStringSequence(testCondition, args, kwargs):
             # ON(rawMessage[1==TOGGLE]): dev[1]/toggle()
             if len(args) > 0:
 
-                # print("\t"+testArg + "\t"+operator+"\t"+testVal)
+                evaluatedTestVal = getTestValEvaluated(testVal)
 
                 if int(testArg) >= 0 and int(testArg) < len(args):
                     if type(args[int(testArg)]) == bool:
-                        tr = args[int(testArg)] and whichBool(testVal)
+                        tr = args[int(testArg)] and whichBool(evaluatedTestVal)
                     else:
                         tr = performOperationFromString(
-                            args[int(testArg)], (args[int(testArg)]).__class__(testVal), operator)
+                            args[int(testArg)], evaluatedTestVal, operator)
 
         else:
             # ON(rawMessage[message==TOGGLE]): dev[1]/toggle()
@@ -161,11 +179,13 @@ def testStringSequence(testCondition, args, kwargs):
 
                 # print("\t"+kwargs.get(testArg) + "\t"+operator+"\t"+testVal)
 
+                evaluatedTestVal = getTestValEvaluated(testVal)
+
                 if type(kwargs.get(testArg)) is bool:
-                    tr = kwargs.get(testArg) and whichBool(testVal)
+                    tr = kwargs.get(testArg) and whichBool(evaluatedTestVal)
                 else:
                     tr = performOperationFromString(
-                        kwargs.get(testArg), (kwargs.get(testArg)).__class__(testVal), operator)
+                        kwargs.get(testArg), evaluatedTestVal, operator)
 
             else:
                 # ON(rawMessage[jsonmessage/data==TOGGLE]):  dev[1]/toggle()
@@ -184,10 +204,7 @@ def testStringSequence(testCondition, args, kwargs):
 
                                 requiredArgValue = neededArg.get(neededArgKey)
 
-                                try:
-                                    evaluatedTestVal = eval(testVal)
-                                except:
-                                    evaluatedTestVal = testVal
+                                evaluatedTestVal = getTestValEvaluated(testVal)
 
                                 if type(requiredArgValue) == bool:
                                     tr = requiredArgValue and whichBool(
@@ -196,8 +213,7 @@ def testStringSequence(testCondition, args, kwargs):
                                     try:
                                         # o==int("alphanumeric")
                                         tr = performOperationFromString(
-                                            requiredArgValue, (requiredArgValue).__class__(
-                                                evaluatedTestVal), operator
+                                            requiredArgValue, evaluatedTestVal, operator
                                         )
                                     except ValueError:
                                         tr = False
@@ -213,10 +229,8 @@ def testStringSequence(testCondition, args, kwargs):
 
                                     requiredArgValue = neededArg[neededArgKey]
 
-                                    try:
-                                        evaluatedTestVal = eval(testVal)
-                                    except:
-                                        evaluatedTestVal = testVal
+                                    evaluatedTestVal = getTestValEvaluated(
+                                        testVal)
 
                                     if type(requiredArgValue) is bool:
                                         tr = requiredArgValue and whichBool(
@@ -225,7 +239,7 @@ def testStringSequence(testCondition, args, kwargs):
                                         try:
                                             # o==int("alphanumeric")
                                             tr = performOperationFromString(
-                                                requiredArgValue, (requiredArgValue).__class__(evaluatedTestVal), operator)
+                                                requiredArgValue, evaluatedTestVal, operator)
                                         except ValueError:
                                             tr = False
 

@@ -51,8 +51,6 @@ class mpu6050(peripheral):
             self.i2c = SoftI2C(scl=Pin(scl), sda=Pin(sda))
         else:
             if self.isESP32:
-                # hardware i2c canal 1 scl 18 sda 19
-                # self.i2c = I2C(0)
                 scl = 18 if "scl" not in self.settings else int(
                     self.settings["scl"])
                 sda = 19 if "sda" not in self.settings else int(
@@ -61,13 +59,6 @@ class mpu6050(peripheral):
                 self.i2c = SoftI2C(scl=Pin(scl), sda=Pin(sda))
 
         self.imu = MPU6050(self.i2c)
-        self.__inclination = 0
-        self.__azimuth = 0
-        self.__elevation = 0
-        self.__accel_xyz = 0
-        self.__gyro_xyz = 0
-        self.__accel_ixyz = 0
-        self.__gyro_ixyz = 0
 
         self.period = 1000
         self.__stopTimer = True
@@ -79,16 +70,10 @@ class mpu6050(peripheral):
         self.commands["toggle"] = toggle
         self.commands["setPeriod"] = setPeriod
 
-        self.__msg = ""
-
     def deinit(self):
         pass
 
     def readData(self, t):
-        # self.inclinationChange(
-        #     inclination=self.imu.accel.inclination, imu=self.imu)
-        # self.azimuthChange(azimuth=self.imu.accel.azimuth, imu=self.imu)
-        # self.elevationChange(elevation=self.imu.accel.elevation, imu=self.imu)
         xyz = self.imu.accel.xyz
         self.accel_change(accel_xyz=xyz,
                           gyro_xyz=self.imu.gyro.xyz,
@@ -96,38 +81,11 @@ class mpu6050(peripheral):
                           pitch=self.pitch(xyz),
                           yaw=self.yaw(xyz),
                           imu=self.imu)
-        # self.gyro_xyzChange(gyro_xyz=self.imu.gyro.xyz, imu=self.imu)
-        # self.accel_ixyzChange(accel_ixyz=self.imu.accel.ixyz, imu=self.imu)
-        # self.gyro_ixyzChange(gyro_ixyz=self.imu.gyro.ixyz, imu=self.imu)
         self.heartbeat = not self.heartbeat
 
     @peripheral._trigger
     def accel_change(self, accel_xyz, gyro_xyz, roll, pitch, yaw, imu):
         pass
-
-    # @peripheral._trigger
-    # def inclinationChange(self, inclination, imu):
-    #     pass
-
-    # @peripheral._trigger
-    # def azimuthChange(self, azimuth, imu):
-    #     pass
-
-    # @peripheral._trigger
-    # def elevationChange(self, elevation, imu):
-    #     pass
-
-    # @peripheral._trigger
-    # def gyro_xyzChange(self, gyro_xyz, imu):
-    #     pass
-
-    # @peripheral._trigger
-    # def accel_ixyzChange(self, accel_ixyz, imu):
-    #     pass
-
-    # @peripheral._trigger
-    # def gyro_ixyzChange(self, gyro_ixyz, imu):
-    #     pass
 
     def roll(self, xyz):
         # x, y, z = self.imu.accel.xyz
@@ -142,7 +100,6 @@ class mpu6050(peripheral):
     def yaw(self, xyz):
         # x, y, z = self.imu.accel.xyz
         x, y, z = xyz
-        # yaw = 180 * atan (accelerationZ/sqrt(accelerationX*accelerationX + accelerationZ*accelerationZ))/M_PI;
         return 180 * atan(z/sqrt(x*x + z*z)) / pi
 
     @property
@@ -187,10 +144,7 @@ class mpu6050(peripheral):
 
     def getObservableMethods(self):
         return ["command",
-                #  "inclinationChange", "azimuthChange", "elevationChange", "accel_ixyzChange", "gyro_ixyzChange",
-                "accel_change"
-                #  ,"gyro_xyzChange"
-                ]
+                "accel_change"]
 
     def getObservableProperties(self):
         return ["heartbeat", "stopTimer", "period"]

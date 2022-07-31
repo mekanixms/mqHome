@@ -1,3 +1,10 @@
+0.10.1-2022-07-31
+    jsu:
+        prepareStringSequence/allParamExpression changed to accept all caracters .* instead of word only \W*
+            reason: did not accepted negative numbers
+        testStringSequence - all test values are evaluated in getTestValEvaluated function
+        performOperationFromString make the conversion of O2 to O1 type, if possible
+
 0.10.0-2022-07-30
     mpu6050:
         removed all other triggers and replaced with accel_change(self, accel_xyz, gyro_xyz, roll, pitch, yaw, imu)
