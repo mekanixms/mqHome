@@ -42,7 +42,7 @@ def removepeer(s, mac):
     return {"result": toRet}
 
 
-def send(s, msg, to="*"):
+def send(s, msg, to='*'):
     if type(msg) is str:
         m = urlStringDecode(msg.encode("utf-8"))
     else:

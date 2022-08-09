@@ -1,3 +1,8 @@
+0.10.2-2022-08-10
+    docgen.py:
+        doc generator
+    mcu2:
+        works with params given by docgen.py/externalCommands.json
 0.10.1-2022-07-31
     jsu:
         prepareStringSequence/allParamExpression changed to accept all caracters .* instead of word only \W*

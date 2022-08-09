@@ -219,35 +219,35 @@
       }
 
       /*
-                        var sendThis = {
-                            "pdata0": $("#postdata0").val(),
-                            "pdata1": $("#postdata1").val()
-                        };
-                        console.log(str2bts($("#postdata0").val()));
-                        console.log(str2bts($("#postdata1").val()));
-                        
-        
-                $.ajax({
-                    cache: false,
-                    contentType: false,
-                    processData: false,
-                    method: 'POST',
-                    dataType: "json",
-                    crossDomain: true,
-                    headers: {
-                        "Accept": "application/json",
-                        "Content-Type": "multipart/form-data; boundary=---DATAFIELD---",
-                        "X-Requested-With": "XmlHttpRequest"
-                    },
-                    data: packDataForPOST(sendThis, "---DATAFIELD---"),
-                    success: function (data) {
-                        console.info("Handler script saved");
-                        console.log(data);
-                    },
-                    url: "http://10.11.1.49:8080/postdata"
-                });
+                      var sendThis = {
+                          "pdata0": $("#postdata0").val(),
+                          "pdata1": $("#postdata1").val()
+                      };
+                      console.log(str2bts($("#postdata0").val()));
+                      console.log(str2bts($("#postdata1").val()));
 
-        */
+
+              $.ajax({
+                  cache: false,
+                  contentType: false,
+                  processData: false,
+                  method: 'POST',
+                  dataType: "json",
+                  crossDomain: true,
+                  headers: {
+                      "Accept": "application/json",
+                      "Content-Type": "multipart/form-data; boundary=---DATAFIELD---",
+                      "X-Requested-With": "XmlHttpRequest"
+                  },
+                  data: packDataForPOST(sendThis, "---DATAFIELD---"),
+                  success: function (data) {
+                      console.info("Handler script saved");
+                      console.log(data);
+                  },
+                  url: "http://10.11.1.49:8080/postdata"
+              });
+
+      */
 
       function str2bts(str) {
         var bts = [];
@@ -588,7 +588,7 @@
                 <td><button id="rebootPeer">Reboot Peer as</button></td>
                 <td><button id="deletePeer">Delete Peer</button></td>
                 <td><button id="addPeer">Add Peer</button></td>
-                
+
             </tr>
             <tr>
                 <td colspan="4" align="center"><button id="broadcastRegistration">Broadcast for peer registration</button></td>
@@ -622,7 +622,7 @@
         realbutton: `<div align="center" class="realbutton"></div>`,
         realbuttonv2: `<div align="center" class="realbuttonv2"></div>`,
         mqtt: `<div align="center" class="mqtt">
-  
+
     <table width="100%">
         <tr width="50%">
             <td align="center" style="font-weight: bold;">Subscribe</td>
@@ -654,7 +654,7 @@
     </table>
 </div>`,
         mqtta: `<div align="center" class="mqtt">
-  
+
   <table width="100%">
       <tr width="50%">
           <td align="center" style="font-weight: bold;">Subscribe</td>
@@ -686,7 +686,7 @@
   </table>
 </div>`,
         mqttht: `<div align="center" class="mqtt">
-  
+
   <table width="100%">
       <tr width="50%">
           <td align="center" style="font-weight: bold;">Subscribe</td>
@@ -1560,6 +1560,33 @@
       }
 
       function displayAutomateControls_attachSelectEvents() {
+        if (typeof Android == "object" && "getExternalCommands" in Android)
+          externalPeripheralCommands = JSON.parse(
+            Android.getExternalCommands()
+          );
+        else {
+          externalPeripheralCommands = {};
+
+          $.ajax({
+            success: function (data) {
+              if (typeof data == "object") externalPeripheralCommands = data;
+              if (typeof data == "string")
+                externalPeripheralCommands = JSON.parse(data);
+            },
+            url: "externalCommands.json",
+          });
+
+          // fetch("externalCommands.json")
+
+          //   .then((response) => {
+          //     if (!response.ok) {
+          //       throw new Error(`HTTP error: ${response.status}`);
+          //     }
+
+          //     return response.text();
+          //   });
+        }
+
         $("select#targetActions").on("change", function (evt) {
           var ta = $(
             "textarea",
@@ -1572,6 +1599,26 @@
           var so = this.options[this.selectedIndex];
           var sd = so.getAttribute("pid");
           typeInTextarea(ta.get(0), " dev[" + sd + "]/" + so.value + "()");
+
+          var activePeripheralId = so.getAttribute("pid");
+
+          if (
+            peripherals[activePeripheralId]["type"] in
+            externalPeripheralCommands
+          ) {
+            var paramsForSelectedMethod =
+              externalPeripheralCommands[
+                peripherals[activePeripheralId]["type"]
+              ][so.value];
+            $("#console").html(
+              peripherals[activePeripheralId]["type"] +
+                "/" +
+                so.value +
+                "(" +
+                paramsForSelectedMethod.trim() +
+                ")"
+            );
+          }
         });
       }
 
