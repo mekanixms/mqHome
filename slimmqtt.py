@@ -180,13 +180,10 @@ class slimmqtt(observable):
             decodedTopic = topic.decode('utf-8')
 
             if decodedTopic == conf.PRESENCE:
-                # raspund automat la PRESENCE
                 self.mqttInstance.publish(
                     conf.BROADCAST_ONLINE, self.online_mesg, retain=True, qos=0)
             else:
                 if decodedTopic == conf.defaultTopic:
-                    # topic default interceptez cu observables in message
-                    #  si prelucrez acolo; trimit datele doar json
                     try:
                         msgjs = ujson.loads(msg.decode("utf-8"))
                     except ValueError:
@@ -199,23 +196,15 @@ class slimmqtt(observable):
                         skipMessage = True
 
                     if not skipMessage:
-                        # print("mqtt Msg to "+self.CLIENT_ID+"\tTopic: " +
-                        #       topic.decode('utf-8')+"\n\t content:\t"+msg.decode("utf-8"))
-                        # daca este pentru mine sau pt toate deviceurile sau pentru toate relele :)
                         if "to" in msgjs:
                             if msgjs["to"] == self.CLIENT_ID or msgjs["to"] == "*":
                                 go = True
                             else:
                                 go = False
-                                # print("Not for me, skipping")
 
                         if go:
                             self.message = msgjs
                 else:
-                    # oricare al topic folosesc handler
-                    # si apelez cu param topic si message
-                    # daca mesajul este json parsez si trimit
-                    # daca nu trimit text
                     try:
                         msgjs = ujson.loads(msg.decode("utf-8"))
                     except ValueError:

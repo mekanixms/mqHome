@@ -4,19 +4,16 @@ from machine import Pin, PWM
 
 def relayOn(s):
     s.value = True
-    # print("ON Pin "+str(s.settings.get("pinOut")))
     return s.value
 
 
 def relayOff(s):
     s.value = False
-    # print("OFF Pin "+str(s.settings.get("pinOut")))
     return s.value
 
 
 def relayToggle(s):
     s.value = not s.value
-    # print("Toggle Pin "+str(s.settings.get("pinOut")))
     return s.value
 
 
@@ -26,7 +23,6 @@ def relayValue(s, to=None):
     else:
         s.value = False
 
-    # print("Value set to "+str(to)+" on Pin "+str(s.settings.get("pinOut")))
     return s.value
 
 
@@ -113,7 +109,6 @@ class relfet(peripheral):
         mtv.append("pwm")
 
         if val in mtv:
-            # if type(self.pwm) is not PWM:
             self.pwm = PWM(self.po)
             return True
         else:
@@ -127,7 +122,6 @@ class relfet(peripheral):
         if type(self.pwm) is PWM:
             return self.pwm.duty()
         else:
-            # print("Not in PWM mode "+str(self.settings.get("pinOut")))
             return False
 
     @duty.setter
@@ -138,7 +132,6 @@ class relfet(peripheral):
                 self.pwm.duty(int(val))
             return self.pwm.duty()
         else:
-            # print("Not in PWM mode "+str(self.settings.get("pinOut")))
             return False
 
     @property
@@ -146,7 +139,6 @@ class relfet(peripheral):
         if type(self.pwm) is PWM:
             return self.pwm.freq()
         else:
-            # print("Not in PWM mode "+str(self.settings.get("pinOut")))
             return False
 
     @freq.setter
@@ -157,7 +149,6 @@ class relfet(peripheral):
                 self.pwm.freq(int(val))
             return self.pwm.duty()
         else:
-            # print("Not in PWM mode "+str(self.settings.get("pinOut")))
             return False
 
     def getState(self):

@@ -6,7 +6,6 @@ from jsu import FalseValues
 import ujson
 
 def all(s):
-    # scriu valoarea ca sa pot folosi watcher
     s.temperature = s.temperature
     s.humidity = s.humidity
 
@@ -17,12 +16,10 @@ def all(s):
         })
 
 def temperature(s):
-    # scriu valoarea ca sa pot folosi watcher
     s.temperature = s.temperature
     return s.temperature
 
 def humidity(s):
-    # scriu valoarea ca sa pot folosi watcher 
     s.humidity = s.humidity
     return s.humidity
 

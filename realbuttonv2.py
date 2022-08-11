@@ -78,11 +78,10 @@ class realbuttonv2(peripheral):
     def _switch_change(self, pin):
         self.value = pin.value()
 
-        # Start timer to check for debounce
         self.debounce_checks = 0
         self._start_debounce_timer()
 
-        # Disable IRQs for GPIO pin while debouncing
+        # IRQs disabled while debouncing
         self.pin.irq(trigger=0)
 
     def _start_debounce_timer(self):
@@ -99,22 +98,15 @@ class realbuttonv2(peripheral):
             self.debounce_checks = self.debounce_checks + 1
 
             if self.debounce_checks == self.checks:
-                # Values are the same, debouncing done
-
-                # Check if this is actually a new value for the application
                 if self.prev_value != self.value:
                     self.new_value_available = True
                     self.prev_value = self.value
 
-                # Re-enable the Switch IRQ to get the next change
                 self.pin.irq(handler=self._switch_change,
                              trigger=Pin.IRQ_FALLING | Pin.IRQ_RISING)
             else:
-                # Start the timer over to make sure debounce value stays the same
                 self._start_debounce_timer()
         else:
-            # Values are not the same, update value we're checking for and
-            # delay again
             self.debounce_checks = 0
             self.value = new_value
             self._start_debounce_timer()

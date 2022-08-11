@@ -4,13 +4,11 @@ from machine import Pin
 
 def relayOn(s):
     s.value = True
-    # print("ON Pin "+str(s.settings.get("pinOut")))
     return s.value
 
 
 def relayOff(s):
     s.value = False
-    # print("OFF Pin "+str(s.settings.get("pinOut")))
     return s.value
 
 
@@ -20,14 +18,12 @@ def relayValue(s, to=None):
     else:
         s.value = False
 
-    # print("Value set to "+str(to)+" on Pin "+str(s.settings.get("pinOut")))
     return s.value
 
 
 @peripheral._trigger
 def relayToggle(s):
     s.value = not s.value
-    # print("Toggle Pin "+str(s.settings.get("pinOut")))
     return s.value
 
 

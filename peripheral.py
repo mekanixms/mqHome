@@ -7,7 +7,6 @@ class peripheral:
     def __init__(self, options={}):
         self.pClass = ""  # sau IN SAU OUT?
         self.pType = ""  # rel sau "fet" sau led sau buton
-        # aici tin istanta obiectului nativ, adica Pin sau PWM sau ....
         self.po = False
 
         self.commands = {}

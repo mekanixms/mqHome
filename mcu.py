@@ -34,8 +34,6 @@ class mcu:
     userVariables = {}
 
     def __init__(self):
-        # if hasattr(machine, "unique_id"):
-        #  ESP sau STM32 sau RP2
         from machine import unique_id
         from ubinascii import hexlify
         self.unique_id = hexlify(unique_id()).decode('utf-8')
@@ -100,9 +98,6 @@ class mcu:
             if not pt in self.peripheralsByType:
                 self.peripheralsByType[pt] = []
 
-            # TODO
-            # self.peripheralsByName[] = nickName setat
-            # in initOptions in addPeropherals
             self.peripherals.append(driverInstance)
 
             self.peripheralsByType[pt].append(driverInstance)

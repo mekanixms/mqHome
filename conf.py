@@ -1,17 +1,14 @@
 import os
 import json
 
-# http server port
 http_server_port = 8080
 
 # valori default
 cfgf = configFilename = "apl.json"
-# peripherals definitions
 pcfg = "pph.json"
 observablesFile = "observables.json"
 startupFile = "startup.run"
 
-# run = "config/sta"  sau config/ap sau mqtt/sta
 run = "config/ap"
 mosquitto_server = "10.11.1.115"
 mosquitto_port = 1883
@@ -30,10 +27,9 @@ DEVICE_CMDS = "mqdevcmds"
 defaultTopic = "mqhomeintercom"
 jsonConfig = {}
 
-runModes = ["mqtt/sta", "config/sta", "config/ap", "espnow/ap","espnow/sta"]
+runModes = ["mqtt/sta", "config/sta", "config/ap", "espnow/ap", "espnow/sta"]
 
 
-# default valoarea pt releu
 pinModeSwitch = 35
 pinBtn1 = 25
 pinBtn2 = 27
@@ -68,7 +64,6 @@ def configFileSave(**saveInfo):
 
 # import continut json in var jsonConfig
 if file_exists(cfgf):
-    # incarc fisier configurare
     configFile = open(cfgf, "r")
     configFileContent = configFile.readlines()
 
@@ -84,7 +79,6 @@ else:
 
 jsonConfig["peripherals"] = []
 if file_exists(pcfg):
-    # incarc fisier configurare
     pcfg = open(pcfg, "r")
     pcfgContent = pcfg.readlines()
 

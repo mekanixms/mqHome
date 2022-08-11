@@ -31,20 +31,15 @@ class vtimer():
             self.thread = _thread.start_new_thread(self.__run, ())
         except OSError as err:
             print("Could not create new thread for virtual timer")
-            # print(err)
 
     def stop(self):
-        # print("Stop")
         self._stop = True
 
     def __run(self):
         run = True
-        # print("Cycle")
-        # self.a_lock.acquire()
 
         while run:
             if self._stop:
-                # print("Cycle break")
                 break
 
             with self.a_lock:
@@ -66,4 +61,3 @@ class vtimer():
                     break
         if self.a_lock.locked():
             self.a_lock.release()
-        # print("loop ended")

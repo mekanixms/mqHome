@@ -17,7 +17,6 @@ def send(s, msg, to="*", topic=False, retain=False, qos=0, encapsulate=True):
     return s.send(msg, to, topic, retain, qos, encapsulate)
 
 
-# subscribe(self, newTopic)
 def subscribe(s, topic=False):
     s.subscribe(topic)
     return {"subscribed": "done"}
@@ -119,9 +118,6 @@ class mqtta(peripheral):
 
     @peripheral._trigger
     def rawMessage(self, topic, message, jsonmessage):
-        # print("Raw message")
-        # print("\ttopic: " + topic)
-        # print("\tmessage: " + message)
         pass
 
     def getState(self):

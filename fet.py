@@ -47,7 +47,6 @@ class fet(peripheral):
         if type(self.pwm) is PWM:
             return self.pwm.duty()
         else:
-            # print("Not in PWM mode "+str(self.settings.get("pinOut")))
             return False
 
     @duty.setter
@@ -58,7 +57,6 @@ class fet(peripheral):
                 self.pwm.duty(int(val))
             return self.pwm.duty()
         else:
-            # print("Not in PWM mode "+str(self.settings.get("pinOut")))
             return False
 
     @property
@@ -66,7 +64,6 @@ class fet(peripheral):
         if type(self.pwm) is PWM:
             return self.pwm.freq()
         else:
-            # print("Not in PWM mode "+str(self.settings.get("pinOut")))
             return False
 
     @freq.setter
@@ -77,7 +74,6 @@ class fet(peripheral):
                 self.pwm.freq(int(val))
             return self.pwm.duty()
         else:
-            # print("Not in PWM mode "+str(self.settings.get("pinOut")))
             return False
 
     def getState(self):
