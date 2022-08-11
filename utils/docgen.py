@@ -2,12 +2,14 @@ import re
 import json
 from os import listdir
 
-version = 0.6
+version = 0.7
 
 matchClassNames = "^class\s{1}(?P<classname>\w*)\((?P<parentclass>\w*)\):"
 matchClassMethods = "^\s{4}def\s{1}(?P<methodname>\w*)\((?P<methodparams>[\w\W]*)\):"
 matchFunctions = "^def\s{1}(?P<funcname>\w*)\((?P<funcparams>[\w\W]*)\):"
 matchCommands = "^\s*self.commands\[[\"'](?P<cmdname>\w*)[\"']\] = (?P<callfunction>[\w\W]*[^\n])"
+matchDocStrings = "^\s*['\"]{3}$"
+matchDocStringsMultilineAlternative = "\s*[\"']{3}(?P<docstring>.*)[\"']{3}"
 
 externalCommandsAllClasses = {}
 
@@ -29,18 +31,18 @@ for f in listdir("."):
         doc = {}
         functions = {}
         classCommands = {}
+        docStrings = []
 
         currentClass = None
 
         for cline in inputFileContent:
+            try:
+                docString
+            except NameError:
+                docString = {"open": None, "close": None}
 
             check = re.match(matchClassNames, cline)
             if check is not None:
-                # print(check.group('classname')+'\t'+check.group(1))
-                # print(check.group('parentclass')+'\t'+check.group(2))
-                # print("CLASS "+check.group('classname')+'\t parent ' +
-                #       check.group('parentclass')+"\t LINE: "+str(linenum))
-
                 classDoc = {}
                 currentClass = check.group('classname')
                 if check.group('classname') not in doc.keys():
@@ -53,8 +55,6 @@ for f in listdir("."):
 
             check = re.match(matchClassMethods, cline)
             if check is not None:
-                # print("\tMETHOD "+check.group('methodname')+'\tparams ' +
-                #       check.group("methodparams")+"\t LINE: "+str(linenum))
                 if currentClass is not None:
                     if currentClass in doc.keys():
                         if linenum > doc[currentClass]["startLine"]:
@@ -65,8 +65,6 @@ for f in listdir("."):
 
             check = re.match(matchCommands, cline)
             if check is not None:
-                # print("COMMANDS "+check.group('cmdname')+' calls for ' +
-                #       check.group("callfunction")+"\t LINE: "+str(linenum))
                 if currentClass is not None:
                     if currentClass in doc.keys():
                         if linenum > doc[currentClass]["startLine"]:
@@ -77,16 +75,38 @@ for f in listdir("."):
 
             check = re.match(matchFunctions, cline)
             if check is not None:
-                # print("FUNCTION "+check.group('funcname')+'\tparams ' +
-                #       check.group("funcparams")+"\t LINE: "+str(linenum))
                 functions[check.group('funcname')] = {
                     "line": linenum,
                     "params": check.group("funcparams")
                 }
 
+            check = re.match(matchDocStrings, cline)
+            if check is not None:
+                if docString["open"] is None:
+                    docString["open"] = linenum
+                else:
+                    docString["close"] = linenum
+
+                    if docString["open"]+1 == docString["close"]-1:
+                        docStringRange = [docString["open"]+1]
+                    else:
+                        docStringRange = range(
+                            docString["open"]+1, docString["close"]-1)
+
+                    docStringLines = (
+                        inputFileContent[index].strip() for index in docStringRange)
+                    docString["text"] = "".join(docStringLines)
+
+                    docStrings.append(docString)
+                    docString = {"open": None, "close": None}
+
             linenum += 1
 
-        dout = {"classes": doc, "functions": functions}
+        dout = {
+            "classes": doc,
+            "functions": functions,
+            "docstrings": docStrings
+        }
 
         dumpJson(f+".def", dout)
 

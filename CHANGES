@@ -1,3 +1,6 @@
+0.10.4-2022-08-11
+    docgen.py:
+        extracts the docstrings
 0.10.2-2022-08-10
     docgen.py:
         doc generator
