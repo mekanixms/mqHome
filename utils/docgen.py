@@ -2,7 +2,7 @@ import re
 import json
 from os import listdir
 
-version = 0.7
+version = 0.8
 
 matchClassNames = "^class\s{1}(?P<classname>\w*)\((?P<parentclass>\w*)\):"
 matchClassMethods = "^\s{4}def\s{1}(?P<methodname>\w*)\((?P<methodparams>[\w\W]*)\):"
@@ -108,7 +108,20 @@ for f in listdir("."):
             "docstrings": docStrings
         }
 
-        dumpJson(f+".def", dout)
+        for cClass in doc:
+            for method in doc[cClass]["methods"]:
+                for dstr in dout["docstrings"]:
+                    if doc[cClass]["methods"][method]["line"]+1 == dstr["open"]:
+                        if "text" in dstr.keys():
+                            doc[cClass]["methods"][method]["docstring"] = dstr["text"]
+
+        for cFunction in functions:
+            for dstr in dout["docstrings"]:
+                if functions[cFunction]["line"]+1 == dstr["open"]:
+                    if "text" in dstr.keys():
+                        functions[cFunction]["docstring"] = dstr["text"]
+
+        dumpJson(f+"-def.json", dout)
 
         for thisClass in doc:
             classCommands[thisClass] = {}
@@ -126,6 +139,7 @@ for f in listdir("."):
                     classCommands[thisClass][cmd] = ",".join(paramsWithoutSelf)
 
             externalCommandsAllClasses[thisClass] = classCommands[thisClass]
+
 
 dumpJson("externalCommands.json", externalCommandsAllClasses)
 

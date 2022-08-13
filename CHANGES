@@ -1,3 +1,9 @@
+0.10.5-2022-08-12
+    docgen.py:
+        docstrings to functions/methods
+    mcu2:
+        use of docgen pydef files to show params and docstrings
+        
 0.10.4-2022-08-11
     docgen.py:
         extracts the docstrings

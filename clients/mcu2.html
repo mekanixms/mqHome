@@ -139,7 +139,7 @@
     </div>
     <div align="center" id="console" />
     <div id="mcusSelectDialog" align="center">
-      <input type="text" id="mcuaddress" placeholder="192.168.1.4:8080" />
+      <input type="text" id="mcuaddress" placeholder="192.168.4.1:8080" />
       <br />
       <select id="mcusListSelect" size="5"></select>
     </div>
@@ -219,35 +219,35 @@
       }
 
       /*
-                      var sendThis = {
-                          "pdata0": $("#postdata0").val(),
-                          "pdata1": $("#postdata1").val()
-                      };
-                      console.log(str2bts($("#postdata0").val()));
-                      console.log(str2bts($("#postdata1").val()));
+                          var sendThis = {
+                              "pdata0": $("#postdata0").val(),
+                              "pdata1": $("#postdata1").val()
+                          };
+                          console.log(str2bts($("#postdata0").val()));
+                          console.log(str2bts($("#postdata1").val()));
 
 
-              $.ajax({
-                  cache: false,
-                  contentType: false,
-                  processData: false,
-                  method: 'POST',
-                  dataType: "json",
-                  crossDomain: true,
-                  headers: {
-                      "Accept": "application/json",
-                      "Content-Type": "multipart/form-data; boundary=---DATAFIELD---",
-                      "X-Requested-With": "XmlHttpRequest"
-                  },
-                  data: packDataForPOST(sendThis, "---DATAFIELD---"),
-                  success: function (data) {
-                      console.info("Handler script saved");
-                      console.log(data);
-                  },
-                  url: "http://10.11.1.49:8080/postdata"
-              });
+                  $.ajax({
+                      cache: false,
+                      contentType: false,
+                      processData: false,
+                      method: 'POST',
+                      dataType: "json",
+                      crossDomain: true,
+                      headers: {
+                          "Accept": "application/json",
+                          "Content-Type": "multipart/form-data; boundary=---DATAFIELD---",
+                          "X-Requested-With": "XmlHttpRequest"
+                      },
+                      data: packDataForPOST(sendThis, "---DATAFIELD---"),
+                      success: function (data) {
+                          console.info("Handler script saved");
+                          console.log(data);
+                      },
+                      url: "http://10.11.1.49:8080/postdata"
+                  });
 
-      */
+          */
 
       function str2bts(str) {
         var bts = [];
@@ -565,9 +565,9 @@
 
       var peripheralsTemplates = {
         mpu6050: `<div align="center" class="mpu6050">
-    <button type="button" class="switch" id="startStopAccel">-</button>
-    <input id="period" min="0" alt="period" type="number" placeholder="msec" style="width: 60px;" />
-</div>`,
+          <button type="button" class="switch" id="startStopAccel">-</button>
+          <input id="period" min="0" alt="period" type="number" placeholder="msec" style="width: 60px;" />
+      </div>`,
         emiter: `<div align="center" class="emiter"></div>`,
         receiver: `<div align="center" class="receiver"></div>`,
         bts7960: `<div align="center" class="bts7960"></div>`,
@@ -576,223 +576,223 @@
         digital_in: `<div align="center" class="digital_in"></div>`,
         analog_in: `<div align="center" class="analog_in"></div>`,
         espnowdrv: `
-        <div align="center" class="espnowdrv">
-          <table>
-            <tr>
-                <td align="center"><select id="peersList"></select></td>
-                <td align="center"><input size="12" type="text" id="messageContent" placeholder="Message" colspan="2"/></td>
-                <td><button id="sendMessage">Send message</button></td>
-            </tr>
-            <tr>
-                <td align="center"><input size="12" type="text" id="peerMac" placeholder="Peer MAC"/></td>
-                <td><button id="rebootPeer">Reboot Peer as</button></td>
-                <td><button id="deletePeer">Delete Peer</button></td>
-                <td><button id="addPeer">Add Peer</button></td>
+              <div align="center" class="espnowdrv">
+                <table>
+                  <tr>
+                      <td align="center"><select id="peersList"></select></td>
+                      <td align="center"><input size="12" type="text" id="messageContent" placeholder="Message" colspan="2"/></td>
+                      <td><button id="sendMessage">Send message</button></td>
+                  </tr>
+                  <tr>
+                      <td align="center"><input size="12" type="text" id="peerMac" placeholder="Peer MAC"/></td>
+                      <td><button id="rebootPeer">Reboot Peer as</button></td>
+                      <td><button id="deletePeer">Delete Peer</button></td>
+                      <td><button id="addPeer">Add Peer</button></td>
 
-            </tr>
-            <tr>
-                <td colspan="4" align="center"><button id="broadcastRegistration">Broadcast for peer registration</button></td>
-            </tr>
-        </table>
-        </div>`,
+                  </tr>
+                  <tr>
+                      <td colspan="4" align="center"><button id="broadcastRegistration">Broadcast for peer registration</button></td>
+                  </tr>
+              </table>
+              </div>`,
         iruart: `
-        <div align="center" class="iruart">
-        <table>
-            <thead>
-                <td align="center">Dict</td>
-                <td align="center">Key</td>
-                <td></td>
-                <td></td>
-            </thead>
-            <tr>
-                <td align="center"><select id="irDictNameSelector"></select></td>
-                <td align="center"><select id="irCmdSelector"></select></td>
-                <td><button id="irSendSignal">Send</button></td>
-                <td><button id="irSetDictPrefix">Prefix</button></td>
-            </tr>
-            <tr>
-                <td align="center"><input size="5" type="text" id="irLearnDictName" placeholder="Dictionary" /></td>
-                <td align="center"><input placeholder="Command name" size="5" type="text" id="irLearnCmdId" /></td>
-                <td></td>
-                <td><button id="irLearnRelearn">Learn</button></td>
-            </tr>
-        </table>
-    </div>
-        `,
+              <div align="center" class="iruart">
+              <table>
+                  <thead>
+                      <td align="center">Dict</td>
+                      <td align="center">Key</td>
+                      <td></td>
+                      <td></td>
+                  </thead>
+                  <tr>
+                      <td align="center"><select id="irDictNameSelector"></select></td>
+                      <td align="center"><select id="irCmdSelector"></select></td>
+                      <td><button id="irSendSignal">Send</button></td>
+                      <td><button id="irSetDictPrefix">Prefix</button></td>
+                  </tr>
+                  <tr>
+                      <td align="center"><input size="5" type="text" id="irLearnDictName" placeholder="Dictionary" /></td>
+                      <td align="center"><input placeholder="Command name" size="5" type="text" id="irLearnCmdId" /></td>
+                      <td></td>
+                      <td><button id="irLearnRelearn">Learn</button></td>
+                  </tr>
+              </table>
+          </div>
+              `,
         realbutton: `<div align="center" class="realbutton"></div>`,
         realbuttonv2: `<div align="center" class="realbuttonv2"></div>`,
         mqtt: `<div align="center" class="mqtt">
 
-    <table width="100%">
-        <tr width="50%">
-            <td align="center" style="font-weight: bold;">Subscribe</td>
-            <td align="center" style="font-weight: bold;">Enable/Disable</td>
-        </tr>
-        <tr>
-            <td align="center">
-                <input id="newTopic" type="text" placeholder="new topic"/><br/>
-                <button id="subscribe">Subscribe</button>
-            </td>
-            <td align="center">
-                <button id="running"></button>
-            </td>
-        </tr>
-        <tr>
-            <td colspan="2" align="center" style="font-weight: bold;">
-                Topic handlers
-            </td>
-        </tr>
-        <tr>
-            <td colspan="2" align="center">
-                <select id="topicsList"></select>
-                <br/>
-                <textarea style="width:95%;"></textarea>
-                <br/>
-                <button id="setHandler">Set</button>
-            </td>
-        </tr>
-    </table>
-</div>`,
+          <table width="100%">
+              <tr width="50%">
+                  <td align="center" style="font-weight: bold;">Subscribe</td>
+                  <td align="center" style="font-weight: bold;">Enable/Disable</td>
+              </tr>
+              <tr>
+                  <td align="center">
+                      <input id="newTopic" type="text" placeholder="new topic"/><br/>
+                      <button id="subscribe">Subscribe</button>
+                  </td>
+                  <td align="center">
+                      <button id="running"></button>
+                  </td>
+              </tr>
+              <tr>
+                  <td colspan="2" align="center" style="font-weight: bold;">
+                      Topic handlers
+                  </td>
+              </tr>
+              <tr>
+                  <td colspan="2" align="center">
+                      <select id="topicsList"></select>
+                      <br/>
+                      <textarea style="width:95%;"></textarea>
+                      <br/>
+                      <button id="setHandler">Set</button>
+                  </td>
+              </tr>
+          </table>
+      </div>`,
         mqtta: `<div align="center" class="mqtt">
 
-  <table width="100%">
-      <tr width="50%">
-          <td align="center" style="font-weight: bold;">Subscribe</td>
-          <td align="center" style="font-weight: bold;">Enable/Disable</td>
-      </tr>
-      <tr>
-          <td align="center">
-              <input id="newTopic" type="text" placeholder="new topic"/><br/>
-              <button id="subscribe">Subscribe</button>
-          </td>
-          <td align="center">
-              <button id="running"></button>
-          </td>
-      </tr>
-      <tr>
-          <td colspan="2" align="center" style="font-weight: bold;">
-              Topic handlers
-          </td>
-      </tr>
-      <tr>
-          <td colspan="2" align="center">
-              <select id="topicsList"></select>
-              <br/>
-              <textarea style="width:95%;"></textarea>
-              <br/>
-              <button id="setHandler">Set</button>
-          </td>
-      </tr>
-  </table>
-</div>`,
+        <table width="100%">
+            <tr width="50%">
+                <td align="center" style="font-weight: bold;">Subscribe</td>
+                <td align="center" style="font-weight: bold;">Enable/Disable</td>
+            </tr>
+            <tr>
+                <td align="center">
+                    <input id="newTopic" type="text" placeholder="new topic"/><br/>
+                    <button id="subscribe">Subscribe</button>
+                </td>
+                <td align="center">
+                    <button id="running"></button>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2" align="center" style="font-weight: bold;">
+                    Topic handlers
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2" align="center">
+                    <select id="topicsList"></select>
+                    <br/>
+                    <textarea style="width:95%;"></textarea>
+                    <br/>
+                    <button id="setHandler">Set</button>
+                </td>
+            </tr>
+        </table>
+      </div>`,
         mqttht: `<div align="center" class="mqtt">
 
-  <table width="100%">
-      <tr width="50%">
-          <td align="center" style="font-weight: bold;">Subscribe</td>
-          <td align="center" style="font-weight: bold;">Enable/Disable</td>
-      </tr>
-      <tr>
-          <td align="center">
-              <input id="newTopic" type="text" placeholder="new topic"/><br/>
-              <button id="subscribe">Subscribe</button>
-          </td>
-          <td align="center">
-              <button id="running"></button>
-          </td>
-      </tr>
-      <tr>
-          <td colspan="2" align="center" style="font-weight: bold;">
-              Topic handlers
-          </td>
-      </tr>
-      <tr>
-          <td colspan="2" align="center">
-              <select id="topicsList"></select>
-              <br/>
-              <textarea style="width:95%;"></textarea>
-              <br/>
-              <button id="setHandler">Set</button>
-          </td>
-      </tr>
-  </table>
-</div>`,
+        <table width="100%">
+            <tr width="50%">
+                <td align="center" style="font-weight: bold;">Subscribe</td>
+                <td align="center" style="font-weight: bold;">Enable/Disable</td>
+            </tr>
+            <tr>
+                <td align="center">
+                    <input id="newTopic" type="text" placeholder="new topic"/><br/>
+                    <button id="subscribe">Subscribe</button>
+                </td>
+                <td align="center">
+                    <button id="running"></button>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2" align="center" style="font-weight: bold;">
+                    Topic handlers
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2" align="center">
+                    <select id="topicsList"></select>
+                    <br/>
+                    <textarea style="width:95%;"></textarea>
+                    <br/>
+                    <button id="setHandler">Set</button>
+                </td>
+            </tr>
+        </table>
+      </div>`,
         // "mqtt": `<div align="center" class="mqtt"></div>`,
         messager: `<div align="center" class="messager"></div>`,
         nokiadisplay: `<div align="center" class="nokiadisplay"></div>`,
         rotencoder: `<div align="center" class="rotencoder"></div>`,
         relay: `
-<div align="center" class="relfet">
-    <button type="button" class="switch" id="switch">-</button>
-</div>
-`,
+      <div align="center" class="relfet">
+          <button type="button" class="switch" id="switch">-</button>
+      </div>
+      `,
         fet: `
-<div align="center" class="fet">
-    <div align="center">
-        <div class="fetMode" id="pwm">
-            <input type="number" min="0" alt="Duty" id="duty" placeholder="Duty" value="256"
-                style="width: 60px;" />
-            <input type="number" min="0" alt="Frequency" id="freq" placeholder="Freq" value="1"
-                style="width: 60px;" />
-            <button id="setFetPWM">Set</button>
-        </div>
-    </div>
-</div>
-`,
+      <div align="center" class="fet">
+          <div align="center">
+              <div class="fetMode" id="pwm">
+                  <input type="number" min="0" alt="Duty" id="duty" placeholder="Duty" value="256"
+                      style="width: 60px;" />
+                  <input type="number" min="0" alt="Frequency" id="freq" placeholder="Freq" value="1"
+                      style="width: 60px;" />
+                  <button id="setFetPWM">Set</button>
+              </div>
+          </div>
+      </div>
+      `,
         relfet: `
-<div align="center" class="relfet">
-    <button type="button" class="switch" id="switch">-</button>
-    <div align="center">
-        <select id="pwm">
-            <option value="false">Switch</option>
-            <option value="true">PWM</option>
-        </select>
-        <div class="fetMode" id="pwm" style="display: none;">
-            <input type="number" min="0" alt="Duty" id="duty" placeholder="Duty" value="256"
-                style="width: 60px;" />
-            <input type="number" min="0" alt="Frequency" id="freq" placeholder="Freq" value="1"
-                style="width: 60px;" />
-            <button id="setFetPWM">Set</button>
-        </div>
-    </div>
-</div>
-`,
+      <div align="center" class="relfet">
+          <button type="button" class="switch" id="switch">-</button>
+          <div align="center">
+              <select id="pwm">
+                  <option value="false">Switch</option>
+                  <option value="true">PWM</option>
+              </select>
+              <div class="fetMode" id="pwm" style="display: none;">
+                  <input type="number" min="0" alt="Duty" id="duty" placeholder="Duty" value="256"
+                      style="width: 60px;" />
+                  <input type="number" min="0" alt="Frequency" id="freq" placeholder="Freq" value="1"
+                      style="width: 60px;" />
+                  <button id="setFetPWM">Set</button>
+              </div>
+          </div>
+      </div>
+      `,
         stimer: `
-<div align="center" class="stimer">
-                        <table align="center" style="width:100%;">
-                            <tr>
-                                <td align="center" style="background-color:lightblue">Status</td>
-                                <td align="center" style="background-color: lightblue;">Repeat</td>
-                                <td align="center" style="background-color: lightblue;">Period</td>
-                            </tr>
-                            <tr>
-                                <td align="center">
-                                    <select id="timerStatus" alt="Start or Stop the timer">
-                                        <option value="--">--</option>
-                                        <option value="start">START</option>
-                                        <option value="stop">STOP</option>
-                                    </select>
-                                </td>
-                                <td align="center">
-                                    <select id="repeat" alt="Repeat the operation or only do it Once">
-                                        <option value="--">--</option>
-                                        <option value="0" selected>NO</option>
-                                        <option value="1">YES</option>
-                                    </select>
-                                </td>
-                                <td align="center">
-                                    <input id="period" min="0" alt="period" type="number" placeholder="minutes"
-                                        style="width: 60px;" />
-                                </td>
-                            </tr>
-                            <tr>
-                                <td colspan="4" style="background-color:#e9e9e9">
-                                    <button id="setTimer" style="width:100%;">Set</button>
-                                </td>
-                            </tr>
-                        </table>
-                    </div>
-`,
+      <div align="center" class="stimer">
+                              <table align="center" style="width:100%;">
+                                  <tr>
+                                      <td align="center" style="background-color:lightblue">Status</td>
+                                      <td align="center" style="background-color: lightblue;">Repeat</td>
+                                      <td align="center" style="background-color: lightblue;">Period</td>
+                                  </tr>
+                                  <tr>
+                                      <td align="center">
+                                          <select id="timerStatus" alt="Start or Stop the timer">
+                                              <option value="--">--</option>
+                                              <option value="start">START</option>
+                                              <option value="stop">STOP</option>
+                                          </select>
+                                      </td>
+                                      <td align="center">
+                                          <select id="repeat" alt="Repeat the operation or only do it Once">
+                                              <option value="--">--</option>
+                                              <option value="0" selected>NO</option>
+                                              <option value="1">YES</option>
+                                          </select>
+                                      </td>
+                                      <td align="center">
+                                          <input id="period" min="0" alt="period" type="number" placeholder="minutes"
+                                              style="width: 60px;" />
+                                      </td>
+                                  </tr>
+                                  <tr>
+                                      <td colspan="4" style="background-color:#e9e9e9">
+                                          <button id="setTimer" style="width:100%;">Set</button>
+                                      </td>
+                                  </tr>
+                              </table>
+                          </div>
+      `,
       };
 
       function updateFetContainer(p, s) {
@@ -1396,6 +1396,85 @@
             ta.val(ta.val() + "ON(" + $(this).val() + "[]): ");
 
           ta.get(0).focus();
+
+          console.info(
+            "GET methids for " +
+              this.getAttribute("pType") +
+              "/" +
+              $(this).val()
+          );
+
+          selectedPeripheralMethod = $(this).val();
+          selectedPeripheralType = this.getAttribute("pType");
+
+          peripheralMethods = {};
+
+          pydefDataRetrieved = function (data) {
+            go = false;
+            docstring = "";
+            if (typeof data == "object") methods = data;
+            if (typeof data == "string") methods = JSON.parse(data);
+            if (
+              selectedPeripheralMethod in
+              methods["classes"][selectedPeripheralType]["methods"]
+            ) {
+              go = true;
+              paramsAsString =
+                methods["classes"][selectedPeripheralType]["methods"][
+                  selectedPeripheralMethod
+                ]["params"];
+              if (
+                "docstring" in
+                methods["classes"][selectedPeripheralType]["methods"][
+                  selectedPeripheralMethod
+                ]
+              )
+                docstring =
+                  methods["classes"][selectedPeripheralType]["methods"][
+                    selectedPeripheralMethod
+                  ]["docstring"];
+            }
+            // NU FOLOSESC - este in externalCommands
+            // else if (selectedPeripheralMethod in methods["functions"]) {
+            //   go = true;
+            //   paramsAsString = methods["functions"][
+            //     selectedPeripheralMethod
+            //   ]["params"];
+            //   if ("docstring" in methods["functions"][selectedPeripheralMethod])
+            //     docstring = methods["functions"][selectedPeripheralMethod]["docstring"];
+            // }
+
+            if (go) {
+              paramsAsArray = paramsAsString.split(",");
+              paramsLessSelf = paramsAsArray.slice(1, paramsAsArray.length);
+
+              $("#console").html(
+                selectedPeripheralType +
+                  "/" +
+                  selectedPeripheralMethod +
+                  "(" +
+                  paramsLessSelf.toString() +
+                  ")<br/>" +
+                  docstring
+              );
+            } else $("#console").html("");
+          };
+
+          if (typeof Android == "object" && "getPyDef" in Android) {
+            methods = JSON.parse(
+              Android.getPyDef(
+                "pydef/" + this.getAttribute("pType") + ".py-def.json"
+              )
+            );
+            pydefDataRetrieved(methods);
+            // TODO
+          } else {
+            methods = {};
+            $.ajax({
+              success: pydefDataRetrieved,
+              url: "pydef/" + this.getAttribute("pType") + ".py-def.json",
+            });
+          }
         });
 
         setObservablesBtn.click(function () {
@@ -1484,7 +1563,9 @@
             (el.alias != null ? el.alias : el.type) +
             '</h3><div for="' +
             el.id +
-            '" align="center"><select id="observableTargets"></select><br/><textarea></textarea><br/><button id="setObservables">Save</button><button id="resetObservables">Reset</button><button id="loadObservables">View</button><button id="applyObservables">Apply</button></div>'
+            '" align="center"><select id="observableTargets" pType="' +
+            el.type +
+            '"></select><br/><textarea></textarea><br/><button id="setObservables">Save</button><button id="resetObservables">Reset</button><button id="loadObservables">View</button><button id="applyObservables">Apply</button></div>'
         );
         var sinat = $("h3#" + el.id, "#automateTarget")
           .next("div[for=" + el.id + "]")
