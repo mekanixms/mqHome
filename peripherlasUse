@@ -198,3 +198,42 @@ POS ARGS / KW ARGS and jsonmessage/key calls
     ON(rawMessage[message==OFF,0==comutator]):  dev[1]/off()`
 
     Note: combination jsonmessage/data with positional args does not work; KB 2 / 0.8-2022-07-10
+
+
+-----------
+uartcomm
+-----------
+
+TX sends simple messages which can be red with onNewLine
+    or strings like functionName(bd1,b2,b3....) that are red with onNewCommand
+                in this case the first argument of onNewCommand is always the function name functionName
+                    and the rest are arguments
+
+u=m.peripherals[0]
+
+# if I do not know the number of arguments coming from the sender
+>>> def printf(*args):
+...     print("CMD "+args[0]+" arg 1 "+args[1]+" arg 2 "+args[2])
+...     
+...     
+... 
+>>> u.addTrigger("onNewCommand","AFTER",printf)
+
+
+# if I know the number of arguments i can define them by desired name
+#   as the callback is called with *args
+>>> def printfA(cmd,a1,a2):
+...     print("\t CMD "+cmd + "\t a1 " + a1+"\t a2 "+a2)
+...     
+...     
+... 
+>>> u.addTrigger("onNewCommand","AFTER",printfA)
+
+
+
+>>> def printLine(value):
+...     print("LINE\t "+value)
+...     
+...     
+... 
+>>> u.addTrigger("onNewLine","AFTER",printLine)

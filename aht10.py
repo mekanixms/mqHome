@@ -5,29 +5,32 @@ from machine import Pin, SoftI2C
 from jsu import FalseValues
 import ujson
 
+
 def all(s):
     s.temperature = s.temperature
     s.humidity = s.humidity
 
     return ujson.dumps({
-            "humidity": s.humidity,
-            "temperature": s.temperature,
-            "mode": s.mode
-        })
+        "humidity": s.humidity,
+        "temperature": s.temperature,
+        "mode": s.mode
+    })
+
 
 def temperature(s):
-    s.temperature = s.temperature
     return s.temperature
 
+
 def humidity(s):
-    s.humidity = s.humidity
     return s.humidity
 
-def mode(s, mode = None):
+
+def mode(s, mode=None):
     if mode != None:
         s.mode = mode
 
     return s.mode
+
 
 class aht10(peripheral):
     VERSION = 0.1
@@ -51,42 +54,42 @@ class aht10(peripheral):
         self._humidity = 0
         self._temperature = 0
 
-        self.sensor = AHT10(i2c = SoftI2C(scl=Pin(self.sclInput), sda=Pin(self.sdaInput)), mode = self.temperatureUnits)
+        self.sensor = AHT10(i2c=SoftI2C(scl=Pin(self.sclInput), sda=Pin(
+            self.sdaInput)), mode=self.temperatureUnits)
 
     @property
     def humidity(self):
-        return self.sensor.humidity()
+        self._humidity = self.sensor.humidity()
+        self.onHumidityUpdate(self._humidity)
+        return self._humidity
 
-    @humidity.setter
-    @peripheral._watch
-    def humidity(self, val):
-        self._humidity = val
+    @peripheral._trigger
+    def onHumidityUpdate(self, value):
+        pass
 
     @property
     def temperature(self):
-        return self.sensor.temperature()
+        self._temperature = self.sensor.temperature()
+        self.onTemperatureUpdate(self._temperature)
+        return self._temperature
 
-    @temperature.setter
-    @peripheral._watch
-    def temperature(self, val):
-        self._temperature = val
+    @peripheral._trigger
+    def onTemperatureUpdate(self, value):
+        pass
 
     @property
     def mode(self):
         return self.sensor.mode
 
     @mode.setter
-    @peripheral._watch
     def mode(self, val):
         self.sensor.set_mode(val)
 
-
-
     def getState(self):
-        return {"humidity": self.humidity,"temperature": self.temperature,"mode": self.mode}
+        return {"humidity": self.humidity, "temperature": self.temperature, "mode": self.mode}
 
     def getObservableMethods(self):
-        return ["command"]
+        return ["command", "onTemperatureUpdate", "onHumidityUpdate"]
 
     def getObservableProperties(self):
-        return ["mode","humidity","temperature"]
+        return []
