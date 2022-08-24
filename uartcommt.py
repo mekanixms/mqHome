@@ -1,6 +1,10 @@
 from peripheral import peripheral
 from machine import UART, idle
+import _thread
 import ure
+
+
+_thread.stack_size(4096*4)
 
 
 @peripheral._trigger
@@ -8,10 +12,9 @@ def sendMessage(s, message):
     return s.send(message)
 
 
-class uartcomm(peripheral):
+class uartcommt(peripheral):
     '''
-    blocking version, using simple while loop
-    to be instatiated with autostart False and started in startup.run
+    threaded version of uartcomm
     '''
 
     version = 0.1
@@ -19,14 +22,14 @@ class uartcomm(peripheral):
     lineSeparator = "\n"
 
     def __init__(self, options={
-        "autostart": False,
+        "autostart": True,
         "id": 2,
         "baudrate": 115200,
         "skipRepeats": True
     }):
         super().__init__(options)
 
-        self.pType = "uartcomm"
+        self.pType = "uartcommt"
         self.pClass = "OUT"
 
         self.connected = False
@@ -45,18 +48,24 @@ class uartcomm(peripheral):
                 self.start()
 
     def start(self):
+        try:
+            self.thread = _thread.start_new_thread(self.run, ())
+        except Exception:
+            print("UART THREAD EXCEPTION")
 
-        print("\t"+self.pType+" "+str(self.settings["id"]) +
-              " STARTing at " + str(self.settings["baudrate"]) + " bps")
         self.send("PING")
-        self.run()
+        print("\t"+self.pType+" "+str(self.settings["id"]) +
+              " STARTED at " + str(self.settings["baudrate"]) + " bps")
 
     def run(self):
+        a_lock = _thread.allocate_lock()
         while True:
-            if self.uart.any():
-                self.value = self.uart.readline().decode().rstrip(self.lineSeparator)
-            else:
-                idle()
+            with a_lock:
+                if self.uart.any():
+                    self.value = self.uart.readline().decode().rstrip(self.lineSeparator)
+                else:
+                    idle()
+        _thread.exit()
 
     def th_setValue(self, v):
         self.value = v

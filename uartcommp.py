@@ -1,6 +1,7 @@
 from peripheral import peripheral
 from machine import UART, idle
 import ure
+import select
 
 
 @peripheral._trigger
@@ -8,10 +9,10 @@ def sendMessage(s, message):
     return s.send(message)
 
 
-class uartcomm(peripheral):
+class uartcommht(peripheral):
     '''
-    blocking version, using simple while loop
-    to be instatiated with autostart False and started in startup.run
+    select.poll version to read the messages from uart
+    base example https://forum.micropython.org/viewtopic.php?t=1741
     '''
 
     version = 0.1
@@ -19,15 +20,17 @@ class uartcomm(peripheral):
     lineSeparator = "\n"
 
     def __init__(self, options={
-        "autostart": False,
+        "autostart": True,
         "id": 2,
         "baudrate": 115200,
         "skipRepeats": True
     }):
         super().__init__(options)
 
-        self.pType = "uartcomm"
+        self.pType = "uartcommht"
         self.pClass = "OUT"
+
+
 
         self.connected = False
         self.synced = False
@@ -38,6 +41,8 @@ class uartcomm(peripheral):
         self.__tmpValue = False
 
         self.uart = UART(self.settings["id"], self.settings["baudrate"])
+        self.poll = select.poll()
+        self.poll.register(self.uart, select.POLLIN)
 
         if "autostart" in options.keys():
             if options["autostart"]:
@@ -45,21 +50,16 @@ class uartcomm(peripheral):
                 self.start()
 
     def start(self):
-
-        print("\t"+self.pType+" "+str(self.settings["id"]) +
-              " STARTing at " + str(self.settings["baudrate"]) + " bps")
+        # TODO: finish implementation
+        # self.hTimer.init(
+        #     period=self.settings["timer_period"], mode=Timer.PERIODIC, callback=self.run)
         self.send("PING")
-        self.run()
+        print("\t"+self.pType+" "+str(self.settings["id"]) +
+              " STARTED at " + str(self.settings["baudrate"]) + " bps")
 
-    def run(self):
-        while True:
-            if self.uart.any():
-                self.value = self.uart.readline().decode().rstrip(self.lineSeparator)
-            else:
-                idle()
-
-    def th_setValue(self, v):
-        self.value = v
+    def run(self, t):
+        if self.uart.any():
+            self.value = self.uart.readline().decode().rstrip(self.lineSeparator)
 
     @property
     def value(self):

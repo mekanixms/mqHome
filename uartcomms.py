@@ -10,8 +10,8 @@ def sendMessage(s, message):
 
 class uartcomm(peripheral):
     '''
-    blocking version, using simple while loop
-    to be instatiated with autostart False and started in startup.run
+    simple version of uartcomm with no automatic way to read the uart messages
+    uses parseAllMessages method to parse them
     '''
 
     version = 0.1
@@ -19,14 +19,14 @@ class uartcomm(peripheral):
     lineSeparator = "\n"
 
     def __init__(self, options={
-        "autostart": False,
+        "autostart": True,
         "id": 2,
         "baudrate": 115200,
         "skipRepeats": True
     }):
         super().__init__(options)
 
-        self.pType = "uartcomm"
+        self.pType = "uartcomms"
         self.pClass = "OUT"
 
         self.connected = False
@@ -45,21 +45,13 @@ class uartcomm(peripheral):
                 self.start()
 
     def start(self):
-
-        print("\t"+self.pType+" "+str(self.settings["id"]) +
-              " STARTing at " + str(self.settings["baudrate"]) + " bps")
         self.send("PING")
-        self.run()
+        print("\t"+self.pType+" "+str(self.settings["id"]) +
+              " STARTED at " + str(self.settings["baudrate"]) + " bps")
 
-    def run(self):
-        while True:
-            if self.uart.any():
-                self.value = self.uart.readline().decode().rstrip(self.lineSeparator)
-            else:
-                idle()
-
-    def th_setValue(self, v):
-        self.value = v
+    def parseAllMessages(self):
+        while self.uart.any():
+            self.value = self.uart.readline().decode().rstrip(self.lineSeparator)
 
     @property
     def value(self):

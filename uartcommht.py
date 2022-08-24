@@ -1,5 +1,5 @@
 from peripheral import peripheral
-from machine import UART, idle
+from machine import UART, idle, Timer
 import ure
 
 
@@ -8,10 +8,9 @@ def sendMessage(s, message):
     return s.send(message)
 
 
-class uartcomm(peripheral):
+class uartcommht(peripheral):
     '''
-    blocking version, using simple while loop
-    to be instatiated with autostart False and started in startup.run
+    hardware timer is used to read the messages from uart
     '''
 
     version = 0.1
@@ -19,15 +18,19 @@ class uartcomm(peripheral):
     lineSeparator = "\n"
 
     def __init__(self, options={
-        "autostart": False,
+        "autostart": True,
         "id": 2,
+        "timer_id": 2,
+        "timer_period": 20,
         "baudrate": 115200,
         "skipRepeats": True
     }):
         super().__init__(options)
 
-        self.pType = "uartcomm"
+        self.pType = "uartcommht"
         self.pClass = "OUT"
+
+        self.hTimer = Timer(int(self.settings.get("timer_id")))
 
         self.connected = False
         self.synced = False
@@ -45,21 +48,20 @@ class uartcomm(peripheral):
                 self.start()
 
     def start(self):
-
-        print("\t"+self.pType+" "+str(self.settings["id"]) +
-              " STARTing at " + str(self.settings["baudrate"]) + " bps")
+        self.hTimer.init(
+            period=self.settings["timer_period"], mode=Timer.PERIODIC, callback=self.run)
         self.send("PING")
-        self.run()
+        print("\t"+self.pType+" "+str(self.settings["id"]) +
+              " STARTED at " + str(self.settings["baudrate"]) + " bps")
 
-    def run(self):
-        while True:
-            if self.uart.any():
+    def run(self, t):
+        if self.uart.any():
+            try:
                 self.value = self.uart.readline().decode().rstrip(self.lineSeparator)
-            else:
-                idle()
-
-    def th_setValue(self, v):
-        self.value = v
+            except:
+                pass
+            # except UnicodeError as ue:
+            #     pass
 
     @property
     def value(self):
