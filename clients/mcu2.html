@@ -43,7 +43,7 @@
                         <option confKeyModifier="alias">alias</option>
                         <option
                           confKeyModifier="run"
-                          vlist="config/ap|config/sta|mqtt/sta|espnow/ap|espnow/sta"
+                          vlist="config/ap|config/sta|mqtt/sta|espnow/ap|espnow/sta|single/ap|single/off"
                         >
                           Standalone or Mqtt
                         </option>
@@ -572,6 +572,7 @@
         receiver: `<div align="center" class="receiver"></div>`,
         bts7960: `<div align="center" class="bts7960"></div>`,
         aht10: `<div align="center" class="aht10"></div>`,
+        uartcommht: `<div align="center" class="uartcommht"></div>`,
         servo: `<div align="center" class="servo"></div>`,
         digital_in: `<div align="center" class="digital_in"></div>`,
         analog_in: `<div align="center" class="analog_in"></div>`,
@@ -1892,6 +1893,8 @@
 
       function aht10AddUIEvents() {}
 
+      function uartcommhtAddUIEvents() {}
+
       function servoAddUIEvents() {}
 
       function digital_inAddUIEvents() {}
@@ -2411,6 +2414,12 @@
         $("#console").html(JSON.stringify(state));
       }
 
+      function updateuartcommhtContainer(p, s) {
+        var state = s.state;
+
+        $("#console").html(JSON.stringify(state));
+      }
+
       function updateservoContainer(p, s) {
         var state = s.state;
 
@@ -2480,6 +2489,7 @@
         receiver: updateReceiverContainer,
         bts7960: updatebts7960Container,
         aht10: updateaht10Container,
+        uartcommht: updateuartcommhtContainer,
         servo: updateservoContainer,
         digital_in: updatedigital_inContainer,
         analog_in: updateanalog_inContainer,
@@ -2510,6 +2520,7 @@
         receiver: receiverAddUIEvents,
         bts7960: bts7960AddUIEvents,
         aht10: aht10AddUIEvents,
+        uartcommht: uartcommhtAddUIEvents,
         servo: servoAddUIEvents,
         digital_in: digital_inAddUIEvents,
         analog_in: analog_inAddUIEvents,

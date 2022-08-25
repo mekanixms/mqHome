@@ -14,6 +14,7 @@ def disable(s):
 class stimer(peripheral):
 
     _trigger = peripheral._trigger
+    _watch = peripheral._watch
 
     def __init__(self, options={"id": -1, "minutes": True}):
         super().__init__(options)
@@ -37,7 +38,7 @@ class stimer(peripheral):
         return self.__stopTimer
 
     @stopTimer.setter
-    @peripheral._watch
+    @_watch
     def stopTimer(self, val):
 
         if val in TrueValues:
@@ -53,7 +54,7 @@ class stimer(peripheral):
         return self.__heartbeat
 
     @heartbeat.setter
-    @peripheral._watch
+    @_watch
     def heartbeat(self, val):
         self.__heartbeat = val
 

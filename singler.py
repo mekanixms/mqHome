@@ -73,7 +73,7 @@ if executeStartupFile:
                     exec("".join(scfgContent), {
                         "dev": mpu.peripherals,
                         "mpu": mpu,
-                        "runMode": "mqtt"
+                        "runMode": "single"
                     })
                 except:
                     print("\tError, Bad script")

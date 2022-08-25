@@ -1,3 +1,16 @@
+
+0.12.1-2022-08-24
+    main.py:
+        suports off nwtowrk mode for single/off run mode
+    uartcomm*:
+        autostart False by default
+        code improvements
+    singler:
+        fixed runMode on startup script exec
+    mcu2 and mqtt2:
+        uartcommht added
+            TODO: add all uartcomm*
+        
 0.12.0-2022-08-24:
     exploring various uartcomm versions;
         stable is uartcommht, initial version is uartcommt

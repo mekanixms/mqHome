@@ -51,7 +51,12 @@ class uartcomm(peripheral):
 
     def parseAllMessages(self):
         while self.uart.any():
-            self.value = self.uart.readline().decode().rstrip(self.lineSeparator)
+            try:
+                self.value = self.uart.readline().decode().rstrip(self.lineSeparator)
+            except:
+                pass
+            # except UnicodeError as ue:
+            #     pass
 
     @property
     def value(self):
@@ -59,41 +64,43 @@ class uartcomm(peripheral):
 
     @value.setter
     def value(self, val):
-        try:
-            self.__tmpValue = val
 
-            skipThisOne = False
+        isSyncMessage = False
+        skipThisOne = False
 
-            if self.__tmpValue == "PING":
-                self.connected = True
-                skipThisOne = True
-                self.send("PONG")
+        if val != None:
+            try:
+                if val == "PING":
+                    self.connected = True
+                    isSyncMessage = True
+                    self.send("PONG")
 
-            if self.__tmpValue == "PONG":
-                self.synced = True
-                skipThisOne = True
+                if val == "PONG":
+                    self.synced = True
+                    isSyncMessage = True
+
+                if not isSyncMessage:
+                    if self.settings["skipRepeats"]:
+                        if self.__lastRead != val:
+                            self.__lastRead = val
+                        else:
+                            skipThisOne = True
+                    else:
+                        self.__lastRead = val
+            except:
+                pass
 
             if not skipThisOne:
-                if self.settings["skipRepeats"]:
-                    if self.__lastRead != self.__tmpValue:
-                        if self.__tmpValue != None:
-                            self.__lastRead = self.__tmpValue
-                else:
-                    if self.__tmpValue != None:
-                        self.__lastRead = self.__tmpValue
-        except:
-            pass
+                self.onNewLine(val)
 
-        self.onNewLine(val)
-
-        try:
-            smthd = ure.match(self.matchFunctions, val)
-            cmd = smthd.group(1)
-            params = smthd.group(2).split(",")
-            params.insert(0, cmd)
-            self.onNewCommand(*params)
-        except:
-            pass
+                try:
+                    smthd = ure.match(self.matchFunctions, val)
+                    cmd = smthd.group(1)
+                    params = smthd.group(2).split(",")
+                    params.insert(0, cmd)
+                    self.onNewCommand(*params)
+                except:
+                    pass
 
     @peripheral._trigger
     def onNewLine(self, value):

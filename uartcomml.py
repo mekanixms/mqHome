@@ -23,7 +23,7 @@ class uartcomml(peripheral):
     lineSeparator = "\n"
 
     def __init__(self, options={
-        "autostart": True,
+        "autostart": False,
         "id": 2,
         "baudrate": 115200,
         "skipRepeats": True

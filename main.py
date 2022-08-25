@@ -73,6 +73,13 @@ def startSTA(cdata):
     print("IP Address:\t"+wif.ifconfig()[0])
 
 
+def turnOffNetwork():
+    wif = network.WLAN(network.STA_IF)
+    wif.active(False)
+    wap = network.WLAN(network.AP_IF)
+    wap.active(False)
+
+
 def isStationWifiSet():
     if "aps" in conf.jsonConfig.keys() and len(conf.jsonConfig["aps"]) > 0:
         return next(iter(conf.jsonConfig["aps"]))
@@ -114,10 +121,13 @@ def main():
             stationMode = "ap"
             runAs = "config"
 
-    if stationMode == "ap" or not wif.isconnected():
+    if stationMode == "ap" or (wif is not None and not wif.isconnected()):
         startAP()
 
-    print("\nRun mode: "+runAs+"\n")
+    if stationMode == "off":
+        turnOffNetwork()
+
+    print("\tRUNNING AS "+runAs+" net IF "+stationMode+"\n")
     try:
         runner = __import__(runAs+"r")
     except ImportError as e:
