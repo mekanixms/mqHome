@@ -1,4 +1,11 @@
 
+Driver Logger
+  primeste informatii de la alte drivere si le salveaza in fisier local sau alte resurse... (?? online oe cloud)
+
+mqtt2:
+  Implementare parametrii functii  la comenzi periferice ca la mcu2/automation (vezi pydefDataRetrieved)
+
+
 custom Modes DONE:
   scripts to execut from main.py same as jssr mqttr or espnowr
     but user defined/written
@@ -8,7 +15,7 @@ espnowdrv:
   reboot to option by espnow message DONE
   implement channel:
     recommend using w0.config(channel=X) to set the channel on the sender, instead of e.add_peer(peer, channel=X) 
-  
+    DONE
 
 jsu/importJsonDictionaryFromFile
   sa returneze {} daca nu exista, eventual predefinit ca parametru al functiei ca sa pot modificat OTF

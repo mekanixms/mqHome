@@ -133,6 +133,8 @@ class iruart(peripheral):
 
     @peripheral._trigger
     def send(self, key, dictionary="default", repeat=1):
+        # TODO: def send(self, key, dictionary="default", repeat=1, repeatTimeIncrement = 0.1s):
+        # repeatTimeIncrement sa fie folosit de sleep_ms in for loop
         if dictionary in self.dictionary.keys():
             jsonDict = self.dictionary.get(dictionary)
             if key in jsonDict["commands"].keys():

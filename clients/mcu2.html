@@ -45,7 +45,7 @@
                           confKeyModifier="run"
                           vlist="config/ap|config/sta|mqtt/sta|espnow/ap|espnow/sta|single/ap|single/off"
                         >
-                          Standalone or Mqtt
+                          Run mode
                         </option>
                         <option
                           confKeyModifier="applyObservablesOnBoot"
@@ -1194,6 +1194,7 @@
         return cmds;
       }
 
+      // TODO: mut in functii generale
       function arrayDiff(other, smaller) {
         var ret = [];
 

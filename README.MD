@@ -2,7 +2,7 @@
 
 ## Introduction
 
-This software offers multiple peripherals interface implementation and simple automation capabilities
+This software is focused on ESP32 platform and provides integration and use of multiple peripherals with simple automation capabilities
 
 Examples:
 
@@ -79,25 +79,106 @@ Example:
   ON(changed[0]): dev[2]/send(topic=DRIVE,msg=OFF,encapsulate=false)
 ```
 
-As for now, mqHome has 2 run modes: config and mqtt.
+As for now, mqHome has 4 default run modes: config, mqtt, espnow and single
 
-* config mode:
-  In config mode, although the mqtt drivers can be enabled, the users can change device settings as well as define observable for automation purposes
-  Config mode is a http server running on the mcu. Can be accessed directly from the web browser, curl, ... or programatically.
+* config mode (espnowr.py):
+
+  In config mode, although the mqtt drivers can be enabled, the users is able to change device settings as well as define "observables" for automation purposes.
+  Config mode is basically a small http server running on the mcu. Can be accessed directly from the web browser, curl, ... or programatically.
   A config client application (see clients/mcu2.html) is provided with this software (can run remotely or locally on a computer or phone)
   More info on the jssr.py section below
 
-* mqtt mode:
+* mqtt mode (mqttr.py):
+
   In mqtt mode the devices can communicate via mqtt
   Mqtt mode provides intercomnucation  and loads peripherals and observables  but do not provide any configuring options.
   A mqtt client application (see clients/mqtt2.html) is provided with this software (can run remotely or locally on a computer or phone)
   More info on the mqttr.py section below
 
+* espnow mode (espnowr.py):
+
+  Enables espnow driver for communication
+
+* single mode (singler.py):
+
+  No communication between esp devices
+
+To define new run modes please follow the template of the default ones above.
+
+The run mode script is accesible, from main.py, through runner variable (if you have a prompt after initialization)
+
+There are 3 network modes predefined:
+
+* sta
+
+  Enables STATION IF at boot time
+* ap
+
+  Enables AP IF at boot time
+* off
+
+  Disables both AP and STA IFs
+
+The run modes can be set with "run" setting in apl.json directly or in the configr web app (mcu2.html) or directy, in repl as follows:
+
+```bold
+import conf
+conf.jsonConfig["run"] = "config/sta"
+conf.configFileSave()
+```
+
 It is recommended to run the scripts (all, except main.py) precompiled (mpy-cross).
-For best performance is recommended to have them [built into the firmware] (<https://docs.micropython.org/en/latest/develop/natmod.html>)
-Later I will provide a detailed howto for this process
+For best performance have them built into the firmware (<https://docs.micropython.org/en/latest/develop/natmod.html>)
 
 More info on [precompiled modules](https://docs.micropython.org/en/latest/reference/mpyfiles.html)
+
+## Client utils
+
+Both below scripts can run locallty or on a small, local http server. Additionally, an Android app is available (working, under development, not published on Play store yet)
+
+* mcu2.html
+
+Used to connect to the devices via http, while they run in config mode; in config mode you can change the defaults, work with some of the peripherals and define automate rules
+
+* mqtt2.html
+
+Used to play with all devices that are tunning in mqtt mode (ofcourse, connected to a wifi hotspot)
+
+## Drivers
+
+### Communication
+
+* mqtt drivers
+
+Check mqtt.py (tested / blocking), mqtta.py (tested/beta, working well) and mqttht.py (tested, stable)
+
+* espnow
+
+Check espnowdrv.py
+
+* uart communication
+
+Check uartcomm.py, uartcomml.py, uartcomms.py, uartcommht.py (tested, stable), uartcommt.py
+
+### Drivers list
+
+* aht10
+* bts7960
+* analog_in
+* digital_in
+* espnowdrv
+* fet
+* mpu6050
+* mqtt, mqtta, mqttht
+* nokiadisplay
+* realbutton
+* realbuttonv2
+* relay
+* rotencoder
+* servo
+* stimer
+* uartcomm, uartcommht, uartcomml, uartcommp, uartcomms, uartcommt 
+* vtimer
 
 ## Files description
 
@@ -182,7 +263,8 @@ More info on [precompiled modules](https://docs.micropython.org/en/latest/refere
 ```
 
   PERIPHERAL_CMDS = "mqperipheralcmds"
-    peripheral direct commands; comes as mqtt message with json content as 
+    peripheral direct commands; comes as mqtt message with json content as
+
 ```json
     {
       "data": {"pid":,"cmd":,"opt":{}},
@@ -190,6 +272,7 @@ More info on [precompiled modules](https://docs.micropython.org/en/latest/refere
       "from": "altClientNume"
     }
 ```
+
     if message is for this mpu and cmdName in mpu.peripherals[int(cmdto)].commandsList()
      executes mpu.peripherals[int(cmdto)].command(cmdName, cmdOptions)
 
@@ -205,7 +288,6 @@ More info on [precompiled modules](https://docs.micropython.org/en/latest/refere
 
 * "jss runner" script is running small http server (jss class) to configure the device
 * http call example: <http://mcuaddress:port/cmd/0/freq?value=2>
-
 
 Predefined routes:
 
@@ -240,6 +322,7 @@ outputs peripheral commands list
 ```
 
 * /cmd/devid/state
+
 ```bold
 outputs peripheral state
 ```
@@ -292,6 +375,7 @@ curl http://localAddress:8080/net/st/list
 
 * /conf/key/set/keyName?value=...
 *set a variable to value in apl.json*
+
 ```bash
 curl http://localAddress:8080/st/save/myWifiNetwork/myWifiPass
 curl http://localAddress:8080/conf/key/set/run?value=mqtt/sta
@@ -317,11 +401,15 @@ curl http://localAddress:8080/conf/key/set/run?value=mqtt/sta
 ### startup.run
 
 * user defined python code executed after initilizing the peripherals and observables
-* used to for custom initialization of peripherals or mpu operations
+* used for custom initialization of peripherals or mpu operations
 * code executed with default context:
   "dev": mpu.peripherals
   "mpu": mpu
-  "runMode": "config" for jssr or "mqtt" for mqttr
+  "runMode":
+      "config" for configr
+      "mqtt" for mqttr
+      "espnow" for espnowr
+      "single" for singler
 
 ### apl.json
 
@@ -338,3 +426,7 @@ curl http://localAddress:8080/conf/key/set/run?value=mqtt/sta
 
  defined observables for each peripheral
  created by user in config mode
+
+### utils/docgen.py
+
+Python 3 script that extracts the docstrings for use with mcu2 and mqtt2 scripts

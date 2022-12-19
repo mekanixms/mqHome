@@ -1,7 +1,7 @@
 
 0.12.1-2022-08-24
     main.py:
-        suports off nwtowrk mode for single/off run mode
+        suports off network mode for single/off run mode
     uartcomm*:
         autostart False by default
         code improvements
@@ -20,20 +20,21 @@
     uartcomm and aht10:
         refined code
         
-0.11.0-2022-08-23
+0.11.0-2022-08-23:
     uartcomm:
         uart communication between mqhome devices
 
-0.10.5-2022-08-12
+0.10.5-2022-08-12:
     docgen.py:
         docstrings to functions/methods
     mcu2:
         use of docgen pydef files to show params and docstrings
         
-0.10.4-2022-08-11
+0.10.4-2022-08-11:
     docgen.py:
         extracts the docstrings
-0.10.2-2022-08-10
+
+0.10.2-2022-08-10:
     docgen.py:
         doc generator
     mcu2:
