@@ -519,6 +519,59 @@
             .append("Data not available yet, waiting for the response");
       }
 
+      pydefDataRetrieved = function (data) {
+        go = false;
+        docstring = "";
+        if (typeof data == "object") methods = data;
+        if (typeof data == "string") methods = JSON.parse(data);
+        console.info("methods");
+        console.log(methods);
+        if (
+          selectedPeripheralMethod in
+          methods["classes"][selectedPeripheralType]["methods"]
+        ) {
+          go = true;
+          paramsAsString =
+            methods["classes"][selectedPeripheralType]["methods"][
+              selectedPeripheralMethod
+            ]["params"];
+          if (
+            "docstring" in
+            methods["classes"][selectedPeripheralType]["methods"][
+              selectedPeripheralMethod
+            ]
+          )
+            docstring =
+              methods["classes"][selectedPeripheralType]["methods"][
+                selectedPeripheralMethod
+              ]["docstring"];
+        }
+        // NU FOLOSESC - este in externalCommands
+        // else if (selectedPeripheralMethod in methods["functions"]) {
+        //   go = true;
+        //   paramsAsString = methods["functions"][
+        //     selectedPeripheralMethod
+        //   ]["params"];
+        //   if ("docstring" in methods["functions"][selectedPeripheralMethod])
+        //     docstring = methods["functions"][selectedPeripheralMethod]["docstring"];
+        // }
+
+        if (go) {
+          paramsAsArray = paramsAsString.split(",");
+          paramsLessSelf = paramsAsArray.slice(1, paramsAsArray.length);
+
+          $("#console").html(
+            selectedPeripheralType +
+              "/" +
+              selectedPeripheralMethod +
+              "(" +
+              paramsLessSelf.toString() +
+              ")<br/>" +
+              docstring
+          );
+        } else $("#console").html("");
+      };
+
       function displayPeripheral(targetContainer, peripheral) {
         console.info("new peripheral");
         console.log(peripheral);
@@ -584,6 +637,74 @@
               ")"
           );
           mqttPub(JSON.stringify(cmdmsg), PERIPHERAL_CMDS);
+        });
+        $("input#params", pdiv).click(function () {
+          var devId = targetContainer.parents("div[role=tabpanel]").attr("id");
+          var peripheralId = peripheral.id;
+          var command = $(this).siblings("select").val();
+          console.info("input#params onclick for pid " + peripheralId);
+          console.info(peripheral.type + "\t" + command);
+
+          selectedPeripheralType = peripheral.type;
+          selectedPeripheralMethod = command;
+
+          pydefDataRetrieved = function (data) {
+            go = false;
+            docstring = "";
+            if (typeof data == "object") methods = data;
+            if (typeof data == "string") methods = JSON.parse(data);
+            if (selectedPeripheralMethod in methods["functions"]) {
+              console.info("params");
+              console.log(
+                methods["functions"][selectedPeripheralMethod]["params"]
+              );
+
+              go = true;
+              paramsAsString =
+                methods["functions"][selectedPeripheralMethod]["params"];
+              if ("docstring" in methods["functions"][selectedPeripheralMethod])
+                docstring =
+                  methods["functions"][selectedPeripheralMethod]["docstring"];
+            }
+            // NU FOLOSESC - este in externalCommands
+            // else if (selectedPeripheralMethod in methods["functions"]) {
+            //   go = true;
+            //   paramsAsString = methods["functions"][
+            //     selectedPeripheralMethod
+            //   ]["params"];
+            //   if ("docstring" in methods["functions"][selectedPeripheralMethod])
+            //     docstring = methods["functions"][selectedPeripheralMethod]["docstring"];
+            // }
+
+            if (go) {
+              paramsAsArray = paramsAsString.split(",");
+              paramsLessSelf = paramsAsArray.slice(1, paramsAsArray.length);
+
+              $("#console").html(
+                selectedPeripheralType +
+                  "/" +
+                  selectedPeripheralMethod +
+                  "(" +
+                  paramsLessSelf.toString() +
+                  ")<br/>" +
+                  docstring
+              );
+            } else $("#console").html("");
+          };
+
+          if (typeof Android == "object" && "getPyDef" in Android) {
+            methods = JSON.parse(
+              Android.getPyDef("pydef/" + peripheral.type + ".py-def.json")
+            );
+            pydefDataRetrieved(methods);
+            // TODO
+          } else {
+            methods = {};
+            $.ajax({
+              success: pydefDataRetrieved,
+              url: "pydef/" + peripheral.type + ".py-def.json",
+            });
+          }
         });
       }
 
