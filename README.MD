@@ -37,7 +37,7 @@ Can be configured with multiple peripherals:
 * *output* (ex: bts7969, fet, relay,mpu 6050, nokia display,servo,...)
 * *virtual* (ex: stimer,mqtt,mqtta,mqttht,receiver,messager)
 
-Each peripheral is controller by a driver (extends peripheral class)
+Each peripheral is controlled by a driver (extends peripheral class)
 
 For each peripheral we can define actions (or observables) when / on property/method change/called.
 
@@ -284,9 +284,9 @@ Check uartcomm.py, uartcomml.py, uartcomms.py, uartcommht.py (tested, stable), u
 
   defaultTopic = "mqhomeintercom"
   
-### jssr.py
+### configr.py
 
-* "jss runner" script is running small http server (jss class) to configure the device
+* "configr" script is running small http server (jss class) to configure the device
 * http call example: <http://mcuaddress:port/cmd/0/freq?value=2>
 
 Predefined routes:
