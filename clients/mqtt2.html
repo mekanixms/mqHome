@@ -653,18 +653,18 @@
             docstring = "";
             if (typeof data == "object") methods = data;
             if (typeof data == "string") methods = JSON.parse(data);
-            if (selectedPeripheralMethod in methods["functions"]) {
+            if (selectedPeripheralMethod in methods[selectedPeripheralType]) {
               console.info("params");
               console.log(
-                methods["functions"][selectedPeripheralMethod]["params"]
+                methods[selectedPeripheralType][selectedPeripheralMethod]
               );
 
               go = true;
               paramsAsString =
-                methods["functions"][selectedPeripheralMethod]["params"];
-              if ("docstring" in methods["functions"][selectedPeripheralMethod])
-                docstring =
-                  methods["functions"][selectedPeripheralMethod]["docstring"];
+                methods[selectedPeripheralType][selectedPeripheralMethod];
+              // if ("docstring" in methods[selectedPeripheralType][selectedPeripheralMethod])
+              //   docstring =
+              //     methods["functions"][selectedPeripheralMethod]["docstring"];
             }
             // NU FOLOSESC - este in externalCommands
             // else if (selectedPeripheralMethod in methods["functions"]) {
@@ -678,7 +678,8 @@
 
             if (go) {
               paramsAsArray = paramsAsString.split(",");
-              paramsLessSelf = paramsAsArray.slice(1, paramsAsArray.length);
+              // paramsLessSelf = paramsAsArray.slice(1, paramsAsArray.length);
+              paramsLessSelf = paramsAsArray.slice(0, paramsAsArray.length);
 
               $("#console").html(
                 selectedPeripheralType +
@@ -686,23 +687,24 @@
                   selectedPeripheralMethod +
                   "(" +
                   paramsLessSelf.toString() +
-                  ")<br/>" +
-                  docstring
+                  ")<br/>"
+                  // +docstring
               );
             } else $("#console").html("");
           };
 
           if (typeof Android == "object" && "getPyDef" in Android) {
             methods = JSON.parse(
-              Android.getPyDef("pydef/" + peripheral.type + ".py-def.json")
-            );
+              // Android.getPyDef("pydef/" + peripheral.type + ".py-def.json")
+              Android.getPyDef("externalCommands.json")
+              );
             pydefDataRetrieved(methods);
             // TODO
           } else {
             methods = {};
             $.ajax({
               success: pydefDataRetrieved,
-              url: "pydef/" + peripheral.type + ".py-def.json",
+              url: "externalCommands.json",
             });
           }
         });
