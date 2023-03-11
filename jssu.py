@@ -62,7 +62,7 @@ def processHeader(rcvd):
 
     return ret
 
-
+# Credits to https://github.com/SpotlightKid/mrequests/blob/master/urlunquote.py
 def unquote(string):
     """unquote('abc%20def') -> b'abc def'.
 

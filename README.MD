@@ -28,7 +28,6 @@ Examples:
   WHEN(temperature[0>>25]):  dev[0]/send(topic=DISPLAY,msg=pargs[0])
   WHEN(temperature[0<<26]):  dev[0]/send(to=a4cf126ca224,topic=DISPLAY,msg=pargs[0],encapsulate=FALSE)
 ```
-
 ## Description
 
 Can be configured with multiple peripherals:
@@ -81,7 +80,7 @@ Example:
 
 As for now, mqHome has 4 default run modes: config, mqtt, espnow and single
 
-* config mode (espnowr.py):
+* config mode (configr.py):
 
   In config mode, although the mqtt drivers can be enabled, the users is able to change device settings as well as define "observables" for automation purposes.
   Config mode is basically a small http server running on the mcu. Can be accessed directly from the web browser, curl, ... or programatically.
@@ -430,3 +429,49 @@ curl http://localAddress:8080/conf/key/set/run?value=mqtt/sta
 ### utils/docgen.py
 
 Python 3 script that extracts the docstrings for use with mcu2 and mqtt2 scripts
+
+
+## How to Install
+
+### Steps
+
+1. Copy content of clients folder to a local webserver
+2. Open pph.json and add your peripherals as needed. It contains some examples for your reference. I recommend you open the desired driver .py file and, from the __init__ constructor, copy the options to your .pph file (as value of initOptions key) and modify as needed
+3. Transfer the .py scripts to your ESP32. For best performance is recommended to use a precompiled image (or make your own) or, at least, use mpy-cross to create the precompiled .mpy (all .py files, except main.py)
+4. Copy  pph.json and startup.run on your ESP32
+5. Reboot your device (first time would be recommended to stay connected to it so you can see the output and it boots properly)
+6. At first boot the device should go into config mode; preload mcu2.html (from the webserver) and  connect to your esp AP interface
+```text
+    default ssid  is AP-XXXXXXX
+    default password is above XXXXXXXpass
+where XXXXXXX is the device's mac address
+```
+When connected to device's AP wifi, add 192.168.4.1:8080 (default AP  address and config server port) and click OK;
+in Setup Tab:
+- set a device alias
+- set a network configuration (STA interface) - Click Network -> Scan for networks; when they are listed, click on the one you want and enter the password; You can also set the AP network name and password
+- after above is set, is recommended to set Device -> Run mode to config/sta and do a Device -> Reboot;
+- Try to connect with mcu2.html to the new address (uou can either get it from the terminal, if you are still connected to the device vis USB) or from your router; if you cannot connect or have any doubts, delete the apl.json file from the root of the ESP and redo this last step
+- When you are connected, go and set the Mqtt Server data (if you use it), set the Run mode to whatever you need (ex mqtt/sta) and do reboot
+- You could also set the Ip Config to static (it should give you the current ip address); change from dhcp to static
+- If you use Mqtt you can now load mqtt2.html and insert your mqtt server address, port (the default websocket port is typically 9001), username and password; once connected you will find each device listed as a tab and inside you will find peripherals; to reboot the device in a different run mode (ex: config/sta to go back and configure the device) look for Reboot and the nearby select will display a list of available run modes; select the right one and click go (remember the device address, from Device Info, if you need to connect to it via STA)
+- more on mcu2 client (work weith the divice peripherals and set Animation) TODO
+- more on mqtt2 client TODO
+
+
+Notes:
+- if you use mqtt, set a username and password on your server otherwise the devices will keep disconnecting
+- before copying the client scripts, you may want to generate the 'json defs' using the script docgen.py inside utils directory;
+```bash
+$ python3 docgen.py
+```
+- copy generated externalCommands.json in the same location of mqtt2.html and mcu2.html and all the other *.py-def.json inside a pydef directory; these are loaded to give you instructions on the available parameters for each command
+
+
+### Precompiled images
+- Generic ESP32
+- SPI Ram (WROVER)
+
+Note:
+- see How to Write images TODO
+
