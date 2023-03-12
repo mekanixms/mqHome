@@ -440,21 +440,26 @@ Python 3 script that extracts the docstrings for use with mcu2 and mqtt2 scripts
 3. Transfer the .py scripts to your ESP32. For best performance is recommended to use a precompiled image (or make your own) or, at least, use mpy-cross to create the precompiled .mpy (all .py files, except main.py)
 4. Copy  pph.json and startup.run on your ESP32
 5. Reboot your device (first time would be recommended to stay connected to it so you can see the output and it boots properly)
-6. At first boot the device should go into config mode; preload mcu2.html (from the webserver) and  connect to your esp AP interface
+6. Configure the device
+- At first boot the device should go into config/ap mode
+- preload mcu2.html (from the webserver) in a browser (Chrome, Firefox, Brave, Safari)
+- connect your computer wifi to your esp AP interface (scan to find a ssid like below)
 ```text
-    default ssid  is AP-XXXXXXX
-    default password is above XXXXXXXpass
-where XXXXXXX is the device's mac address
+    default ssid  is AP-XXXXXXXXXXXX
+    default password is above XXXXXXXXXXXXpass
+where XXXXXXXXXXXX is the device's mac address
 ```
 When connected to device's AP wifi, add 192.168.4.1:8080 (default AP  address and config server port) and click OK;
 in Setup Tab:
-- set a device alias
-- set a network configuration (STA interface) - Click Network -> Scan for networks; when they are listed, click on the one you want and enter the password; You can also set the AP network name and password
-- after above is set, is recommended to set Device -> Run mode to config/sta and do a Device -> Reboot;
-- Try to connect with mcu2.html to the new address (uou can either get it from the terminal, if you are still connected to the device vis USB) or from your router; if you cannot connect or have any doubts, delete the apl.json file from the root of the ESP and redo this last step
+- Set a device alias
+- Set a network configuration (STA interface); Click Network -> Scan for networks; when they are listed, click on the one you want and set the password; click Save when prompted and disregard the Could not connect message (at this stage is normal); Optionally AP network name and password
+- You can also set the Mqtt Server connection info (port 1883 is the default one; remember is best if you have your mqtt server username and pass set to avoid unpredictable disconnect) and Groups option (used only to select the devices to display in mqtt2.html)
+- If you click Config -> Show, the client will display the device's settings you did so far
+- After above is set, is recommended to set Device -> Run mode to config/sta and do a Device -> Reboot;
+- Try to connect with mcu2.html to the new address (you can either get it from the terminal, if you are still connected to the device via USB) or from your router; if you cannot connect or have any doubts, delete the apl.json file from the root of the ESP and redo this last step
 - When you are connected, go and set the Mqtt Server data (if you use it), set the Run mode to whatever you need (ex mqtt/sta) and do reboot
 - You could also set the Ip Config to static (it should give you the current ip address); change from dhcp to static
-- If you use Mqtt you can now load mqtt2.html and insert your mqtt server address, port (the default websocket port is typically 9001), username and password; once connected you will find each device listed as a tab and inside you will find peripherals; to reboot the device in a different run mode (ex: config/sta to go back and configure the device) look for Reboot and the nearby select will display a list of available run modes; select the right one and click go (remember the device address, from Device Info, if you need to connect to it via STA)
+- If you use Mqtt, first Switch your computer wifi to the wifi network the device is currently set to, and you can load mqtt2.html, set the client required  mqtt server address, port (the default websocket port is typically 9001), username and password; once connected you will find each device listed as a tab and inside you will find peripherals; to reboot the device in a different run mode (ex: config/sta to go back and configure the device) look for Reboot and the nearby select will display a list of available run modes; select the right one and click go (remember the device address, from Device Info, if you need to connect to it via STA)
 - more on mcu2 client (work weith the divice peripherals and set Animation) TODO
 - more on mqtt2 client TODO
 
@@ -469,9 +474,53 @@ $ python3 docgen.py
 
 
 ### Precompiled images
+They are compiled from source of @glenn20 micropython v1.19.1 repo (ESPNow enabled https://github.com/glenn20/micropython/tree/espnow-g20)
 - Generic ESP32
 - SPI Ram (WROVER)
 
+If you want to compile your own follows these steps:
+
+```bash
+# Download and install ESP Idf
+git clone -b v4.4 --recursive https://github.com/espressif/esp-idf.git
+cd esp-idf
+./install.sh
+source export.sh
+
+# Download Glen20 Micropython source
+git clone https://github.com/glenn20/micropython.git
+cd micropython
+git switch espnow-g20-v1.19.1
+
+
+# Optional, if you want umqtt frozen in the firmware, otherwise you have to copy them later, manually 
+cp /path/to/umqtt/files extmod/umqtt
+cp extmod/uasyncio/manifest.py /extmod/umqtt
+# add umqtt/simple.py and umqtt/robust.py 
+mcedit extmod/umqtt/manifest.py
+# add umqtt, similat with uasyncio
+mcedit ports/esp32/boards/manifest.py
+
+
+
+cd ports/esp32
+# All .py files, except main.py
+cp /path/to/mqHome/*.mpy modules/
+make clean
+# replace BOARD value with GENERIC or remove BOARD option for standard esp32
+make BOARD=GENERIC_SPIRAM clean
+make submodules
+make
+# or cp build-GENERIC/firmware.bin
+cp build-GENERIC_SPIRAM/firmware.bin /to/safe/location/to-write-with-esptool
+
+
+
+# Optional, compile mpy-cross executable, to compile for testing any .py and to mpy
+make -C mpy-cross
+```
+
+
 Note:
-- see How to Write images TODO
+- use esptool to write firmware.bin on your board
 
