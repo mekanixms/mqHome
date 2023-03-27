@@ -424,7 +424,7 @@ curl http://localAddress:8080/conf/key/set/run?value=mqtt/sta
 ### observables.json
 
  defined observables for each peripheral
- created by user in config mode
+ created by user in config mode (mcu2.html)
 
 ### utils/docgen.py
 
@@ -460,7 +460,7 @@ in Setup Tab:
 - When you are connected, go and set the Mqtt Server data (if you use it), set the Run mode to whatever you need (ex mqtt/sta) and do reboot
 - You could also set the Ip Config to static (it should give you the current ip address); change from dhcp to static
 - If you use Mqtt, first Switch your computer wifi to the wifi network the device is currently set to, and you can load mqtt2.html, set the client required  mqtt server address, port (the default websocket port is typically 9001), username and password; once connected you will find each device listed as a tab and inside you will find peripherals; to reboot the device in a different run mode (ex: config/sta to go back and configure the device) look for Reboot and the nearby select will display a list of available run modes; select the right one and click go (remember the device address, from Device Info, if you need to connect to it via STA)
-- more on mcu2 client (work weith the divice peripherals and set Animation) TODO
+- more on mcu2 client (work with the device peripherals and set Animation) TODO
 - more on mqtt2 client TODO
 
 
@@ -481,7 +481,7 @@ They are compiled from source of @glenn20 micropython v1.19.1 repo (ESPNow enabl
 If you want to compile your own follows these steps:
 
 ```bash
-# Download and install ESP Idf
+# Download and install ESP-IDF
 git clone -b v4.4 --recursive https://github.com/espressif/esp-idf.git
 cd esp-idf
 ./install.sh
@@ -498,14 +498,14 @@ cp /path/to/umqtt/files extmod/umqtt
 cp extmod/uasyncio/manifest.py /extmod/umqtt
 # add umqtt/simple.py and umqtt/robust.py 
 mcedit extmod/umqtt/manifest.py
-# add umqtt, similat with uasyncio
+# add umqtt, similar with uasyncio
 mcedit ports/esp32/boards/manifest.py
 
 
 
 cd ports/esp32
 # All .py files, except main.py
-cp /path/to/mqHome/*.mpy modules/
+cp /path/to/mqHome/*.py modules/
 make clean
 # replace BOARD value with GENERIC or remove BOARD option for standard esp32
 make BOARD=GENERIC_SPIRAM clean
