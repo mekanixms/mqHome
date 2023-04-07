@@ -476,7 +476,9 @@ $ python3 docgen.py
 ### Precompiled images
 They are compiled from source of @glenn20 micropython v1.19.1 repo (ESPNow enabled https://github.com/glenn20/micropython/tree/espnow-g20)
 - Generic ESP32
-- SPI Ram (WROVER)
+- SPIRam (WROVER)
+[Available for download here](https://drive.google.com/drive/folders/1BDVXVYsRYnLQj8iEc7BwDJ-dXAx9ziKS?usp=share_link)
+
 
 If you want to compile your own follows these steps:
 

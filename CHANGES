@@ -1,4 +1,8 @@
 
+0.14.2-2023-04-02
+    -espnowdrv.py:
+        send() - added @peripheral._trigger decorator / NOT TESTED YET
+
 0.12.1-2022-08-24
     main.py:
         suports off network mode for single/off run mode

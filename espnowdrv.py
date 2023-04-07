@@ -295,6 +295,7 @@ class espnowdrv(peripheral):
 
         _thread.exit()
 
+    @peripheral._trigger
     def send(self, msg, to="*", sync=False):
 
         response = False

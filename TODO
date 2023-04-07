@@ -11,6 +11,14 @@ custom Modes DONE:
     but user defined/written
 
 espnowdrv:
+  - nu exista peers.json eroare 
+    File "espnowdrv.py", line 138, in loadPeers
+  TypeError: unsupported type for __hash__: 'dict'
+  FIX de implementat:
+        peers = importJsonDictionaryFromFile("peers.json")
+           la linia 138 modific
+        peers = importJsonDictionaryFromFile("peers.json",{})
+
   initOption to switch between thread and on_recv
   reboot to option by espnow message DONE
   implement channel:
