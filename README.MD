@@ -3,7 +3,7 @@
 ## Introduction
 
 This software is focused on ESP32 platform and provides integration and use of multiple peripherals with simple automation capabilities.  
-Clients applications are available as well as a [Android App] (https://play.google.com/store/apps/details?id=com.mekanix.mqhomeadmin)
+Clients applications are available as well as a [Android App](https://play.google.com/store/apps/details?id=com.mekanix.mqhomeadmin)
 
 Examples:
 
