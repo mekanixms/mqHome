@@ -688,7 +688,7 @@
                   "(" +
                   paramsLessSelf.toString() +
                   ")<br/>"
-                  // +docstring
+                // +docstring
               );
             } else $("#console").html("");
           };
@@ -697,7 +697,7 @@
             methods = JSON.parse(
               // Android.getPyDef("pydef/" + peripheral.type + ".py-def.json")
               Android.getPyDef("externalCommands.json")
-              );
+            );
             pydefDataRetrieved(methods);
             // TODO
           } else {
@@ -1040,17 +1040,49 @@
     <div align="center" id="connectDialog" style="display: none">
       <table>
         <tr>
-          <td><input type="text" placeholder="Server" id="host" /></td>
-          <td><input type="number" placeholder="Port" id="port" /></td>
+          <td>
+            <input
+              type="text"
+              placeholder="Server"
+              style="text-align: center"
+              id="host"
+            />
+          </td>
         </tr>
         <tr>
-          <td><input type="text" placeholder="User" id="username" /></td>
-          <td><input type="password" placeholder="Password" id="usp" /></td>
+          <td>
+            <input
+              type="number"
+              placeholder="Port"
+              style="text-align: center"
+              id="port"
+            />
+          </td>
         </tr>
         <tr>
-          <td colspan="2">
-            <label for="autologin">Save password and login automatically?</label
-            ><input type="checkbox" id="autologin" />
+          <td>
+            <input
+              type="text"
+              placeholder="User"
+              style="text-align: center"
+              id="username"
+            />
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <input
+              type="password"
+              placeholder="Password"
+              style="text-align: center"
+              id="usp"
+            />
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2" align="center">
+            <label for="autologin">Save?</label>
+            <input type="checkbox" id="autologin" />
           </td>
         </tr>
       </table>
@@ -1116,8 +1148,8 @@
         autoOpen: false,
         modal: true,
         title: "Log in",
-        width: $(document).width() * 0.5,
-        height: $(document).height() * 0.5,
+        width: $(document).width() * 0.9,
+        height: $(document).height() * 0.9,
         buttons: {
           Connect: function () {
             host = $("#host", connectDialog).val();
