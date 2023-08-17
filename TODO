@@ -1,4 +1,7 @@
 
+espnowdrv
+  din 1.20 nu mai are on_recv, trebuie migrat la irq
+
 Driver Logger
   primeste informatii de la alte drivere si le salveaza in fisier local sau alte resurse... (?? online oe cloud)
 

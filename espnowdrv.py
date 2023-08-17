@@ -122,14 +122,18 @@ class espnowdrv(peripheral):
     def start(self):
         if "on_recv" in dir(self.espnow):
             self.espnow.on_recv(self.onrcvcbk)
-            print("\tespnow driver running in on_recv mode")
+            print("\tespnow driver running in on_recv mode mp < 1.20")
         else:
-            _thread.stack_size(4096*2)
-            try:
-                self.thread = _thread.start_new_thread(self.run, ())
-                print("\tespnow driver running in thread mode")
-            except Exception:
-                print("THREAD EXCEPTION")
+            if "irq" in dir(self.espnow):
+                self.espnow.irq(self.onrcvcbk)
+                print("\tespnow driver running in irq mode (mp >= 1.20)")
+            else:
+                _thread.stack_size(4096*2)
+                try:
+                    self.thread = _thread.start_new_thread(self.run, ())
+                    print("\tespnow driver running in thread mode")
+                except Exception:
+                    print("THREAD EXCEPTION")
 
     def loadPeers(self):
         peers = importJsonDictionaryFromFile("peers.json")
@@ -285,13 +289,14 @@ class espnowdrv(peripheral):
         a_lock = _thread.allocate_lock()
         while True:
             with a_lock:
-                host, msg = self.espnow.irecv(0)
+                if self.espnow.any():
+                    host, msg = self.espnow.irecv(0)
 
-                if msg:
-                    self.__re(host, msg)
+                    if msg:
+                        self.__re(host, msg)
 
-                if self.stop:
-                    break
+                    if self.stop:
+                        break
 
         _thread.exit()
 
