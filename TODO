@@ -1,7 +1,7 @@
 
 main.py:
-  daca nu am setari sau este vreo eroare incarca blerepl??
-    - fa aplicatie android de setari initiale
+  daca nu am setari sau este vreo eroare incarca blerepl?? DONE
+    - fa aplicatie android de setari initiale DONE
 
 espnowdrv
   din 1.20 nu mai are on_recv, trebuie migrat la irq
