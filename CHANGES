@@ -1,3 +1,7 @@
+0.15.1-2023-09-01
+    main.py pinBtn1 pushed - loads blereplr / wifioff
+    added blereplr and ble_uart_peripheral
+
 0.14.4-2023-04-09
     -mqtt2: connect dialog interface small tweaks 
 

@@ -100,7 +100,7 @@ def main():
     runAs, stationMode = conf.run.split("/")
 
     if modeSwitch.value() == 1:
-        # resore defaults - sterge apl.json,  observables si startup.run
+        # restore defaults - sterge apl.json,  observables si startup.run
         pass
 
     if btn1.value() and btn2.value():
@@ -110,6 +110,14 @@ def main():
         # vt = vtimer(1, vtimer.PERIODIC, blinkWDLS)
         # vt.start()
         devStatusLED.on()
+    else:
+        if btn1.value():
+            runAs = "blerepl"
+            stationMode = "off"
+    
+    if not file_exists("apl.json"):
+        runAs = "blerepl"
+        stationMode = "off"
 
     if stationMode == "sta":
         sapfc = isStationWifiSet()
@@ -117,7 +125,7 @@ def main():
         if sapfc:
             startSTA(sapfc)
         else:
-            print("No AP saved, running setup")
+            print("No STA Wifi saved, running config / ap")
             stationMode = "ap"
             runAs = "config"
 
