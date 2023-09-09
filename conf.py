@@ -31,7 +31,7 @@ runModes = ["mqtt/sta", "config/sta", "config/ap", "espnow/ap", "espnow/sta"]
 
 
 pinModeSwitch = 35
-pinBtn1 = 25
+pinBtn1 = 13
 pinBtn2 = 27
 pinDevStatusLED = 2
 

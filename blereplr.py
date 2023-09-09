@@ -103,7 +103,7 @@ ble = bluetooth.BLE()
 
 unique_id = hexlify(machine.unique_id()).decode('utf-8')
 
-uart = BLEUART(ble, name="repl_"+unique_id)
+uart = BLEUART(ble, name="r"+unique_id[8:])
 stream = BLEUARTStream(uart)
 
 

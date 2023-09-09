@@ -4,6 +4,7 @@ import bluetooth
 from ble_advertising import advertising_payload
 
 from micropython import const
+import struct
 
 _IRQ_CENTRAL_CONNECT = const(1)
 _IRQ_CENTRAL_DISCONNECT = const(2)
@@ -28,7 +29,7 @@ _UART_SERVICE = (
 
 # org.bluetooth.characteristic.gap.appearance.xml
 _ADV_APPEARANCE_GENERIC_COMPUTER = const(128)
-
+myUID = 0xeea
 
 class BLEUART:
     def __init__(self, ble, name="mpy-uart", rxbuf=100):
@@ -43,6 +44,8 @@ class BLEUART:
         self._handler = None
         # Optionally add services=[_UART_UUID], but this is likely to make the payload too large.
         self._payload = advertising_payload(name=name, appearance=_ADV_APPEARANCE_GENERIC_COMPUTER)
+        # companyId to filer
+        self._payload += struct.pack("BB",len(str(myUID))+1,0xff)+str(hex(myUID))
         self._advertise()
 
     def irq(self, handler):
