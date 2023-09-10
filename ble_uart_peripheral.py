@@ -29,7 +29,7 @@ _UART_SERVICE = (
 
 # org.bluetooth.characteristic.gap.appearance.xml
 _ADV_APPEARANCE_GENERIC_COMPUTER = const(128)
-myUID = 0xeea
+myUID = 0x0eea
 
 class BLEUART:
     def __init__(self, ble, name="mpy-uart", rxbuf=100):
@@ -45,7 +45,7 @@ class BLEUART:
         # Optionally add services=[_UART_UUID], but this is likely to make the payload too large.
         self._payload = advertising_payload(name=name, appearance=_ADV_APPEARANCE_GENERIC_COMPUTER)
         # companyId to filer
-        self._payload += struct.pack("BB",len(str(myUID))+1,0xff)+str(hex(myUID))
+        self._payload += struct.pack("BB",len(str(myUID))+1,0xff)+myUID.to_bytes(2,"little")
         self._advertise()
 
     def irq(self, handler):
