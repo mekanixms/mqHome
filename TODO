@@ -1,4 +1,7 @@
 
+mcu.py
+  battery level - Pin 32
+
 main.py:
   daca nu am setari sau este vreo eroare incarca blerepl?? DONE
     - fa aplicatie android de setari initiale DONE

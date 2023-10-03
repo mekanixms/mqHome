@@ -63,19 +63,12 @@ class BLEUARTStream(io.IOBase):
                 return _MP_STREAM_POLL_RD
         return 0
 
-    def _old_flush(self):
-        data = self._tx_buf[0:100]
-        self._tx_buf = self._tx_buf[100:]
-        self._uart.write(data)
-        if self._tx_buf:
-            schedule_in(self._flush, 50)
-
     def _flush(self):
         data = self._tx_buf[0:100]
         self._tx_buf = self._tx_buf[100:]
         decoded = data.decode()
 
-# send only 20 bits packets at once
+        # send only 20 bits packets at once
         buff = ""
         for cycle in range(5):
             start=cycle*20
