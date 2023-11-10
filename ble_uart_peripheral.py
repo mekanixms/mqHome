@@ -1,5 +1,10 @@
 # This example demonstrates a peripheral implementing the Nordic UART Service (NUS).
 
+# This example demonstrates the low-level bluetooth module. For most
+# applications, we recommend using the higher-level aioble library which takes
+# care of all IRQ handling and connection management. See
+# https://github.com/micropython/micropython-lib/tree/master/micropython/bluetooth/aioble
+
 import bluetooth
 from ble_advertising import advertising_payload
 
@@ -44,7 +49,7 @@ class BLEUART:
         self._handler = None
         # Optionally add services=[_UART_UUID], but this is likely to make the payload too large.
         self._payload = advertising_payload(name=name, appearance=_ADV_APPEARANCE_GENERIC_COMPUTER)
-        # companyId to filer
+        # companyId to filter
         self._payload += struct.pack("BB",len(str(myUID))+1,0xff)+myUID.to_bytes(2,"little")
         self._advertise()
 

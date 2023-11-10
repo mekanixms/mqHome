@@ -2,6 +2,7 @@
 #
 # Tested with the Adafruit Bluefruit app on Android.
 # Set the EoL characters to \r\n.
+# source and credits: https://github.com/micropython/micropython/blob/master/examples/bluetooth/ble_uart_repl.py
 
 import bluetooth
 import io
