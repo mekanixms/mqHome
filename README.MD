@@ -150,7 +150,7 @@ Used to play with all devices that are tunning in mqtt mode (ofcourse, connected
 
 * repl over Bluetooth LE
 
-Available with the [Android App](https://play.google.com/store/apps/details?id=com.mekanix.mqhomeadmin&pcampaignid=web_share) and provides acces to repl
+Available with the [Android App](https://play.google.com/store/apps/details?id=com.mekanix.mqhomeadmin&pcampaignid=web_share) and provides access to repl
 
 ## Drivers
 
