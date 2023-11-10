@@ -103,6 +103,10 @@ As for now, mqHome has 4 default run modes: config, mqtt, espnow and single
 
   No communication between esp devices
 
+* Repl over BLE (blereplr.py):
+
+  Since 0.15.5 onward. If the device detects the settings file, apl.json, does not exists or if the Btn 1 (pinBtn1 is 13 by default in conf.py, available to overwrite through conf.jsonConfig) is pressed or when run mode is set to blerepl/off
+
 To define new run modes please follow the template of the default ones above.
 
 The run mode script is accesible, from main.py, through runner variable (if you have a prompt after initialization)
@@ -134,7 +138,7 @@ More info on [precompiled modules](https://docs.micropython.org/en/latest/refere
 
 ## Client utils
 
-Both below scripts can run locallty or on a small, local http server. Additionally, an Android app is available (working, under development, not published on Play store yet)
+Both below scripts can run locallty or on a small, local http server. Additionally, an Android app is [available](https://play.google.com/store/apps/details?id=com.mekanix.mqhomeadmin&pcampaignid=web_share)
 
 * mcu2.html
 
@@ -143,6 +147,10 @@ Used to connect to the devices via http, while they run in config mode; in confi
 * mqtt2.html
 
 Used to play with all devices that are tunning in mqtt mode (ofcourse, connected to a wifi hotspot)
+
+* repl over Bluetooth LE
+
+Available with the [Android App](https://play.google.com/store/apps/details?id=com.mekanix.mqhomeadmin&pcampaignid=web_share) and provides acces to repl
 
 ## Drivers
 
@@ -159,6 +167,7 @@ Check espnowdrv.py
 * uart communication
 
 Check uartcomm.py, uartcomml.py, uartcomms.py, uartcommht.py (tested, stable), uartcommt.py
+
 
 ### Drivers list
 
