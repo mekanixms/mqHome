@@ -137,16 +137,30 @@ def prepareStringSequence(testCondition):
 
 
 def getTestValEvaluated(testVal, ctx={}):
-
+    evaluatedTestVal = testVal
     try:
         evaluatedTestVal = eval(testVal, {}, ctx)
     except:
-        evaluatedTestVal = testVal
+        pass
 
     return evaluatedTestVal
 
+def _getTestValEvaluated(testVal, ctx={}):
+    # TODO: verifica getTestValEvaluated de mai sus, daca nu merge la toate incearca asa, desi e mai lent
+    # print("getTestValEvaluated target "+testVal+"\tctx "+ctx.keys())
+    evaluatedTestVal = testVal
+    if testVal.find("dev[") != -1 or testVal.find("pargs[") != -1 or testVal.find("kargs[") != -1 or testVal.find("context[") != -1:
+        try:
+            evaluatedTestVal = eval(testVal, {}, ctx)
+        except:
+            pass
+        
+    # print("getTestValEvaluated return "+evaluatedTestVal)
+    
+    return evaluatedTestVal
 
-def testStringSequence(testCondition, args, kwargs):
+
+def testStringSequence(testCondition, args, kwargs,ctx={}):
     testResult = True
 
     for tline in testCondition:
@@ -164,7 +178,7 @@ def testStringSequence(testCondition, args, kwargs):
             # ON(rawMessage[1==TOGGLE]): dev[1]/toggle()
             if len(args) > 0:
 
-                evaluatedTestVal = getTestValEvaluated(testVal)
+                evaluatedTestVal = getTestValEvaluated(testVal,ctx)
 
                 if int(testArg) >= 0 and int(testArg) < len(args):
                     if type(args[int(testArg)]) == bool:
@@ -179,7 +193,7 @@ def testStringSequence(testCondition, args, kwargs):
 
                 # print("\t"+kwargs.get(testArg) + "\t"+operator+"\t"+testVal)
 
-                evaluatedTestVal = getTestValEvaluated(testVal)
+                evaluatedTestVal = getTestValEvaluated(testVal,ctx)
 
                 if type(kwargs.get(testArg)) is bool:
                     tr = kwargs.get(testArg) and whichBool(evaluatedTestVal)
@@ -204,7 +218,7 @@ def testStringSequence(testCondition, args, kwargs):
 
                                 requiredArgValue = neededArg.get(neededArgKey)
 
-                                evaluatedTestVal = getTestValEvaluated(testVal)
+                                evaluatedTestVal = getTestValEvaluated(testVal,ctx)
 
                                 if type(requiredArgValue) == bool:
                                     tr = requiredArgValue and whichBool(
@@ -229,8 +243,7 @@ def testStringSequence(testCondition, args, kwargs):
 
                                     requiredArgValue = neededArg[neededArgKey]
 
-                                    evaluatedTestVal = getTestValEvaluated(
-                                        testVal)
+                                    evaluatedTestVal = getTestValEvaluated(testVal,ctx)
 
                                     if type(requiredArgValue) is bool:
                                         tr = requiredArgValue and whichBool(
@@ -346,8 +359,18 @@ def lmbdForPeripheralObservable(testCondition, pee, mpu):
 
         executePeripheralCommand = True
 
+        # variabila ctxForTestValueEval sa aiba fie identica cu cea din evalParams
+        # TODO: evalParams si ctxForTestValueEval sa foloseasca cod comun de generare a context
+        ctxForTestValueEval = {
+            "dev":mpu.peripherals,
+            "context":mpu.userVariables,
+            "pargs": args,
+            "kargs": kwargs
+        }
+        
+
         if testCondition:
-            testForValue = testStringSequence(testCondition, args, kwargs)
+            testForValue = testStringSequence(testCondition, args, kwargs,ctxForTestValueEval)
 
             if testForValue:
                 executePeripheralCommand = True
@@ -380,8 +403,17 @@ def lmbdForContext(testCondition, pee, mpu):
 
         executeCommand = True
 
+        # variabila ctxForTestValueEval sa aiba fie identica cu cea din evalParams
+        # TODO: evalParams si ctxForTestValueEval sa foloseasca cod comun de generare a context
+        ctxForTestValueEval = {
+            "dev":mpu.peripherals,
+            "context":mpu.userVariables,
+            "pargs": args,
+            "kargs": kwargs
+        }
+
         if testCondition:
-            testForValue = testStringSequence(testCondition, args, kwargs)
+            testForValue = testStringSequence(testCondition, args, kwargs,ctxForTestValueEval)
 
             if testForValue:
                 executeCommand = True
@@ -426,8 +458,17 @@ def lmbdForMpu(testCondition, pee, mpu):
 
         executePeripheralCommand = True
 
+        # variabila ctxForTestValueEval sa aiba fie identica cu cea din evalParams
+        # TODO: evalParams si ctxForTestValueEval sa foloseasca cod comun de generare a context
+        ctxForTestValueEval = {
+            "dev":mpu.peripherals,
+            "context":mpu.userVariables,
+            "pargs": args,
+            "kargs": kwargs
+        }       
+
         if testCondition:
-            testForValue = testStringSequence(testCondition, args, kwargs)
+            testForValue = testStringSequence(testCondition, args, kwargs,ctxForTestValueEval)
 
             if testForValue:
                 executePeripheralCommand = True

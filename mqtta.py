@@ -242,7 +242,7 @@ class mqtta(peripheral):
             if type(msgjs) is dict:
                 rawMessageKwArgs["jsonmessage"] = msgjs
             else:
-                rawMessagePosArgs[2] = msgjs
+                rawMessagePosArgs.append(msgjs)
 
             try:
                 self.rawMessage(*rawMessagePosArgs, **rawMessageKwArgs)
