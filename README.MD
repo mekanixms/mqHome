@@ -51,6 +51,13 @@ Observables are defined in config mode
 * *Condition operands:*
  == >> << >= <= != <>
 
+* *Condition values are evaluated with the context set to:
+ dev[
+ pargs[
+  positional parameters of the condition
+ kargs[
+ context[
+
 * *Target actions:*
  dev[peripheralID]/command(optionalParam,...)
  mpu/method(optionalParam,...)
@@ -79,7 +86,7 @@ Example:
   ON(changed[0]): dev[2]/send(topic=DRIVE,msg=OFF,encapsulate=false)
 ```
 
-As for now, mqHome has 4 default run modes: config, mqtt, espnow and single
+As for now, mqHome has 5 default run modes: config, mqtt, espnow, blerepl and single
 
 * config mode (configr.py):
 
