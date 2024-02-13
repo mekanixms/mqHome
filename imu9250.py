@@ -6,7 +6,7 @@ from math import atan, atan2, sqrt, pi
 from fusion import Fusion
 from time import sleep_ms, ticks_us, ticks_diff
 import json
-from utils import file_exists
+from utils import file_exists, is_number
 
 # TODO:
 # - implement Calibrate cu swtich Pin 4 ca in FuseTest
@@ -63,6 +63,9 @@ class imu9250(peripheral):
 
     period = 1000
     fuseUpdateTime = 1000
+    doCalibrate = False
+    calibrationPeriod = 20000
+    declination = 0
 
     def __init__(self, options={"id": -1}):
         super().__init__(options)
@@ -97,9 +100,22 @@ class imu9250(peripheral):
         self.commands["toggle"] = toggle
         self.commands["setPeriod"] = setPeriod
 
-        # Choose test to run
-        # Calibrate = switch.value()
-        Calibrate = False
+        if "calibrate" in self.settings:
+            if self.settings["calibrate"] in TrueValues:
+                self.doCalibrate = True
+            else:
+                if callable(self.settings["calibrate"]):
+                    calibrate_call_method = self.settings["calibrate"]
+                    self.doCalibrate = calibrate_call_method(self)
+
+        if "declination" in self.settings:
+            if callable(self.settings["declination"]):
+                declination_call_method = self.settings["declination"]
+                self.declination = declination_call_method()
+            else:
+                if is_number(self.settings["declination"]):
+                    self.declination = float(self.settings["declination"])
+
         self.fuse = Fusion()
 
         self.magConfig = {}
@@ -124,14 +140,15 @@ class imu9250(peripheral):
                   str(self.magConfig["fuseUpdateTime"]))
             self.fuseUpdateTime = self.magConfig["fuseUpdateTime"]
 
-        if Calibrate:
+        if self.doCalibrate:
             self.calibrate()
 
-        self.declination = 6
-
-    def calibrate(self, period=20000):
+    def calibrate(self, period=None):
         global timerRunning
-        print("Calibrating for "+str(period))
+        if period is None:
+            period = self.calibrationPeriod
+
+        print("Calibrating for "+str(period)+" uS")
         timerRunning = True
         self.po.init(period=period, mode=0,
                      callback=calibrate_timcbk)

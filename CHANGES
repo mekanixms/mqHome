@@ -1,3 +1,6 @@
+0.17.1-2024-02-13
+    imu9250: declination and calibrate in init Options
+
 0.17.0-2024-02-13
     imu9250:
         - first functional version of mpu 9250 implementation
@@ -5,7 +8,6 @@
         - fuseUpdateTime saved as json in config file
         - init Timer is used for calibration and later to update Fusion;
         = TODO: declination and update in init Options
-
 
 0.16.3-2024-02-11
     mpu6050: roll, pitch, yaw read self.imu.accel.xyz if no parameters are given
