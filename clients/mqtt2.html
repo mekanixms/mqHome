@@ -1,1235 +1,1278 @@
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>MicroHome</title>
+    <link
+      rel="stylesheet"
+      href="https://code.jquery.com/ui/1.12.0/themes/smoothness/jquery-ui.css"
+    />
+    <style rel="text/css">
+      button.son {
+        background-color: lightgreen;
+      }
+    </style>
 
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>MicroHome</title>
-  <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.0/themes/smoothness/jquery-ui.css" />
-  <style rel="text/css">
-    button.son {
-      background-color: lightgreen;
-    }
-  </style>
-
-  <script src="paho-mqtt/mqttws31.min.js" type="text/javascript"></script>
-  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-  <script type="text/javascript" src="https://code.jquery.com/ui/1.12.0/jquery-ui.min.js"></script>
-  <script language="javascript" type="text/javascript">
-    /*
+    <script src="paho-mqtt/mqttws31.min.js" type="text/javascript"></script>
+    <script
+      type="text/javascript"
+      src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="https://code.jquery.com/ui/1.12.0/jquery-ui.min.js"
+    ></script>
+    <script language="javascript" type="text/javascript">
+      /*
       TODO:
       */
-    var mqtt;
-    var reconnectTimeout;
-    var isConnected = false;
+      var mqtt;
+      var reconnectTimeout;
+      var isConnected = false;
 
-    var tab;
-    var connectDialog;
-    var groupSelector;
+      var tab;
+      var connectDialog;
+      var groupSelector;
 
-    var Iam = "clientjs" + Math.floor(Math.random() * 1000 + 1);
+      var Iam = "clientjs" + Math.floor(Math.random() * 1000 + 1);
 
-    var BROADCAST_ONLINE = "DEVONLINE";
-    var BROADCAST_OFFLINE = "DEVLASTWILL";
-    var devSpecificTopics = {};
+      var BROADCAST_ONLINE = "DEVONLINE";
+      var BROADCAST_OFFLINE = "DEVLASTWILL";
+      var devSpecificTopics = {};
 
-    var PRESENCE = "PRESENCE";
-    var STATUS_UPDATE_TOPIC = "statusupdate";
-    var DEVICE_CONFIG = "DEVCONF";
-    var defaultTopic = "mqhomeintercom";
-    var PERIPHERAL_CMDS = "mqperipheralcmds";
-    var DEVICE_CMDS = "mqdevcmds";
+      var PRESENCE = "PRESENCE";
+      var STATUS_UPDATE_TOPIC = "statusupdate";
+      var DEVICE_CONFIG = "DEVCONF";
+      var defaultTopic = "mqhomeintercom";
+      var PERIPHERAL_CMDS = "mqperipheralcmds";
+      var DEVICE_CMDS = "mqdevcmds";
 
-    //server, port , user si parola salvate pe storage browser
-    var host = "10.11.1.58";
-    var port = 1883;
+      //server, port , user si parola salvate pe storage browser
+      var host = "10.11.1.58";
+      var port = 1883;
 
-    var storage = window.localStorage;
+      var storage = window.localStorage;
 
-    //TODO: lista trebuie generata automat dupa interogare server mosquitto
-    var devices = {};
-    var peripheralsState = {};
-    var groups = { group: [] };
+      //TODO: lista trebuie generata automat dupa interogare server mosquitto
+      var devices = {};
+      var peripheralsState = {};
+      var groups = { group: [] };
 
-    var pub_topics = {};
+      var pub_topics = {};
 
-    var timerElapsed = 0;
+      var timerElapsed = 0;
 
-    var peripheralsTemplates = `<div align="center"><select id="targetActions" size=5></select></div>`;
+      var peripheralsTemplates = `<div align="center"><select id="targetActions" size=5></select></div>`;
 
-    var makeContainerInteractive = {
-      emiter: emiterAddUIEvents,
-      receiver: receiverAddUIEvents,
-      bts7960: bts7960AddUIEvents,
-      aht10: aht10AddUIEvents,
-      uartcommht: uartcommhtAddUIEvents,
-      servo: servoAddUIEvents,
-      digital_in: digital_inAddUIEvents,
-      analog_in: analog_inAddUIEvents,
-      iruart: iruartAddUIEvents,
-      espnowdrv: espnowdrvAddUIEvents,
-      realbutton: realbuttonAddUIEvents,
-      realbuttonv2: realbuttonAddUIEvents,
-      mqtt: mqttAddUIEvents,
-      mqtta: mqttAddUIEvents,
-      mqttht: mqttAddUIEvents,
-      messager: mqttAddUIEvents,
-      nokiadisplay: nokiadisplayAddUIEvents,
-      rotencoder: rotencoderAddUIEvents,
-      relfet: relfetAddUIEvents,
-      fet: fetAddUIEvents,
-      relay: relAddUIEvents,
-      stimer: stimerAddUIEvents,
-      mpu6050: accelAddUIEvents,
-      model: function (p) { },
-    };
+      var makeContainerInteractive = {
+        emiter: emiterAddUIEvents,
+        receiver: receiverAddUIEvents,
+        bts7960: bts7960AddUIEvents,
+        aht10: aht10AddUIEvents,
+        uartcommht: uartcommhtAddUIEvents,
+        servo: servoAddUIEvents,
+        digital_in: digital_inAddUIEvents,
+        analog_in: analog_inAddUIEvents,
+        iruart: iruartAddUIEvents,
+        espnowdrv: espnowdrvAddUIEvents,
+        realbutton: realbuttonAddUIEvents,
+        realbuttonv2: realbuttonAddUIEvents,
+        mqtt: mqttAddUIEvents,
+        mqtta: mqttAddUIEvents,
+        mqttht: mqttAddUIEvents,
+        messager: mqttAddUIEvents,
+        nokiadisplay: nokiadisplayAddUIEvents,
+        rotencoder: rotencoderAddUIEvents,
+        relfet: relfetAddUIEvents,
+        fet: fetAddUIEvents,
+        relay: relAddUIEvents,
+        stimer: stimerAddUIEvents,
+        mpu6050: accelAddUIEvents,
+        imu6050: accelAddUIEvents,
+        imu9150: accelAddUIEvents,
+        imu9250: accelAddUIEvents,
+        model: function (p) {},
+      };
 
-    var peripheralsStateUpdateCallback = {
-      emiter: function () { },
-      receiver: function () { },
-      bts7960: function () { },
-      aht10: function () { },
-      uartcommht: function () { },
-      servo: function () { },
-      digital_in: function () { },
-      analog_in: function () { },
-      espnowdrv: function () { },
-      iruart: function (did, pid, state) {
-        console.info("TODO Continua cu implementarea celorlalte ca aici");
-        // devices[did].config.peripherals[pid].type
-        console.log(this);
-        console.log(state);
-      },
-      realbutton: function () { },
-      realbuttonv2: function () { },
-      mqtt: function () { },
-      mqtta: function () { },
-      mqttht: function () { },
-      messager: function () { },
-      nokiadisplay: function () { },
-      rotencoder: function () { },
-      relfet: function () { },
-      fet: function () { },
-      relay: function () { },
-      stimer: function () { },
-      mpu6050: function () { },
-      model: function (did, pid, state) {
-        // devices[did].config.peripherals[pid].type
-        // function called
-        // pcbk.apply(panel, [did, pid, data]);
-        // this is the ui tab panel of the peripheral
-        // $(this).append(JSON.stringify(peripheric));
-      },
-    };
+      var peripheralsStateUpdateCallback = {
+        emiter: function () {},
+        receiver: function () {},
+        bts7960: function () {},
+        aht10: function () {},
+        uartcommht: function () {},
+        servo: function () {},
+        digital_in: function () {},
+        analog_in: function () {},
+        espnowdrv: function () {},
+        iruart: function (did, pid, state) {
+          console.info("TODO Continua cu implementarea celorlalte ca aici");
+          // devices[did].config.peripherals[pid].type
+          console.log(this);
+          console.log(state);
+        },
+        realbutton: function () {},
+        realbuttonv2: function () {},
+        mqtt: function () {},
+        mqtta: function () {},
+        mqttht: function () {},
+        messager: function () {},
+        nokiadisplay: function () {},
+        rotencoder: function () {},
+        relfet: function () {},
+        fet: function () {},
+        relay: function () {},
+        stimer: function () {},
+        mpu6050: function () {},
+        imu6050: function () {},
+        imu9150: function () {},
+        imu9250: function () {},
+        model: function (did, pid, state) {
+          // devices[did].config.peripherals[pid].type
+          // function called
+          // pcbk.apply(panel, [did, pid, data]);
+          // this is the ui tab panel of the peripheral
+          // $(this).append(JSON.stringify(peripheric));
+        },
+      };
 
-    function onConnect() {
-      sectionsVisibility(true);
-      isConnected = true;
-      mqtt.subscribe(STATUS_UPDATE_TOPIC, { qos: 0 });
-      mqtt.subscribe(BROADCAST_ONLINE, { qos: 0 });
-      mqtt.subscribe(BROADCAST_OFFLINE, { qos: 0 });
-      mqtt.subscribe(DEVICE_CONFIG, { qos: 0 });
-      mqtt.subscribe(defaultTopic, { qos: 0 });
-      if (typeof MqttIF == "object" && "getPyDef" in MqttIF) MqttIF.connectedToServer(mqtt._getHost());
-      console.log("Connected");
-      $("#connectionStatus")
-        .text("Connected")
-        .css("background-color", " lightgreen");
-      connectDialog.dialog("close");
-      mqttPub("{}", "PRESENCE");
-    }
-
-    function onConnectionLost(msg) {
-      console.log("Disconnected with message:");
-      console.log(msg);
-      $("#connectionStatus")
-        .text("Disconnected")
-        .css("background-color", " red");
-      sectionsVisibility(false);
-    }
-
-    function newTabSetInterfaceActions(tabid) { }
-
-    function createTab(index, devGroup) {
-      var alias = index;
-      if (devices[index]["alias"] != undefined)
-        alias = devices[index]["alias"];
-
-      $("ul", tab).append(
-        '<li class="' +
-        devGroup +
-        '"><a href="#' +
-        index +
-        '">' +
-        alias +
-        "</a></li>"
-      );
-
-      tab.append(
-        '<div id="' +
-        index +
-        '" align="center" peripherals="NONE"><div id="peripherals"></div></div>'
-      );
-      tab.tabs("refresh");
-
-      newTabSetInterfaceActions(index);
-    }
-
-    function fetAddUIEvents(p) {
-      var container = this;
-
-      $("button#setFetPWM", this).click(function () {
-        var cc = getControlsAccordionContainer(this);
-        var spid = cc.getAttribute("aria-labelledby");
-        var setduty = $("input#duty", cc).val();
-        var setfreq = $("input#freq", cc).val();
-        console.log(
-          "SET Dev " + spid + " to duty " + setduty + " freq " + setfreq
-        );
-        $.ajax({
-          type: "GET",
-          dataType: "json",
-          crossDomain: true,
-          headers: {
-            Accept: "application/json",
-            "Content-Type": "text/plain",
-            "X-Requested-With": "XmlHttpRequest",
-          },
-          success: function (data) {
-            console.log("pwmset " + spid);
-            console.log(data);
-          },
-          url:
-            mcu +
-            "/cmd/" +
-            spid +
-            "/pwmset?duty=" +
-            setduty +
-            "&freq=" +
-            setfreq,
-        });
-      });
-    }
-
-    function relAddUIEvents(p) {
-      var container = this;
-
-      $("button#switch.switch", this).click(function () {
-        var swbtn = this;
-        var cc = getControlsAccordionContainer(this);
-        var spid = cc.getAttribute("aria-labelledby");
-        $.ajax({
-          type: "GET",
-          dataType: "json",
-          crossDomain: true,
-          headers: {
-            Accept: "application/json",
-            "Content-Type": "text/plain",
-            "X-Requested-With": "XmlHttpRequest",
-          },
-          success: function (data) {
-            console.log("TOGGLE " + spid);
-            console.log(data);
-            data.result
-              ? $(swbtn).addClass("on")
-              : $(swbtn).removeClass("on");
-          },
-          url: mcu + "/cmd/" + spid + "/toggle",
-        });
-      });
-    }
-
-    function accelAddUIEvents(p) {
-      var container = this;
-
-      $("button#startStopAccel.switch", this).click(function () {
-        var swbtn = this;
-        var cc = getControlsAccordionContainer(this);
-        var spid = cc.getAttribute("aria-labelledby");
-        var periodInput = $("input#period", cc);
-
-        if ($(swbtn).hasClass("on")) {
-          var btnAction = "/stop";
-        } else {
-          var ps = "";
-          if (isNumeric(periodInput.val()))
-            ps = "?period=" + periodInput.val();
-
-          var btnAction = "/start" + ps;
-        }
-
-        $.ajax({
-          type: "GET",
-          dataType: "json",
-          crossDomain: true,
-          headers: {
-            Accept: "application/json",
-            "Content-Type": "text/plain",
-            "X-Requested-With": "XmlHttpRequest",
-          },
-          success: function (data) {
-            console.log(data);
-            data.result.running
-              ? $(swbtn).addClass("on")
-              : $(swbtn).removeClass("on");
-          },
-          url: mcu + "/cmd/" + spid + btnAction,
-        });
-      });
-    }
-
-    function relfetAddUIEvents(p) {
-      var container = this;
-      $("select#pwm", this).on("update", function () {
-        if (this.options[this.options.selectedIndex].value == "true")
-          $(this).next("div#pwm.fetMode").first().show();
-        else $(this).next("div#pwm.fetMode").first().hide();
-      });
-
-      $("button#switch.switch", this).click(function () {
-        var swbtn = this;
-        var cc = getControlsAccordionContainer(this);
-        var spid = cc.getAttribute("aria-labelledby");
-        var cmd = cc.PERIPHERAL_STATE ? "/off" : "/on";
-
-        $.ajax({
-          type: "GET",
-          dataType: "json",
-          crossDomain: true,
-          headers: {
-            Accept: "application/json",
-            "Content-Type": "text/plain",
-            "X-Requested-With": "XmlHttpRequest",
-          },
-          success: function (data) {
-            console.log(JSON.stringify(data));
-            console.log(typeof data.result);
-            cc.PERIPHERAL_STATE = data.result;
-            data.result
-              ? $(swbtn).addClass("on")
-              : $(swbtn).removeClass("on");
-          },
-          // url: mcu + "/cmd/" + spid + "/relayValue?to="+(!cc.PERIPHERAL_STATE).toString()
-          // url: mcu + "/cmd/" + spid + cmd
-          url: mcu + "/cmd/" + spid + "/toggle",
-        });
-      });
-
-      $("button#setFetPWM", this).click(function () {
-        var cc = getControlsAccordionContainer(this);
-        var spid = cc.getAttribute("aria-labelledby");
-        var setduty = $("input#duty", cc).val();
-        var setfreq = $("input#freq", cc).val();
-        console.log(
-          "SET Dev " + spid + " to duty " + setduty + " freq " + setfreq
-        );
-        $.ajax({
-          type: "GET",
-          dataType: "json",
-          crossDomain: true,
-          headers: {
-            Accept: "application/json",
-            "Content-Type": "text/plain",
-            "X-Requested-With": "XmlHttpRequest",
-          },
-          success: function (data) {
-            console.log("pwmset " + spid);
-            console.log(data);
-          },
-          url:
-            mcu +
-            "/cmd/" +
-            spid +
-            "/pwmset?duty=" +
-            setduty +
-            "&freq=" +
-            setfreq,
-        });
-      });
-
-      $("select#pwm", this).on("change", function () {
-        $(this).trigger("update");
-        var cc = getControlsAccordionContainer(this);
-        var spid = cc.getAttribute("aria-labelledby");
-        var selv = this.options[this.options.selectedIndex].value;
-        $.ajax({
-          type: "GET",
-          dataType: "json",
-          crossDomain: true,
-          headers: {
-            Accept: "application/json",
-            "Content-Type": "text/plain",
-            "X-Requested-With": "XmlHttpRequest",
-          },
-          success: function (data) {
-            console.log(
-              "Dev " + spid + " PWM mode set to " + selv + "; Result:"
-            );
-            console.log(data);
-          },
-          url: mcu + "/cmd/" + spid + "/mode?pwm=" + selv,
-        });
-        console.log("ID: " + cc.getAttribute("aria-labelledby"));
-      });
-    }
-
-    function stimerAddUIEvents(p) {
-      var container = this;
-      var timerStatus = $("select#timerStatus", container);
-      var timerRepeat = $("select#repeat", container);
-      var timerPeriod = $("input#period", container);
-
-      $("button#setTimer", this).click(function () {
-        var cc = getControlsAccordionContainer(this);
-        var spid = cc.getAttribute("aria-labelledby");
-        if (
-          timerPeriod.get(0).value &&
-          timerStatus.val() &&
-          timerRepeat.val()
-        )
-          var link =
-            mcu +
-            "/cmd/" +
-            spid +
-            "/" +
-            timerStatus.val() +
-            "?period=" +
-            timerPeriod.get(0).value +
-            "&mode=" +
-            timerRepeat.val();
-
-        if (timerStatus.val().trim() == "stop")
-          link = mcu + "/cmd/" + spid + "/stop";
-
-        $.ajax({
-          type: "GET",
-          dataType: "json",
-          crossDomain: true,
-          headers: {
-            Accept: "application/json",
-            "Content-Type": "text/plain",
-            "X-Requested-With": "XmlHttpRequest",
-          },
-          success: function (data) {
-            console.log("success Timer call");
-          },
-          url: link,
-        });
-      });
-    }
-
-    function emiterAddUIEvents() { }
-
-    function receiverAddUIEvents() { }
-
-    function bts7960AddUIEvents() { }
-
-    function aht10AddUIEvents() { }
-
-    function uartcommhtAddUIEvents() { }
-
-    function servoAddUIEvents() { }
-
-    function digital_inAddUIEvents() { }
-
-    function analog_inAddUIEvents() { }
-
-    function iruartAddUIEvents() { }
-
-    function espnowdrvAddUIEvents() { }
-
-    function realbuttonAddUIEvents(p, s) {
-      // var state = s.state;
-      // $(this).append(JSON.stringify(state));
-    }
-
-    function mqttAddUIEvents(p, s) {
-      // var state = s.state;
-      // $(this).append(JSON.stringify(state));
-    }
-
-    function nokiadisplayAddUIEvents(p, s) {
-      // var state = s.state;
-      // $(this).append(JSON.stringify(state));
-    }
-
-    function rotencoderAddUIEvents(p, s) {
-      // var state = s.state;
-      // $(this).append(JSON.stringify(state));
-    }
-
-    function updatePeripheralUI(did, pid, data) {
-      var panel = $("div#" + did + "[peripherals]")
-        .find("div[role=tabpanel][aria-labelledby=" + pid + "]")
-        .get(0);
-
-      var pcbk =
-        peripheralsStateUpdateCallback[
-        devices[did].config.peripherals[pid].type
-        ];
-
-      panel.PERIPHERAL_STATE = data;
-      pcbk.apply(panel, [did, pid, data]);
-    }
-
-    function peripheralsOnActivate(event, ui) {
-      var activePeripheral = ui.newHeader.get(0).getAttribute("id");
-      var activeDevice = ui.newHeader.parents("div[role=tabpanel]");
-      var activeDeviceId = activeDevice.attr("id");
-      $("#peripheralState", ui.newPanel).empty();
-      mqttPub(
-        '{"to": "' +
-        activeDeviceId +
-        '", "data": "","from":"' +
-        Iam +
-        '","pid":"' +
-        activePeripheral +
-        '"}',
-        STATUS_UPDATE_TOPIC
-      );
-
-      updatePeripheralUI(
-        activeDeviceId,
-        activePeripheral,
-        peripheralsState[activeDeviceId][activePeripheral]
-      );
-
-      if (
-        peripheralsState.hasOwnProperty(activeDeviceId) &&
-        peripheralsState[activeDeviceId].hasOwnProperty(activePeripheral)
-      ) {
-        // TODO sterge la finalizarea implementarii peripheralsStateUpdateCallback
-        $("#console").text(
-          // $("#peripheralState", ui.newPanel).text(
-          JSON.stringify(peripheralsState[activeDeviceId][activePeripheral])
-        );
+      function onConnect() {
+        sectionsVisibility(true);
+        isConnected = true;
+        mqtt.subscribe(STATUS_UPDATE_TOPIC, { qos: 0 });
+        mqtt.subscribe(BROADCAST_ONLINE, { qos: 0 });
+        mqtt.subscribe(BROADCAST_OFFLINE, { qos: 0 });
+        mqtt.subscribe(DEVICE_CONFIG, { qos: 0 });
+        mqtt.subscribe(defaultTopic, { qos: 0 });
+        if (typeof MqttIF == "object" && "getPyDef" in MqttIF)
+          MqttIF.connectedToServer(mqtt._getHost());
+        console.log("Connected");
+        $("#connectionStatus")
+          .text("Connected")
+          .css("background-color", " lightgreen");
+        connectDialog.dialog("close");
+        mqttPub("{}", "PRESENCE");
       }
 
-      if (activeDevice.attr("peripherals") == "NONE")
-        ui.newHeader
-          .get(0)
-          .append("Data not available yet, waiting for the response");
-    }
-
-    pydefDataRetrieved = function (data) {
-      go = false;
-      docstring = "";
-      if (typeof data == "object") methods = data;
-      if (typeof data == "string") methods = JSON.parse(data);
-      console.info("methods");
-      console.log(methods);
-      if (
-        selectedPeripheralMethod in
-        methods["classes"][selectedPeripheralType]["methods"]
-      ) {
-        go = true;
-        paramsAsString =
-          methods["classes"][selectedPeripheralType]["methods"][
-          selectedPeripheralMethod
-          ]["params"];
-        if (
-          "docstring" in
-          methods["classes"][selectedPeripheralType]["methods"][
-          selectedPeripheralMethod
-          ]
-        )
-          docstring =
-            methods["classes"][selectedPeripheralType]["methods"][
-            selectedPeripheralMethod
-            ]["docstring"];
-      }
-      // NU FOLOSESC - este in externalCommands
-      // else if (selectedPeripheralMethod in methods["functions"]) {
-      //   go = true;
-      //   paramsAsString = methods["functions"][
-      //     selectedPeripheralMethod
-      //   ]["params"];
-      //   if ("docstring" in methods["functions"][selectedPeripheralMethod])
-      //     docstring = methods["functions"][selectedPeripheralMethod]["docstring"];
-      // }
-
-      if (go) {
-        paramsAsArray = paramsAsString.split(",");
-        paramsLessSelf = paramsAsArray.slice(1, paramsAsArray.length);
-
-        $("#console").html(
-          selectedPeripheralType +
-          "/" +
-          selectedPeripheralMethod +
-          "(" +
-          paramsLessSelf.toString() +
-          ")<br/>" +
-          docstring
-        );
-      } else $("#console").html("");
-    };
-
-    function displayPeripheral(targetContainer, peripheral) {
-      console.info("new peripheral");
-      console.log(peripheral);
-      var pdiv = document.createElement("div");
-      pdiv.setAttribute("align", "center");
-      pdiv.setAttribute("style", "v-align:middle;");
-      var psel = document.createElement("select");
-      psel.setAttribute("id", "targetActions");
-      var pin = document.createElement("input");
-      pdiv.appendChild(psel);
-      targetContainer.append(
-        '<h3 id="' +
-        peripheral.id +
-        '">' +
-        (peripheral.alias != null ? peripheral.alias : peripheral.type) +
-        "</h3>"
-      );
-      targetContainer.append(pdiv);
-      displayAutomateActions(pdiv, peripheral);
-      $(pdiv).append(
-        '<input type="text" id="params" placeholder="parameters"/>'
-      );
-
-      var br = document.createElement("br");
-      pdiv.appendChild(br);
-      var gobtn = document.createElement("button");
-      gobtn.textContent = "execute";
-      pdiv.appendChild(gobtn);
-      $(pdiv).append('<div id="peripheralState"/>');
-
-      $(gobtn).click(function () {
-        var devId = targetContainer.parents("div[role=tabpanel]").attr("id");
-        var peripheralId = peripheral.id;
-        var command = $(this).siblings("select").val();
-        var params = $(this).siblings("input#params").val();
-
-        var opts = {};
-        var sparams = params.trim().split(",");
-        sparams.forEach(function (p) {
-          var ps = p.split("=");
-          opts[ps[0]] = ps[1];
-        });
-        var txtdata = JSON.stringify({
-          pid: peripheralId,
-          cmd: command,
-          opt: opts,
-        });
-
-        var cmdmsg = {
-          from: Iam,
-          to: devId,
-          data: txtdata,
-        };
-        console.log(
-          "Executing: \t" +
-          devId +
-          "[" +
-          peripheralId +
-          "]/" +
-          command +
-          "(" +
-          params +
-          ")"
-        );
-        mqttPub(JSON.stringify(cmdmsg), PERIPHERAL_CMDS);
-      });
-      $("input#params", pdiv).click(function () {
-        var devId = targetContainer.parents("div[role=tabpanel]").attr("id");
-        var peripheralId = peripheral.id;
-        var command = $(this).siblings("select").val();
-        console.info("input#params onclick for pid " + peripheralId);
-        console.info(peripheral.type + "\t" + command);
-
-        selectedPeripheralType = peripheral.type;
-        selectedPeripheralMethod = command;
-
-        pydefDataRetrieved = function (data) {
-          go = false;
-          docstring = "";
-          if (typeof data == "object") methods = data;
-          if (typeof data == "string") methods = JSON.parse(data);
-          if (selectedPeripheralMethod in methods[selectedPeripheralType]) {
-            console.info("params");
-            console.log(
-              methods[selectedPeripheralType][selectedPeripheralMethod]
-            );
-
-            go = true;
-            paramsAsString =
-              methods[selectedPeripheralType][selectedPeripheralMethod];
-            // if ("docstring" in methods[selectedPeripheralType][selectedPeripheralMethod])
-            //   docstring =
-            //     methods["functions"][selectedPeripheralMethod]["docstring"];
-          }
-          // NU FOLOSESC - este in externalCommands
-          // else if (selectedPeripheralMethod in methods["functions"]) {
-          //   go = true;
-          //   paramsAsString = methods["functions"][
-          //     selectedPeripheralMethod
-          //   ]["params"];
-          //   if ("docstring" in methods["functions"][selectedPeripheralMethod])
-          //     docstring = methods["functions"][selectedPeripheralMethod]["docstring"];
-          // }
-
-          if (go) {
-            paramsAsArray = paramsAsString.split(",");
-            // paramsLessSelf = paramsAsArray.slice(1, paramsAsArray.length);
-            paramsLessSelf = paramsAsArray.slice(0, paramsAsArray.length);
-
-            $("#console").html(
-              selectedPeripheralType +
-              "/" +
-              selectedPeripheralMethod +
-              "(" +
-              paramsLessSelf.toString() +
-              ")<br/>"
-              // +docstring
-            );
-          } else $("#console").html("");
-        };
-
-        if (typeof MqttIF == "object" && "getPyDef" in MqttIF) {
-          methods = JSON.parse(
-            // Android.getPyDef("pydef/" + peripheral.type + ".py-def.json")
-            MqttIF.getPyDef("externalCommands.json")
-          );
-          pydefDataRetrieved(methods);
-          // TODO
-        } else {
-          methods = {};
-          $.ajax({
-            success: pydefDataRetrieved,
-            url: "externalCommands.json",
-          });
-        }
-      });
-    }
-
-    function devicecontroller_displayPeripherals(
-      devid,
-      peripherals,
-      defaultPeripheral = null
-    ) {
-      var activePeripheral = 0;
-      if (defaultPeripheral) activePeripheral = parseInt(defaultPeripheral);
-
-      var goAhead = false;
-      var accordionTarget = $("div[role=tabpanel]#" + devid).find(
-        "#peripherals"
-      );
-
-      if (accordionTarget.children("h3").length != peripherals.length) {
-        accordionTarget.empty();
-        goAhead = true;
-      }
-
-      if (goAhead)
-        if (peripherals.length) {
-          peripherals.forEach(function (el) {
-            if (defaultPeripheral)
-              if (parseInt(defaultPeripheral) == el.id)
-                activePeripheral = el.id;
-
-            if (el.hasOwnProperty("commands") && el["commands"].length > 0)
-              displayPeripheral(accordionTarget, el);
-          });
-          accordionTarget.accordion({
-            heightStyle: "content",
-            active: activePeripheral,
-            activate: peripheralsOnActivate,
-          });
-        } else
-          $("#console").html(
-            "Peripherals list not received, please try again soon"
-          );
-    }
-
-    function displayAutomateActions(targetContainer, el) {
-      var automateActionsSelect = $("#targetActions", targetContainer).get(0);
-      var optgroup = document.createElement("optgroup");
-      automateActionsSelect.appendChild(optgroup);
-
-      var cmds = el.commands;
-
-      cmds.forEach(function (cmd, i, ds) {
-        var opt = document.createElement("option");
-        var txtcnt = document.createTextNode(cmd);
-        opt.appendChild(txtcnt);
-        opt.value = cmd;
-        opt.setAttribute("pid", el.id);
-        opt.setAttribute("type", el.type);
-        optgroup.appendChild(opt);
-      });
-      optgroup.setAttribute(
-        "label",
-        el.alias ? el.alias : el.type + "[" + el.id.toString() + "]"
-      );
-    }
-
-    function formatUptime(utime) {
-      var ut = parseInt(utime);
-      var uts = ut % 60; //sec ramase
-      var utm = (ut - uts) / 60; //total min
-      var utmr = utm % 60; //min ramase
-      var utth = (utm - utmr) / 60; //total ore
-      var uthr = utth % 24; //ore ramase
-      var utz = (utth - uthr) / 24; //zile
-
-      uptimeMsg =
-        (utz ? utz + " d / " : "") +
-        (uthr ? uthr + " h / " : "") +
-        (utmr ? utmr + " m / " : "") +
-        (uts ? uts + " s" : "");
-
-      return uptimeMsg;
-    }
-
-    function msgArrived(msg) {
-      var jsonmsg = JSON.parse(msg.payloadString);
-
-      if (
-        msg.destinationName == BROADCAST_ONLINE ||
-        msg.destinationName == BROADCAST_OFFLINE
-      ) {
-        // {alias: "D32Rel",
-        // group: "group", name: "mqac67b22cca0c",
-        //  state: "ONLINE"}
-        if (jsonmsg["name"]) {
-          if (!devices.hasOwnProperty(jsonmsg["name"])) {
-            devices[jsonmsg["name"]] = jsonmsg;
-
-            if (jsonmsg.hasOwnProperty("group")) {
-              devGroup = jsonmsg.group;
-              var splittedGroups = devGroup.split(" ");
-              splittedGroups.forEach(function (record, index, recordset) {
-                if (groups.hasOwnProperty(jsonmsg[record]))
-                  groups[jsonmsg[record]].push(jsonmsg["name"]);
-                else groups[jsonmsg[record]] = [jsonmsg["name"]];
-                if (
-                  groupSelector.find("option[value='" + record + "']")
-                    .length == 0
-                )
-                  groupSelector.append(
-                    '<option value="' + record + '">' + record + "</option>"
-                  );
-              });
-            }
-
-            //cand primesc mesaj cu topic ONLINE (comun la toate si care se reinaieste)
-            createTab(jsonmsg["name"], jsonmsg["group"]);
-            // if (msg.destinationName == BROADCAST_ONLINE) {
-            mqttPub(
-              '{"to": "' +
-              jsonmsg["name"] +
-              '", "data": "","from":"' +
-              Iam +
-              '"}',
-              DEVICE_CONFIG
-            );
-            // }
-          }
-        }
-      }
-
-      //iau in considerare doar mesajele adresate clientului curent
-      if (jsonmsg["to"] == Iam || jsonmsg["to"] == "*") {
-        //pt mesajele de status update
-        if (msg.destinationName == STATUS_UPDATE_TOPIC) {
-          if ("data" in jsonmsg) {
-            var sutc = JSON.parse(jsonmsg["data"]);
-
-            if ("uptime" in sutc)
-              devices[jsonmsg["from"]]["uptime"] = sutc["uptime"];
-
-            if ("pid" in jsonmsg) {
-              if (!peripheralsState.hasOwnProperty(jsonmsg["from"]))
-                peripheralsState[jsonmsg["from"]] = {};
-
-              peripheralsState[jsonmsg["from"]][jsonmsg["pid"]] = sutc;
-            }
-          }
-          console.info(
-            "Status update received for device " + jsonmsg["from"]
-          );
-
-          // model mesaj
-          //  {"from": "mqa4cf126ca224", "data": "{\"wifi\": \"tp\", \"uptime\": 44.0, \"muid\": \"a4cf126ca224\"}", "to": "clientjs38"}
-        }
-      }
-
-      if (msg.destinationName == DEVICE_CONFIG) {
-        if (devices.hasOwnProperty(jsonmsg["from"]))
-          if ("data" in jsonmsg) {
-            if (typeof MqttIF == "object" && "getPyDef" in MqttIF) {
-              MqttIF.displayAndroidLog("from JS: received DEVICE CONFIG  for " + jsonmsg["from"]);
-              //MqttIF.displayAndroidLog("from JS: "+jsonmsg["from"]+"\t"+jsonmsg["data"]);
-              MqttIF.peripheralsRetrieved(JSON.stringify(
-                {
-                  device: jsonmsg["from"],
-                  config: jsonmsg["data"]
-                }
-              ));
-            };
-            console.log("received DEVICE CONFIG  for " + jsonmsg["from"]);
-            devConfData = JSON.parse(jsonmsg["data"]);
-            devices[jsonmsg["from"]]["config"] = devConfData;
-            $("div[role=tabpanel]#" + jsonmsg["from"]).attr(
-              "peripherals",
-              devices[jsonmsg["from"]]["config"]["peripherals"].length
-            );
-            devicecontroller_displayPeripherals(
-              jsonmsg["from"],
-              devices[jsonmsg["from"]]["config"]["peripherals"],
-              devices[jsonmsg["from"]]["config"]["defaultPeripheral"]
-            );
-          }
-      }
-
-      if (msg.destinationName == defaultTopic) {
-        $("#console").html(msg.payloadString);
-      }
-    }
-
-    function sectionsVisibility(show) {
-      var fieldsets = $("body").children("fieldset");
-
-      if (show) {
-        fieldsets.show();
-        tab.tabs("enable");
-      } else {
-        fieldsets.hide();
-        tab.tabs("disable");
-      }
-    }
-
-    function MQTTconnect(u, p) {
-      console.log("Connecting to " + host + " " + port);
-      mqtt = new Paho.MQTT.Client(host, port, Iam);
-
-      mqtt.onConnectionLost = function (msg) {
+      function onConnectionLost(msg) {
         console.log("Disconnected with message:");
         console.log(msg);
         $("#connectionStatus")
           .text("Disconnected")
           .css("background-color", " red");
         sectionsVisibility(false);
-      };
-      mqtt.onMessageArrived = msgArrived;
-      if (typeof MqttIF == "object" && "getPyDef" in MqttIF) MqttIF.saveServerAccessCredentials(u, host, port, p);
-      if (u) {
-        var options = {
-          userName: u,
-          password: p,
-          timeout: 3,
-          onSuccess: onConnect,
-          onFailure: function (err) {
-            $("#console").html(
-              "Could not connect, error code: " +
-              err.errorCode +
-              "<br/>" +
-              err.errorMessage
-            );
-            connectDialog.dialog("close");
-          },
-        };
-
-        mqtt.connect(options);
-      } else alert("You should provide a user name");
-    }
-
-    function mqttPub(msg, dst) {
-      console.log("Message sent to topic: " + dst);
-      console.log(msg);
-      message = new Paho.MQTT.Message(msg);
-      message.destinationName = dst;
-      mqtt.send(message);
-    }
-
-    function selectedDevice() {
-      return $("#devices").children("div[aria-hidden=false]").attr("id");
-    }
-
-    function deviceUpdate(forThisOne) {
-      var devConfData = devices[forThisOne]["config"];
-      if (devConfData != undefined) {
-        if (devConfData.hasOwnProperty("hotspot"))
-          $("#ssid", "#devinfo").text(devConfData["hotspot"]);
-
-        if (devConfData.hasOwnProperty("network"))
-          $("#ifconfig", "#devinfo").text(devConfData["network"][0]);
-
-        if (devConfData.hasOwnProperty("alias"))
-          $("#alias", "#devinfo").text(devConfData["alias"]);
-
-        if (devConfData.hasOwnProperty("deviceid"))
-          $("#fromdevice", "#devinfo").text(devConfData["deviceid"]);
-
-        if (devices[forThisOne].hasOwnProperty("uptime"))
-          $("#uptime", "#devinfo").text(
-            formatUptime(devices[forThisOne]["uptime"])
-          );
-
-        $("#clientid", "#devinfo").text(Iam);
-        $("#groups", "#devinfo").text(devices[forThisOne]["group"]);
       }
-    }
 
-    function tryConnect() {
-      connectDialog.dialog("open");
-    }
-  </script>
-</head>
+      function newTabSetInterfaceActions(tabid) {}
 
-<body>
-  <div id="devices">
-    <ul></ul>
-  </div>
+      function createTab(index, devGroup) {
+        var alias = index;
+        if (devices[index]["alias"] != undefined)
+          alias = devices[index]["alias"];
 
-  <fieldset>
-    <legend>Console</legend>
-    <div align="center" id="console"></div>
-  </fieldset>
-  <fieldset>
-    <legend>Device info</legend>
-    <div align="center" id="devinfo">
-      <table style="width: 100%">
-        <tr style="background-color: #e9e9e9">
-          <td>Alias</td>
-          <td id="alias" style="float: left"></td>
-        </tr>
-        <tr>
-          <td>Name</td>
-          <td id="fromdevice" style="float: left"></td>
-        </tr>
-        <tr style="background-color: #e9e9e9">
-          <td>browser ClientID</td>
-          <td id="clientid" style="float: left"></td>
-        </tr>
-        <tr>
-          <td>Uptime</td>
-          <td id="uptime" style="float: left"></td>
-        </tr>
-        <tr style="background-color: #e9e9e9">
-          <td>Network name</td>
-          <td id="ssid" style="float: left"></td>
-        </tr>
-        <tr>
-          <td>Network</td>
-          <td id="ifconfig" style="float: left"></td>
-        </tr>
-        <tr style="background-color: #e9e9e9">
-          <td>Groups</td>
-          <td id="groups" style="float: left"></td>
-        </tr>
-      </table>
+        $("ul", tab).append(
+          '<li class="' +
+            devGroup +
+            '"><a href="#' +
+            index +
+            '">' +
+            alias +
+            "</a></li>"
+        );
+
+        tab.append(
+          '<div id="' +
+            index +
+            '" align="center" peripherals="NONE"><div id="peripherals"></div></div>'
+        );
+        tab.tabs("refresh");
+
+        newTabSetInterfaceActions(index);
+      }
+
+      function fetAddUIEvents(p) {
+        var container = this;
+
+        $("button#setFetPWM", this).click(function () {
+          var cc = getControlsAccordionContainer(this);
+          var spid = cc.getAttribute("aria-labelledby");
+          var setduty = $("input#duty", cc).val();
+          var setfreq = $("input#freq", cc).val();
+          console.log(
+            "SET Dev " + spid + " to duty " + setduty + " freq " + setfreq
+          );
+          $.ajax({
+            type: "GET",
+            dataType: "json",
+            crossDomain: true,
+            headers: {
+              Accept: "application/json",
+              "Content-Type": "text/plain",
+              "X-Requested-With": "XmlHttpRequest",
+            },
+            success: function (data) {
+              console.log("pwmset " + spid);
+              console.log(data);
+            },
+            url:
+              mcu +
+              "/cmd/" +
+              spid +
+              "/pwmset?duty=" +
+              setduty +
+              "&freq=" +
+              setfreq,
+          });
+        });
+      }
+
+      function relAddUIEvents(p) {
+        var container = this;
+
+        $("button#switch.switch", this).click(function () {
+          var swbtn = this;
+          var cc = getControlsAccordionContainer(this);
+          var spid = cc.getAttribute("aria-labelledby");
+          $.ajax({
+            type: "GET",
+            dataType: "json",
+            crossDomain: true,
+            headers: {
+              Accept: "application/json",
+              "Content-Type": "text/plain",
+              "X-Requested-With": "XmlHttpRequest",
+            },
+            success: function (data) {
+              console.log("TOGGLE " + spid);
+              console.log(data);
+              data.result
+                ? $(swbtn).addClass("on")
+                : $(swbtn).removeClass("on");
+            },
+            url: mcu + "/cmd/" + spid + "/toggle",
+          });
+        });
+      }
+
+      function accelAddUIEvents(p) {
+        var container = this;
+
+        $("button#startStopAccel.switch", this).click(function () {
+          var swbtn = this;
+          var cc = getControlsAccordionContainer(this);
+          var spid = cc.getAttribute("aria-labelledby");
+          var periodInput = $("input#period", cc);
+
+          if ($(swbtn).hasClass("on")) {
+            var btnAction = "/stop";
+          } else {
+            var ps = "";
+            if (isNumeric(periodInput.val()))
+              ps = "?period=" + periodInput.val();
+
+            var btnAction = "/start" + ps;
+          }
+
+          $.ajax({
+            type: "GET",
+            dataType: "json",
+            crossDomain: true,
+            headers: {
+              Accept: "application/json",
+              "Content-Type": "text/plain",
+              "X-Requested-With": "XmlHttpRequest",
+            },
+            success: function (data) {
+              console.log(data);
+              data.result.running
+                ? $(swbtn).addClass("on")
+                : $(swbtn).removeClass("on");
+            },
+            url: mcu + "/cmd/" + spid + btnAction,
+          });
+        });
+      }
+
+      function relfetAddUIEvents(p) {
+        var container = this;
+        $("select#pwm", this).on("update", function () {
+          if (this.options[this.options.selectedIndex].value == "true")
+            $(this).next("div#pwm.fetMode").first().show();
+          else $(this).next("div#pwm.fetMode").first().hide();
+        });
+
+        $("button#switch.switch", this).click(function () {
+          var swbtn = this;
+          var cc = getControlsAccordionContainer(this);
+          var spid = cc.getAttribute("aria-labelledby");
+          var cmd = cc.PERIPHERAL_STATE ? "/off" : "/on";
+
+          $.ajax({
+            type: "GET",
+            dataType: "json",
+            crossDomain: true,
+            headers: {
+              Accept: "application/json",
+              "Content-Type": "text/plain",
+              "X-Requested-With": "XmlHttpRequest",
+            },
+            success: function (data) {
+              console.log(JSON.stringify(data));
+              console.log(typeof data.result);
+              cc.PERIPHERAL_STATE = data.result;
+              data.result
+                ? $(swbtn).addClass("on")
+                : $(swbtn).removeClass("on");
+            },
+            // url: mcu + "/cmd/" + spid + "/relayValue?to="+(!cc.PERIPHERAL_STATE).toString()
+            // url: mcu + "/cmd/" + spid + cmd
+            url: mcu + "/cmd/" + spid + "/toggle",
+          });
+        });
+
+        $("button#setFetPWM", this).click(function () {
+          var cc = getControlsAccordionContainer(this);
+          var spid = cc.getAttribute("aria-labelledby");
+          var setduty = $("input#duty", cc).val();
+          var setfreq = $("input#freq", cc).val();
+          console.log(
+            "SET Dev " + spid + " to duty " + setduty + " freq " + setfreq
+          );
+          $.ajax({
+            type: "GET",
+            dataType: "json",
+            crossDomain: true,
+            headers: {
+              Accept: "application/json",
+              "Content-Type": "text/plain",
+              "X-Requested-With": "XmlHttpRequest",
+            },
+            success: function (data) {
+              console.log("pwmset " + spid);
+              console.log(data);
+            },
+            url:
+              mcu +
+              "/cmd/" +
+              spid +
+              "/pwmset?duty=" +
+              setduty +
+              "&freq=" +
+              setfreq,
+          });
+        });
+
+        $("select#pwm", this).on("change", function () {
+          $(this).trigger("update");
+          var cc = getControlsAccordionContainer(this);
+          var spid = cc.getAttribute("aria-labelledby");
+          var selv = this.options[this.options.selectedIndex].value;
+          $.ajax({
+            type: "GET",
+            dataType: "json",
+            crossDomain: true,
+            headers: {
+              Accept: "application/json",
+              "Content-Type": "text/plain",
+              "X-Requested-With": "XmlHttpRequest",
+            },
+            success: function (data) {
+              console.log(
+                "Dev " + spid + " PWM mode set to " + selv + "; Result:"
+              );
+              console.log(data);
+            },
+            url: mcu + "/cmd/" + spid + "/mode?pwm=" + selv,
+          });
+          console.log("ID: " + cc.getAttribute("aria-labelledby"));
+        });
+      }
+
+      function stimerAddUIEvents(p) {
+        var container = this;
+        var timerStatus = $("select#timerStatus", container);
+        var timerRepeat = $("select#repeat", container);
+        var timerPeriod = $("input#period", container);
+
+        $("button#setTimer", this).click(function () {
+          var cc = getControlsAccordionContainer(this);
+          var spid = cc.getAttribute("aria-labelledby");
+          if (
+            timerPeriod.get(0).value &&
+            timerStatus.val() &&
+            timerRepeat.val()
+          )
+            var link =
+              mcu +
+              "/cmd/" +
+              spid +
+              "/" +
+              timerStatus.val() +
+              "?period=" +
+              timerPeriod.get(0).value +
+              "&mode=" +
+              timerRepeat.val();
+
+          if (timerStatus.val().trim() == "stop")
+            link = mcu + "/cmd/" + spid + "/stop";
+
+          $.ajax({
+            type: "GET",
+            dataType: "json",
+            crossDomain: true,
+            headers: {
+              Accept: "application/json",
+              "Content-Type": "text/plain",
+              "X-Requested-With": "XmlHttpRequest",
+            },
+            success: function (data) {
+              console.log("success Timer call");
+            },
+            url: link,
+          });
+        });
+      }
+
+      function emiterAddUIEvents() {}
+
+      function receiverAddUIEvents() {}
+
+      function bts7960AddUIEvents() {}
+
+      function aht10AddUIEvents() {}
+
+      function uartcommhtAddUIEvents() {}
+
+      function servoAddUIEvents() {}
+
+      function digital_inAddUIEvents() {}
+
+      function analog_inAddUIEvents() {}
+
+      function iruartAddUIEvents() {}
+
+      function espnowdrvAddUIEvents() {}
+
+      function realbuttonAddUIEvents(p, s) {
+        // var state = s.state;
+        // $(this).append(JSON.stringify(state));
+      }
+
+      function mqttAddUIEvents(p, s) {
+        // var state = s.state;
+        // $(this).append(JSON.stringify(state));
+      }
+
+      function nokiadisplayAddUIEvents(p, s) {
+        // var state = s.state;
+        // $(this).append(JSON.stringify(state));
+      }
+
+      function rotencoderAddUIEvents(p, s) {
+        // var state = s.state;
+        // $(this).append(JSON.stringify(state));
+      }
+
+      function updatePeripheralUI(did, pid, data) {
+        var panel = $("div#" + did + "[peripherals]")
+          .find("div[role=tabpanel][aria-labelledby=" + pid + "]")
+          .get(0);
+
+        var pcbk =
+          peripheralsStateUpdateCallback[
+            devices[did].config.peripherals[pid].type
+          ];
+
+        panel.PERIPHERAL_STATE = data;
+        pcbk.apply(panel, [did, pid, data]);
+      }
+
+      function peripheralsOnActivate(event, ui) {
+        var activePeripheral = ui.newHeader.get(0).getAttribute("id");
+        var activeDevice = ui.newHeader.parents("div[role=tabpanel]");
+        var activeDeviceId = activeDevice.attr("id");
+        $("#peripheralState", ui.newPanel).empty();
+        mqttPub(
+          '{"to": "' +
+            activeDeviceId +
+            '", "data": "","from":"' +
+            Iam +
+            '","pid":"' +
+            activePeripheral +
+            '"}',
+          STATUS_UPDATE_TOPIC
+        );
+
+        updatePeripheralUI(
+          activeDeviceId,
+          activePeripheral,
+          peripheralsState[activeDeviceId][activePeripheral]
+        );
+
+        if (
+          peripheralsState.hasOwnProperty(activeDeviceId) &&
+          peripheralsState[activeDeviceId].hasOwnProperty(activePeripheral)
+        ) {
+          // TODO sterge la finalizarea implementarii peripheralsStateUpdateCallback
+          $("#console").text(
+            // $("#peripheralState", ui.newPanel).text(
+            JSON.stringify(peripheralsState[activeDeviceId][activePeripheral])
+          );
+        }
+
+        if (activeDevice.attr("peripherals") == "NONE")
+          ui.newHeader
+            .get(0)
+            .append("Data not available yet, waiting for the response");
+      }
+
+      pydefDataRetrieved = function (data) {
+        go = false;
+        docstring = "";
+        if (typeof data == "object") methods = data;
+        if (typeof data == "string") methods = JSON.parse(data);
+        console.info("methods");
+        console.log(methods);
+        if (
+          selectedPeripheralMethod in
+          methods["classes"][selectedPeripheralType]["methods"]
+        ) {
+          go = true;
+          paramsAsString =
+            methods["classes"][selectedPeripheralType]["methods"][
+              selectedPeripheralMethod
+            ]["params"];
+          if (
+            "docstring" in
+            methods["classes"][selectedPeripheralType]["methods"][
+              selectedPeripheralMethod
+            ]
+          )
+            docstring =
+              methods["classes"][selectedPeripheralType]["methods"][
+                selectedPeripheralMethod
+              ]["docstring"];
+        }
+        // NU FOLOSESC - este in externalCommands
+        // else if (selectedPeripheralMethod in methods["functions"]) {
+        //   go = true;
+        //   paramsAsString = methods["functions"][
+        //     selectedPeripheralMethod
+        //   ]["params"];
+        //   if ("docstring" in methods["functions"][selectedPeripheralMethod])
+        //     docstring = methods["functions"][selectedPeripheralMethod]["docstring"];
+        // }
+
+        if (go) {
+          paramsAsArray = paramsAsString.split(",");
+          paramsLessSelf = paramsAsArray.slice(1, paramsAsArray.length);
+
+          $("#console").html(
+            selectedPeripheralType +
+              "/" +
+              selectedPeripheralMethod +
+              "(" +
+              paramsLessSelf.toString() +
+              ")<br/>" +
+              docstring
+          );
+        } else $("#console").html("");
+      };
+
+      function displayPeripheral(targetContainer, peripheral) {
+        console.info("new peripheral");
+        console.log(peripheral);
+        var pdiv = document.createElement("div");
+        pdiv.setAttribute("align", "center");
+        pdiv.setAttribute("style", "v-align:middle;");
+        var psel = document.createElement("select");
+        psel.setAttribute("id", "targetActions");
+        var pin = document.createElement("input");
+        pdiv.appendChild(psel);
+        targetContainer.append(
+          '<h3 id="' +
+            peripheral.id +
+            '">' +
+            (peripheral.alias != null ? peripheral.alias : peripheral.type) +
+            "</h3>"
+        );
+        targetContainer.append(pdiv);
+        displayAutomateActions(pdiv, peripheral);
+        $(pdiv).append(
+          '<input type="text" id="params" placeholder="parameters"/>'
+        );
+
+        var br = document.createElement("br");
+        pdiv.appendChild(br);
+        var gobtn = document.createElement("button");
+        gobtn.textContent = "execute";
+        pdiv.appendChild(gobtn);
+        $(pdiv).append('<div id="peripheralState"/>');
+
+        $(gobtn).click(function () {
+          var devId = targetContainer.parents("div[role=tabpanel]").attr("id");
+          var peripheralId = peripheral.id;
+          var command = $(this).siblings("select").val();
+          var params = $(this).siblings("input#params").val();
+
+          var opts = {};
+          var sparams = params.trim().split(",");
+          sparams.forEach(function (p) {
+            var ps = p.split("=");
+            opts[ps[0]] = ps[1];
+          });
+          var txtdata = JSON.stringify({
+            pid: peripheralId,
+            cmd: command,
+            opt: opts,
+          });
+
+          var cmdmsg = {
+            from: Iam,
+            to: devId,
+            data: txtdata,
+          };
+          console.log(
+            "Executing: \t" +
+              devId +
+              "[" +
+              peripheralId +
+              "]/" +
+              command +
+              "(" +
+              params +
+              ")"
+          );
+          mqttPub(JSON.stringify(cmdmsg), PERIPHERAL_CMDS);
+        });
+        $("input#params", pdiv).click(function () {
+          var devId = targetContainer.parents("div[role=tabpanel]").attr("id");
+          var peripheralId = peripheral.id;
+          var command = $(this).siblings("select").val();
+          console.info("input#params onclick for pid " + peripheralId);
+          console.info(peripheral.type + "\t" + command);
+
+          selectedPeripheralType = peripheral.type;
+          selectedPeripheralMethod = command;
+
+          pydefDataRetrieved = function (data) {
+            go = false;
+            docstring = "";
+            if (typeof data == "object") methods = data;
+            if (typeof data == "string") methods = JSON.parse(data);
+            if (selectedPeripheralMethod in methods[selectedPeripheralType]) {
+              console.info("params");
+              console.log(
+                methods[selectedPeripheralType][selectedPeripheralMethod]
+              );
+
+              go = true;
+              paramsAsString =
+                methods[selectedPeripheralType][selectedPeripheralMethod];
+              // if ("docstring" in methods[selectedPeripheralType][selectedPeripheralMethod])
+              //   docstring =
+              //     methods["functions"][selectedPeripheralMethod]["docstring"];
+            }
+            // NU FOLOSESC - este in externalCommands
+            // else if (selectedPeripheralMethod in methods["functions"]) {
+            //   go = true;
+            //   paramsAsString = methods["functions"][
+            //     selectedPeripheralMethod
+            //   ]["params"];
+            //   if ("docstring" in methods["functions"][selectedPeripheralMethod])
+            //     docstring = methods["functions"][selectedPeripheralMethod]["docstring"];
+            // }
+
+            if (go) {
+              paramsAsArray = paramsAsString.split(",");
+              // paramsLessSelf = paramsAsArray.slice(1, paramsAsArray.length);
+              paramsLessSelf = paramsAsArray.slice(0, paramsAsArray.length);
+
+              $("#console").html(
+                selectedPeripheralType +
+                  "/" +
+                  selectedPeripheralMethod +
+                  "(" +
+                  paramsLessSelf.toString() +
+                  ")<br/>"
+                // +docstring
+              );
+            } else $("#console").html("");
+          };
+
+          if (typeof MqttIF == "object" && "getPyDef" in MqttIF) {
+            methods = JSON.parse(
+              // Android.getPyDef("pydef/" + peripheral.type + ".py-def.json")
+              MqttIF.getPyDef("externalCommands.json")
+            );
+            pydefDataRetrieved(methods);
+            // TODO
+          } else {
+            methods = {};
+            $.ajax({
+              success: pydefDataRetrieved,
+              url: "externalCommands.json",
+            });
+          }
+        });
+      }
+
+      function devicecontroller_displayPeripherals(
+        devid,
+        peripherals,
+        defaultPeripheral = null
+      ) {
+        var activePeripheral = 0;
+        if (defaultPeripheral) activePeripheral = parseInt(defaultPeripheral);
+
+        var goAhead = false;
+        var accordionTarget = $("div[role=tabpanel]#" + devid).find(
+          "#peripherals"
+        );
+
+        if (accordionTarget.children("h3").length != peripherals.length) {
+          accordionTarget.empty();
+          goAhead = true;
+        }
+
+        if (goAhead)
+          if (peripherals.length) {
+            peripherals.forEach(function (el) {
+              if (defaultPeripheral)
+                if (parseInt(defaultPeripheral) == el.id)
+                  activePeripheral = el.id;
+
+              if (el.hasOwnProperty("commands") && el["commands"].length > 0)
+                displayPeripheral(accordionTarget, el);
+            });
+            accordionTarget.accordion({
+              heightStyle: "content",
+              active: activePeripheral,
+              activate: peripheralsOnActivate,
+            });
+          } else
+            $("#console").html(
+              "Peripherals list not received, please try again soon"
+            );
+      }
+
+      function displayAutomateActions(targetContainer, el) {
+        var automateActionsSelect = $("#targetActions", targetContainer).get(0);
+        var optgroup = document.createElement("optgroup");
+        automateActionsSelect.appendChild(optgroup);
+
+        var cmds = el.commands;
+
+        cmds.forEach(function (cmd, i, ds) {
+          var opt = document.createElement("option");
+          var txtcnt = document.createTextNode(cmd);
+          opt.appendChild(txtcnt);
+          opt.value = cmd;
+          opt.setAttribute("pid", el.id);
+          opt.setAttribute("type", el.type);
+          optgroup.appendChild(opt);
+        });
+        optgroup.setAttribute(
+          "label",
+          el.alias ? el.alias : el.type + "[" + el.id.toString() + "]"
+        );
+      }
+
+      function formatUptime(utime) {
+        var ut = parseInt(utime);
+        var uts = ut % 60; //sec ramase
+        var utm = (ut - uts) / 60; //total min
+        var utmr = utm % 60; //min ramase
+        var utth = (utm - utmr) / 60; //total ore
+        var uthr = utth % 24; //ore ramase
+        var utz = (utth - uthr) / 24; //zile
+
+        uptimeMsg =
+          (utz ? utz + " d / " : "") +
+          (uthr ? uthr + " h / " : "") +
+          (utmr ? utmr + " m / " : "") +
+          (uts ? uts + " s" : "");
+
+        return uptimeMsg;
+      }
+
+      function msgArrived(msg) {
+        var jsonmsg = JSON.parse(msg.payloadString);
+
+        if (
+          msg.destinationName == BROADCAST_ONLINE ||
+          msg.destinationName == BROADCAST_OFFLINE
+        ) {
+          // {alias: "D32Rel",
+          // group: "group", name: "mqac67b22cca0c",
+          //  state: "ONLINE"}
+          if (jsonmsg["name"]) {
+            if (!devices.hasOwnProperty(jsonmsg["name"])) {
+              devices[jsonmsg["name"]] = jsonmsg;
+
+              if (jsonmsg.hasOwnProperty("group")) {
+                devGroup = jsonmsg.group;
+                var splittedGroups = devGroup.split(" ");
+                splittedGroups.forEach(function (record, index, recordset) {
+                  if (groups.hasOwnProperty(jsonmsg[record]))
+                    groups[jsonmsg[record]].push(jsonmsg["name"]);
+                  else groups[jsonmsg[record]] = [jsonmsg["name"]];
+                  if (
+                    groupSelector.find("option[value='" + record + "']")
+                      .length == 0
+                  )
+                    groupSelector.append(
+                      '<option value="' + record + '">' + record + "</option>"
+                    );
+                });
+              }
+
+              //cand primesc mesaj cu topic ONLINE (comun la toate si care se reinaieste)
+              createTab(jsonmsg["name"], jsonmsg["group"]);
+              // if (msg.destinationName == BROADCAST_ONLINE) {
+              mqttPub(
+                '{"to": "' +
+                  jsonmsg["name"] +
+                  '", "data": "","from":"' +
+                  Iam +
+                  '"}',
+                DEVICE_CONFIG
+              );
+              // }
+            }
+          }
+        }
+
+        //iau in considerare doar mesajele adresate clientului curent
+        if (jsonmsg["to"] == Iam || jsonmsg["to"] == "*") {
+          //pt mesajele de status update
+          if (msg.destinationName == STATUS_UPDATE_TOPIC) {
+            if ("data" in jsonmsg) {
+              var sutc = JSON.parse(jsonmsg["data"]);
+
+              if ("uptime" in sutc)
+                devices[jsonmsg["from"]]["uptime"] = sutc["uptime"];
+
+              if ("pid" in jsonmsg) {
+                if (!peripheralsState.hasOwnProperty(jsonmsg["from"]))
+                  peripheralsState[jsonmsg["from"]] = {};
+
+                peripheralsState[jsonmsg["from"]][jsonmsg["pid"]] = sutc;
+              }
+            }
+            console.info(
+              "Status update received for device " + jsonmsg["from"]
+            );
+
+            // model mesaj
+            //  {"from": "mqa4cf126ca224", "data": "{\"wifi\": \"tp\", \"uptime\": 44.0, \"muid\": \"a4cf126ca224\"}", "to": "clientjs38"}
+          }
+        }
+
+        if (msg.destinationName == DEVICE_CONFIG) {
+          if (devices.hasOwnProperty(jsonmsg["from"]))
+            if ("data" in jsonmsg) {
+              if (typeof MqttIF == "object" && "getPyDef" in MqttIF) {
+                MqttIF.displayAndroidLog(
+                  "from JS: received DEVICE CONFIG  for " + jsonmsg["from"]
+                );
+                //MqttIF.displayAndroidLog("from JS: "+jsonmsg["from"]+"\t"+jsonmsg["data"]);
+                MqttIF.peripheralsRetrieved(
+                  JSON.stringify({
+                    device: jsonmsg["from"],
+                    config: jsonmsg["data"],
+                  })
+                );
+              }
+              console.log("received DEVICE CONFIG  for " + jsonmsg["from"]);
+              devConfData = JSON.parse(jsonmsg["data"]);
+              devices[jsonmsg["from"]]["config"] = devConfData;
+              $("div[role=tabpanel]#" + jsonmsg["from"]).attr(
+                "peripherals",
+                devices[jsonmsg["from"]]["config"]["peripherals"].length
+              );
+              devicecontroller_displayPeripherals(
+                jsonmsg["from"],
+                devices[jsonmsg["from"]]["config"]["peripherals"],
+                devices[jsonmsg["from"]]["config"]["defaultPeripheral"]
+              );
+            }
+        }
+
+        if (msg.destinationName == defaultTopic) {
+          $("#console").html(msg.payloadString);
+        }
+      }
+
+      function sectionsVisibility(show) {
+        var fieldsets = $("body").children("fieldset");
+
+        if (show) {
+          fieldsets.show();
+          tab.tabs("enable");
+        } else {
+          fieldsets.hide();
+          tab.tabs("disable");
+        }
+      }
+
+      function MQTTconnect(u, p) {
+        console.log("Connecting to " + host + " " + port);
+        mqtt = new Paho.MQTT.Client(host, port, Iam);
+
+        mqtt.onConnectionLost = function (msg) {
+          if (typeof MqttIF == "object" && "getPyDef" in MqttIF)
+            MqttIF.stopUpdateService();
+          console.log("Disconnected with message:");
+          console.log(msg);
+          $("#connectionStatus")
+            .text("Disconnected")
+            .css("background-color", " red");
+          sectionsVisibility(false);
+        };
+        mqtt.onMessageArrived = msgArrived;
+        if (typeof MqttIF == "object" && "getPyDef" in MqttIF)
+          MqttIF.saveServerAccessCredentials(u, host, port, p);
+        if (u) {
+          var options = {
+            userName: u,
+            password: p,
+            timeout: 3,
+            onSuccess: onConnect,
+            onFailure: function (err) {
+              $("#console").html(
+                "Could not connect, error code: " +
+                  err.errorCode +
+                  "<br/>" +
+                  err.errorMessage
+              );
+              connectDialog.dialog("close");
+            },
+          };
+
+          mqtt.connect(options);
+        } else alert("You should provide a user name");
+      }
+
+      function mqttPub(msg, dst) {
+        console.log("Message sent to topic: " + dst);
+        console.log(msg);
+        message = new Paho.MQTT.Message(msg);
+        message.destinationName = dst;
+        mqtt.send(message);
+      }
+
+      function selectedDevice() {
+        return $("#devices").children("div[aria-hidden=false]").attr("id");
+      }
+
+      function deviceUpdate(forThisOne) {
+        var devConfData = devices[forThisOne]["config"];
+        if (devConfData != undefined) {
+          if (devConfData.hasOwnProperty("hotspot"))
+            $("#ssid", "#devinfo").text(devConfData["hotspot"]);
+
+          if (devConfData.hasOwnProperty("network"))
+            $("#ifconfig", "#devinfo").text(devConfData["network"][0]);
+
+          if (devConfData.hasOwnProperty("alias"))
+            $("#alias", "#devinfo").text(devConfData["alias"]);
+
+          if (devConfData.hasOwnProperty("deviceid"))
+            $("#fromdevice", "#devinfo").text(devConfData["deviceid"]);
+
+          if (devices[forThisOne].hasOwnProperty("uptime"))
+            $("#uptime", "#devinfo").text(
+              formatUptime(devices[forThisOne]["uptime"])
+            );
+
+          $("#clientid", "#devinfo").text(Iam);
+          $("#groups", "#devinfo").text(devices[forThisOne]["group"]);
+        }
+      }
+
+      function tryConnect() {
+        connectDialog.dialog("open");
+      }
+    </script>
+  </head>
+
+  <body>
+    <div id="devices">
+      <ul></ul>
     </div>
-  </fieldset>
-  <fieldset>
-    <legend>Device control</legend>
-    <div align="center" id="devcontrol">
-      <table style="width: 100%">
+
+    <fieldset>
+      <legend>Console</legend>
+      <div align="center" id="console"></div>
+    </fieldset>
+    <fieldset>
+      <legend>Device info</legend>
+      <div align="center" id="devinfo">
+        <table style="width: 100%">
+          <tr style="background-color: #e9e9e9">
+            <td>Alias</td>
+            <td id="alias" style="float: left"></td>
+          </tr>
+          <tr>
+            <td>Name</td>
+            <td id="fromdevice" style="float: left"></td>
+          </tr>
+          <tr style="background-color: #e9e9e9">
+            <td>browser ClientID</td>
+            <td id="clientid" style="float: left"></td>
+          </tr>
+          <tr>
+            <td>Uptime</td>
+            <td id="uptime" style="float: left"></td>
+          </tr>
+          <tr style="background-color: #e9e9e9">
+            <td>Network name</td>
+            <td id="ssid" style="float: left"></td>
+          </tr>
+          <tr>
+            <td>Network</td>
+            <td id="ifconfig" style="float: left"></td>
+          </tr>
+          <tr style="background-color: #e9e9e9">
+            <td>Groups</td>
+            <td id="groups" style="float: left"></td>
+          </tr>
+        </table>
+      </div>
+    </fieldset>
+    <fieldset>
+      <legend>Device control</legend>
+      <div align="center" id="devcontrol">
+        <table style="width: 100%">
+          <tr>
+            <td>
+              <label for="rebootIn">Reboot</label>
+              <select id="rebootIn">
+                <option value="mqtt/sta">mqtt/sta</option>
+                <option value="config/sta">config/sta</option>
+                <option value="config/ap">config/ap</option>
+                <option value="espnow/sta">espnow/sta</option>
+                <option value="single/off">single/off</option>
+                <option value="blerepl/off">blerepl/off</option>
+              </select>
+              <button id="doReboot">go</button>
+            </td>
+          </tr>
+        </table>
+      </div>
+    </fieldset>
+    <div align="center" id="connectDialog" style="display: none">
+      <table>
         <tr>
           <td>
-            <label for="rebootIn">Reboot</label>
-            <select id="rebootIn">
-              <option value="mqtt/sta">mqtt/sta</option>
-              <option value="config/sta">config/sta</option>
-              <option value="config/ap">config/ap</option>
-              <option value="espnow/sta">espnow/sta</option>
-              <option value="single/off">single/off</option>
-              <option value="blerepl/off">blerepl/off</option>
-            </select>
-            <button id="doReboot">go</button>
+            <input
+              type="text"
+              placeholder="Server"
+              style="text-align: center"
+              id="host"
+            />
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <input
+              type="number"
+              placeholder="Port"
+              style="text-align: center"
+              id="port"
+            />
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <input
+              type="text"
+              placeholder="User"
+              style="text-align: center"
+              id="username"
+            />
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <input
+              type="password"
+              placeholder="Password"
+              style="text-align: center"
+              id="usp"
+            />
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2" align="center">
+            <label for="autologin">Save?</label>
+            <input type="checkbox" id="autologin" />
           </td>
         </tr>
       </table>
     </div>
-  </fieldset>
-  <div align="center" id="connectDialog" style="display: none">
-    <table>
-      <tr>
-        <td>
-          <input type="text" placeholder="Server" style="text-align: center" id="host" />
-        </td>
-      </tr>
-      <tr>
-        <td>
-          <input type="number" placeholder="Port" style="text-align: center" id="port" />
-        </td>
-      </tr>
-      <tr>
-        <td>
-          <input type="text" placeholder="User" style="text-align: center" id="username" />
-        </td>
-      </tr>
-      <tr>
-        <td>
-          <input type="password" placeholder="Password" style="text-align: center" id="usp" />
-        </td>
-      </tr>
-      <tr>
-        <td colspan="2" align="center">
-          <label for="autologin">Save?</label>
-          <input type="checkbox" id="autologin" />
-        </td>
-      </tr>
-    </table>
-  </div>
-  <br />
-  <div style="align: center">
-    <table style="width: 100%">
-      <tr style="background-color: #e9e9e9">
-        <td align="center" style="width: 33%">Device Groups</td>
-        <td align="center" style="width: 33%">Connect / Disconnect</td>
-        <td align="center">Scan for devices</td>
-      </tr>
-      <tr>
-        <td align="center">
-          <select id="groupSelector">
-            <option value="">all</option>
-            <option value="group">default</option>
-          </select>
-        </td>
-        <td align="center">
-          <button id="connectionStatus" align="center" style="background-color: red">
-            Disconnected
-          </button>
-        </td>
-        <td align="center">
-          <button id="scanForDevices">Scan</button>
-        </td>
-      </tr>
-    </table>
-  </div>
-  <div id="console"></div>
+    <br />
+    <div style="align: center">
+      <table style="width: 100%">
+        <tr style="background-color: #e9e9e9">
+          <td align="center" style="width: 33%">Device Groups</td>
+          <td align="center" style="width: 33%">Connect / Disconnect</td>
+          <td align="center">Scan for devices</td>
+        </tr>
+        <tr>
+          <td align="center">
+            <select id="groupSelector">
+              <option value="">all</option>
+              <option value="group">default</option>
+            </select>
+          </td>
+          <td align="center">
+            <button
+              id="connectionStatus"
+              align="center"
+              style="background-color: red"
+            >
+              Disconnected
+            </button>
+          </td>
+          <td align="center">
+            <button id="scanForDevices">Scan</button>
+          </td>
+        </tr>
+      </table>
+    </div>
+    <div id="console"></div>
 
-  <script>
-    tab = $("#devices").tabs({
-      activate: function (event, ui) {
-        var activatedPanel = ui.newPanel.get(0).getAttribute("id");
-        mqttPub(
-          '{"to": "' + activatedPanel + '", "data": "","from":"' + Iam + '"}',
-          STATUS_UPDATE_TOPIC
-        );
-        deviceUpdate(activatedPanel);
-      },
-    });
-
-    groupSelector = $("#groupSelector");
-
-    groupSelector.change(function () {
-      var selectedGroup = this.options[this.selectedIndex].value;
-      var lis = $("ul", tab).children("li");
-      if (selectedGroup != "") {
-        lis.each(function () {
-          if ($(this).hasClass(selectedGroup)) $(this).show();
-          else $(this).hide();
-        });
-      } else lis.show();
-    });
-
-    connectDialog = $("#connectDialog").dialog({
-      autoOpen: false,
-      modal: true,
-      title: "Log in",
-      width: $(document).width() * 0.9,
-      height: $(document).height() * 0.9,
-      buttons: {
-        Connect: function () {
-          host = $("#host", connectDialog).val();
-          port = parseInt($("#port", connectDialog).val());
-          storage.setItem("MicroHomeMqttHost", host);
-          storage.setItem("MicroHomeMqttPort", port);
-          storage.setItem(
-            "MicroHomeMqttUserName",
-            $("#username", connectDialog).val()
+    <script>
+      tab = $("#devices").tabs({
+        activate: function (event, ui) {
+          var activatedPanel = ui.newPanel.get(0).getAttribute("id");
+          mqttPub(
+            '{"to": "' + activatedPanel + '", "data": "","from":"' + Iam + '"}',
+            STATUS_UPDATE_TOPIC
           );
-          if ($("#autologin", connectDialog).get(0).checked) {
+          deviceUpdate(activatedPanel);
+        },
+      });
+
+      groupSelector = $("#groupSelector");
+
+      groupSelector.change(function () {
+        var selectedGroup = this.options[this.selectedIndex].value;
+        var lis = $("ul", tab).children("li");
+        if (selectedGroup != "") {
+          lis.each(function () {
+            if ($(this).hasClass(selectedGroup)) $(this).show();
+            else $(this).hide();
+          });
+        } else lis.show();
+      });
+
+      connectDialog = $("#connectDialog").dialog({
+        autoOpen: false,
+        modal: true,
+        title: "Log in",
+        width: $(document).width() * 0.9,
+        height: $(document).height() * 0.9,
+        buttons: {
+          Connect: function () {
+            host = $("#host", connectDialog).val();
+            port = parseInt($("#port", connectDialog).val());
+            storage.setItem("MicroHomeMqttHost", host);
+            storage.setItem("MicroHomeMqttPort", port);
             storage.setItem(
-              "MicroHomeMqttUSP",
+              "MicroHomeMqttUserName",
+              $("#username", connectDialog).val()
+            );
+            if ($("#autologin", connectDialog).get(0).checked) {
+              storage.setItem(
+                "MicroHomeMqttUSP",
+                $("#usp", connectDialog).val()
+              );
+              storage.setItem("MicroHomeMqttAutologin", "1");
+            } else {
+              storage.setItem("MicroHomeMqttAutologin", "0");
+              storage.removeItem("MicroHomeMqttUSP");
+            }
+
+            MQTTconnect(
+              $("#username", connectDialog).val(),
               $("#usp", connectDialog).val()
             );
-            storage.setItem("MicroHomeMqttAutologin", "1");
-          } else {
-            storage.setItem("MicroHomeMqttAutologin", "0");
-            storage.removeItem("MicroHomeMqttUSP");
+          },
+          Cancel: function () {
+            $(this).dialog("close");
+          },
+        },
+        open: function (event, ui) {
+          if (storage.getItem("MicroHomeMqttHost")) {
+            host = storage.getItem("MicroHomeMqttHost");
+            $("#host", this).val(host);
+          }
+          if (storage.getItem("MicroHomeMqttPort")) {
+            port = storage.getItem("MicroHomeMqttPort");
+            $("#port", this).val(port);
           }
 
-          MQTTconnect(
-            $("#username", connectDialog).val(),
-            $("#usp", connectDialog).val()
+          var mqttuser = "";
+          if (storage.getItem("MicroHomeMqttUserName")) {
+            mqttuser = storage.getItem("MicroHomeMqttUserName");
+            $("#username", this).val(mqttuser);
+          }
+
+          if (parseInt(storage.getItem("MicroHomeMqttAutologin"))) {
+            $("#autologin", connectDialog).get(0).checked = true;
+            $("#usp", this).val(storage.getItem("MicroHomeMqttUSP"));
+          }
+
+          // storage.setItem("MicroHomeMqttUserName", promptforuser);
+        },
+      });
+
+      $("#connectionStatus").click(function () {
+        if (!isConnected) tryConnect();
+        else {
+          mqtt.disconnect();
+          isConnected = false;
+          sectionsVisibility(false);
+        }
+      });
+
+      $("#doReboot").click(function () {
+        var _selected = selectedDevice();
+
+        if (_selected) {
+          // console.log(
+          //   '{"to": "' +
+          //     _selected +
+          //     '", "data": "' +
+          //     $("#rebootIn").val() +
+          //     '","from":"' +
+          //     Iam +
+          //     '"}'
+          // );
+          console.log("Rebooting " + _selected + " in " + $("#rebootIn").val());
+
+          mqttPub(
+            '{"to": "' +
+              _selected +
+              '", "data": "' +
+              $("#rebootIn").val() +
+              '","from":"' +
+              Iam +
+              '"}',
+            DEVICE_CMDS
           );
-        },
-        Cancel: function () {
-          $(this).dialog("close");
-        },
-      },
-      open: function (event, ui) {
-        if (storage.getItem("MicroHomeMqttHost")) {
-          host = storage.getItem("MicroHomeMqttHost");
-          $("#host", this).val(host);
         }
-        if (storage.getItem("MicroHomeMqttPort")) {
-          port = storage.getItem("MicroHomeMqttPort");
-          $("#port", this).val(port);
-        }
+      });
 
-        var mqttuser = "";
-        if (storage.getItem("MicroHomeMqttUserName")) {
-          mqttuser = storage.getItem("MicroHomeMqttUserName");
-          $("#username", this).val(mqttuser);
-        }
+      $("button#scanForDevices").click(function () {
+        console.log("Publishing PRESENCE topic");
+        mqttPub("{}", "PRESENCE");
+      });
 
-        if (parseInt(storage.getItem("MicroHomeMqttAutologin"))) {
-          $("#autologin", connectDialog).get(0).checked = true;
-          $("#usp", this).val(storage.getItem("MicroHomeMqttUSP"));
-        }
-
-        // storage.setItem("MicroHomeMqttUserName", promptforuser);
-      },
-    });
-
-    $("#connectionStatus").click(function () {
-      if (!isConnected) tryConnect();
-      else {
-        mqtt.disconnect();
-        isConnected = false;
-        sectionsVisibility(false);
-      }
-    });
-
-    $("#doReboot").click(function () {
-      var _selected = selectedDevice();
-
-      if (_selected) {
-        // console.log(
-        //   '{"to": "' +
-        //     _selected +
-        //     '", "data": "' +
-        //     $("#rebootIn").val() +
-        //     '","from":"' +
-        //     Iam +
-        //     '"}'
-        // );
-        console.log("Rebooting " + _selected + " in " + $("#rebootIn").val());
-
-        mqttPub(
-          '{"to": "' +
-          _selected +
-          '", "data": "' +
-          $("#rebootIn").val() +
-          '","from":"' +
-          Iam +
-          '"}',
-          DEVICE_CMDS
-        );
-      }
-    });
-
-    $("button#scanForDevices").click(function () {
-      console.log("Publishing PRESENCE topic");
-      mqttPub("{}", "PRESENCE");
-    });
-
-    $("body").children("fieldset").hide();
-  </script>
-</body>
-
+      $("body").children("fieldset").hide();
+    </script>
+  </body>
 </html>

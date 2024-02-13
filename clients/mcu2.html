@@ -1,208 +1,224 @@
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Setup - MicroHome</title>
+    <link
+      rel="stylesheet"
+      href="https://code.jquery.com/ui/1.12.0/themes/smoothness/jquery-ui.css"
+    />
+    <style rel="text/css">
+      button.on {
+        background-color: lightgreen;
+      }
+    </style>
+    <script
+      type="text/javascript"
+      src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="https://code.jquery.com/ui/1.12.0/jquery-ui.min.js"
+    ></script>
+  </head>
 
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Setup - MicroHome</title>
-  <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.0/themes/smoothness/jquery-ui.css" />
-  <style rel="text/css">
-    button.on {
-      background-color: lightgreen;
-    }
-  </style>
-  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-  <script type="text/javascript" src="https://code.jquery.com/ui/1.12.0/jquery-ui.min.js"></script>
-</head>
-
-<body>
-  <div id="clientSections">
-    <ul>
-      <li><a href="#mcusetup">Setup</a></li>
-      <li><a href="#devicecontroller">Device controller</a></li>
-      <li><a href="#automation">Animation</a></li>
-    </ul>
-    <div id="mcusetup" align="center">
-      <div align="center">
-        <fieldset>
-          <legend id="mcu"></legend>
-          <div align="center">
-            <table width="100%">
-              <tr>
-                <td width="50%">
-                  <select id="commands" size="7">
-                    <optgroup label="Device">
-                      <option confKeyModifier="alias">alias</option>
-                      <option confKeyModifier="run"
-                        vlist="config/ap|config/sta|mqtt/sta|espnow/ap|espnow/sta|single/ap|single/off">
-                        Run mode
-                      </option>
-                      <option confKeyModifier="applyObservablesOnBoot" vlist="true|false">
-                        Apply Observables at boot
-                      </option>
-                      <option confKeyModifier="http_server_port">
-                        Http Server Port
-                      </option>
-                      <option value="setConfigKey">
-                        Set custom Key in config
-                      </option>
-                      <option value="getConfigKey">Get config Key</option>
-                      <option value="uptime">Up time</option>
-                      <option value="muid">MCU Unique ID</option>
-                      <option value="saveStartupScript">
-                        Startup script
-                      </option>
-                      <option value="reboot">Reboot</option>
-                    </optgroup>
-                    <optgroup label="Mqtt Server">
-                      <option confKeyModifier="mosquitto_server">
-                        Address
-                      </option>
-                      <option confKeyModifier="mosquitto_port">Port</option>
-                      <option confKeyModifier="mosquitto_user">User</option>
-                      <option confKeyModifier="mosquitto_pass" value="serverPass">
-                        Pass
-                      </option>
-                      <option value="setGroup">Groups</option>
-                    </optgroup>
-                    <optgroup label="Network">
-                      <option value="wifiScan">Scan for networks</option>
-                      <option value="connectionStatus">Connection</option>
-                      <option value="ipConfig">IP Config</option>
-                      <option value="connectSavedAps">Saved Networks</option>
-                      <option confKeyModifier="apssid">AP Ssid</option>
-                      <option confKeyModifier="appass">AP Password</option>
-                    </optgroup>
-                    <optgroup label="Config">
-                      <option value="getRawConfig">Show</option>
-                      <option value="deleteUserConfig">Delete</option>
-                    </optgroup>
-                  </select>
-                  <br />
-                  <select id="ipConfig" style="display: none">
-                    <option value="">NetConf</option>
-                    <option value="dhcp">dhcp</option>
-                    <option value="static">static</option>
-                  </select>
-                </td>
-                <td>
-                  <table id="aplist"></table>
-                </td>
-              </tr>
-              <tr>
-                <td colspan="2">
-                  <div id="connectionStatus" align="center"></div>
-                </td>
-              </tr>
-            </table>
-          </div>
-        </fieldset>
+  <body>
+    <div id="clientSections">
+      <ul>
+        <li><a href="#mcusetup">Setup</a></li>
+        <li><a href="#devicecontroller">Device controller</a></li>
+        <li><a href="#automation">Animation</a></li>
+      </ul>
+      <div id="mcusetup" align="center">
+        <div align="center">
+          <fieldset>
+            <legend id="mcu"></legend>
+            <div align="center">
+              <table width="100%">
+                <tr>
+                  <td width="50%">
+                    <select id="commands" size="7">
+                      <optgroup label="Device">
+                        <option confKeyModifier="alias">alias</option>
+                        <option
+                          confKeyModifier="run"
+                          vlist="config/ap|config/sta|mqtt/sta|espnow/ap|espnow/sta|single/ap|single/off"
+                        >
+                          Run mode
+                        </option>
+                        <option
+                          confKeyModifier="applyObservablesOnBoot"
+                          vlist="true|false"
+                        >
+                          Apply Observables at boot
+                        </option>
+                        <option confKeyModifier="http_server_port">
+                          Http Server Port
+                        </option>
+                        <option value="setConfigKey">
+                          Set custom Key in config
+                        </option>
+                        <option value="getConfigKey">Get config Key</option>
+                        <option value="uptime">Up time</option>
+                        <option value="muid">MCU Unique ID</option>
+                        <option value="saveStartupScript">
+                          Startup script
+                        </option>
+                        <option value="reboot">Reboot</option>
+                      </optgroup>
+                      <optgroup label="Mqtt Server">
+                        <option confKeyModifier="mosquitto_server">
+                          Address
+                        </option>
+                        <option confKeyModifier="mosquitto_port">Port</option>
+                        <option confKeyModifier="mosquitto_user">User</option>
+                        <option
+                          confKeyModifier="mosquitto_pass"
+                          value="serverPass"
+                        >
+                          Pass
+                        </option>
+                        <option value="setGroup">Groups</option>
+                      </optgroup>
+                      <optgroup label="Network">
+                        <option value="wifiScan">Scan for networks</option>
+                        <option value="connectionStatus">Connection</option>
+                        <option value="ipConfig">IP Config</option>
+                        <option value="connectSavedAps">Saved Networks</option>
+                        <option confKeyModifier="apssid">AP Ssid</option>
+                        <option confKeyModifier="appass">AP Password</option>
+                      </optgroup>
+                      <optgroup label="Config">
+                        <option value="getRawConfig">Show</option>
+                        <option value="deleteUserConfig">Delete</option>
+                      </optgroup>
+                    </select>
+                    <br />
+                    <select id="ipConfig" style="display: none">
+                      <option value="">NetConf</option>
+                      <option value="dhcp">dhcp</option>
+                      <option value="static">static</option>
+                    </select>
+                  </td>
+                  <td>
+                    <table id="aplist"></table>
+                  </td>
+                </tr>
+                <tr>
+                  <td colspan="2">
+                    <div id="connectionStatus" align="center"></div>
+                  </td>
+                </tr>
+              </table>
+            </div>
+          </fieldset>
+        </div>
+      </div>
+      <div id="devicecontroller" align="center">
+        <div id="peripherals"></div>
+      </div>
+      <div id="automation" align="center">
+        <table width="100%">
+          <tr>
+            <td width="50%" align="center">ON</td>
+            <td align="center">DO</td>
+          </tr>
+          <tr>
+            <td width="50%" style="vertical-align: top">
+              <div id="automateTarget"></div>
+            </td>
+            <td align="center" style="vertical-align: top">
+              <div id="automateActions">
+                <select id="targetActions" size="5"></select>
+              </div>
+            </td>
+          </tr>
+        </table>
       </div>
     </div>
-    <div id="devicecontroller" align="center">
-      <div id="peripherals"></div>
+    <div align="center" id="console" />
+    <div id="mcusSelectDialog" align="center">
+      <input type="text" id="mcuaddress" placeholder="192.168.4.1:8080" />
+      <br />
+      <select id="mcusListSelect" size="5"></select>
     </div>
-    <div id="automation" align="center">
-      <table width="100%">
-        <tr>
-          <td width="50%" align="center">ON</td>
-          <td align="center">DO</td>
-        </tr>
-        <tr>
-          <td width="50%" style="vertical-align: top">
-            <div id="automateTarget"></div>
-          </td>
-          <td align="center" style="vertical-align: top">
-            <div id="automateActions">
-              <select id="targetActions" size="5"></select>
-            </div>
-          </td>
-        </tr>
-      </table>
+    <div id="startupDialogContent" align="center" style="display: none">
+      <textarea id="script"></textarea>
     </div>
-  </div>
-  <div align="center" id="console" />
-  <div id="mcusSelectDialog" align="center">
-    <input type="text" id="mcuaddress" placeholder="192.168.4.1:8080" />
-    <br />
-    <select id="mcusListSelect" size="5"></select>
-  </div>
-  <div id="startupDialogContent" align="center" style="display: none">
-    <textarea id="script"></textarea>
-  </div>
 
-  <script language="javascript" type="text/javascript">
-    var uptime = 0;
-    var devIpAddress;
-    var muid;
-    var mcu;
-    var mcuData;
-    var wifiConnectionStatus;
-    var peripherals = [];
-    var trueValues = ["1", "on", "true", 1, true];
-    var dateFormat = "DD/MM/YYYY";
-    var dateTimeFormat = "DD/MM/YYYY HH:mm";
-    var commands = {};
-    var storage = window.localStorage;
-    var mcusSelectDialog;
-    var startupDialog = false;
+    <script language="javascript" type="text/javascript">
+      var uptime = 0;
+      var devIpAddress;
+      var muid;
+      var mcu;
+      var mcuData;
+      var wifiConnectionStatus;
+      var peripherals = [];
+      var trueValues = ["1", "on", "true", 1, true];
+      var dateFormat = "DD/MM/YYYY";
+      var dateTimeFormat = "DD/MM/YYYY HH:mm";
+      var commands = {};
+      var storage = window.localStorage;
+      var mcusSelectDialog;
+      var startupDialog = false;
 
-    function isNumeric(str) {
-      return !isNaN(String(str)) && !isNaN(parseFloat(String(str)));
-    }
-
-    function isInteger(s) {
-      var str = String(s);
-      var n = Math.floor(Number(str));
-      return n !== Infinity && String(n) === str && n >= 0;
-    }
-
-    function isDate(s) {
-      return moment(s, dateFormat, true).isValid();
-    }
-
-    function isDateTime(s) {
-      return moment(s, dateTimeFormat, true).isValid();
-    }
-
-    function isEmpty(value) {
-      return !value;
-    }
-
-    function isWhitespace(value) {
-      if (value == "" || isEmpty(value)) return false;
-      else return !String(value).trim();
-    }
-
-    function jsonPrettyPrintHtml(json) {
-      if (typeof json != "string") {
-        json = JSON.stringify(json, undefined, 2);
+      function isNumeric(str) {
+        return !isNaN(String(str)) && !isNaN(parseFloat(String(str)));
       }
-      json = json
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;");
-      return json.replace(
-        /("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g,
-        function (match) {
-          var cls = "number";
-          if (/^"/.test(match)) {
-            if (/:$/.test(match)) {
-              cls = "key";
-            } else {
-              cls = "string";
-            }
-          } else if (/true|false/.test(match)) {
-            cls = "boolean";
-          } else if (/null/.test(match)) {
-            cls = "null";
-          }
-          return '<span class="' + cls + '">' + match + "</span>";
-        }
-      );
-    }
 
-    /*
+      function isInteger(s) {
+        var str = String(s);
+        var n = Math.floor(Number(str));
+        return n !== Infinity && String(n) === str && n >= 0;
+      }
+
+      function isDate(s) {
+        return moment(s, dateFormat, true).isValid();
+      }
+
+      function isDateTime(s) {
+        return moment(s, dateTimeFormat, true).isValid();
+      }
+
+      function isEmpty(value) {
+        return !value;
+      }
+
+      function isWhitespace(value) {
+        if (value == "" || isEmpty(value)) return false;
+        else return !String(value).trim();
+      }
+
+      function jsonPrettyPrintHtml(json) {
+        if (typeof json != "string") {
+          json = JSON.stringify(json, undefined, 2);
+        }
+        json = json
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;");
+        return json.replace(
+          /("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g,
+          function (match) {
+            var cls = "number";
+            if (/^"/.test(match)) {
+              if (/:$/.test(match)) {
+                cls = "key";
+              } else {
+                cls = "string";
+              }
+            } else if (/true|false/.test(match)) {
+              cls = "boolean";
+            } else if (/null/.test(match)) {
+              cls = "null";
+            }
+            return '<span class="' + cls + '">' + match + "</span>";
+          }
+        );
+      }
+
+      /*
                         var sendThis = {
                             "pdata0": $("#postdata0").val(),
                             "pdata1": $("#postdata1").val()
@@ -233,334 +249,346 @@
 
         */
 
-    function str2bts(str) {
-      var bts = [];
+      function str2bts(str) {
+        var bts = [];
 
-      for (var i = 0; i < str.length; ++i) {
-        var code = str.charCodeAt(i);
-        bts = bts.concat([code & 0xff, (code / 256) >>> 0]);
-      }
-      return bts;
-    }
-
-    function packJSONForPOST(data, boundary) {
-      toRet = "";
-      for (key in data) {
-        toRet +=
-          "--" +
-          boundary +
-          "\n" +
-          'Content-Disposition: form-data; name="' +
-          key +
-          '"\r\n' +
-          encodeURIComponent(data[key]) +
-          "\n";
-      }
-      toRet += "--" + boundary + "--\n";
-
-      return toRet;
-    }
-
-    function confKeyModifier(key, check) {
-      var goChecked = true;
-
-      if (key) var kn = key;
-      else var kn = prompt("Key Name");
-
-      var kv = prompt("Key Value");
-
-      if (check)
-        if (check.indexOf(kv) == -1) {
-          goChecked = false;
-          $("#console").html(
-            "Value of " +
-            kn +
-            " not in the list of allowed values: " +
-            check.join(" , ")
-          );
+        for (var i = 0; i < str.length; ++i) {
+          var code = str.charCodeAt(i);
+          bts = bts.concat([code & 0xff, (code / 256) >>> 0]);
         }
+        return bts;
+      }
 
-      if (kn && kv && goChecked)
-        $.ajax({
-          type: "GET",
-          dataType: "jsonp",
-          crossDomain: true,
-          success: function (data) {
-            if (data.hasOwnProperty("error"))
-              $("#console").html("Could not set " + kn);
-            else $("#console").html(kn + " is  " + data[kn]);
-          },
-          url: mcu + "/conf/key/set/" + kn + "?value=" + kv,
-        });
-    }
+      function packJSONForPOST(data, boundary) {
+        toRet = "";
+        for (key in data) {
+          toRet +=
+            "--" +
+            boundary +
+            "\n" +
+            'Content-Disposition: form-data; name="' +
+            key +
+            '"\r\n' +
+            encodeURIComponent(data[key]) +
+            "\n";
+        }
+        toRet += "--" + boundary + "--\n";
 
-    function showConfKey(k) {
-      if (k) var kn = k;
-      else var kn = prompt("Key Name");
+        return toRet;
+      }
 
-      $.ajax({
-        type: "GET",
-        dataType: "jsonp",
-        crossDomain: true,
-        success: function (data) {
-          console.log(data);
-          if (data.hasOwnProperty("error"))
-            $("#console").html("Could not find " + kn);
-          else $("#console").html(kn + " is  " + data[kn]);
-        },
-        url: mcu + "/conf/key/get/" + kn,
-      });
-    }
+      function confKeyModifier(key, check) {
+        var goChecked = true;
 
-    function saveStartupScript(k) {
-      // if (startupDialog == false)
-      if ($("div#startupDialogContent").dialog("instance") == undefined)
-        $("div#startupDialogContent").dialog({
-          title: "Startup script",
-          width: window.innerWidth * 0.8,
-          height: window.innerHeight * 0.8,
-          autoOpen: false,
-          closeOnEscape: false,
-          modal: true,
-          open: function () {
-            $("textarea", this).width($(this).width() * 0.95);
-            $("textarea", this).height($(this).height() * 0.95);
-          },
-          buttons: {
-            Ok: function () {
-              var toSend = {
-                set: $("textarea", this).val(),
-                muid: muid.toString(),
-              };
+        if (key) var kn = key;
+        else var kn = prompt("Key Name");
 
-              $.ajax({
-                cache: false,
-                contentType: false,
-                processData: false,
-                method: "POST",
-                dataType: "json",
-                crossDomain: true,
-                headers: {
-                  Accept: "application/json",
-                  "Content-Type":
-                    "multipart/form-data; boundary=---DATAFIELD---",
-                  "X-Requested-With": "XmlHttpRequest",
-                },
-                data: packJSONForPOST(toSend, "---DATAFIELD---"),
-                success: function (data) {
-                  console.log(data);
-                  if (data.hasOwnProperty("error"))
-                    $("#console").html("Error on save: " + data["error"]);
-                  else $("#console").html(JSON.stringify(data));
-                },
-                url: mcu + "/machine/startup",
-              });
+        var kv = prompt("Key Value");
 
-              $(this).dialog("close");
-            },
-            Close: function () {
-              $(this).dialog("close");
-            },
-          },
-        });
-
-      $("div#startupDialogContent").dialog("open");
-      $("div#startupDialogContent").dialog("moveToTop");
-    }
-
-    commands["reboot"] = function () {
-      if (confirm("Are you sure you want to reboot?"))
-        $.ajax({
-          type: "GET",
-          dataType: "jsonp",
-          crossDomain: true,
-          success: function (data) {
-            $("#console").html("Reboot request sent. Log in again");
-          },
-          url: mcu + "/machine/reboot",
-        });
-    };
-
-    commands["ipConfig"] = function () {
-      $("#ipConfig").show();
-    };
-
-    commands["uptime"] = function () {
-      var ut = parseInt(uptime);
-      if (ut > 0) {
-        var uts = ut % 60; //sec ramase
-        var utm = (ut - uts) / 60; //total min
-        var utmr = utm % 60; //min ramase
-        var utth = (utm - utmr) / 60; //total ore
-        var uthr = utth % 24; //ore ramase
-        var utz = (utth - uthr) / 24; //zile
-
-        uptimeMsg =
-          (utz ? utz + " d / " : "") +
-          (uthr ? uthr + " h / " : "") +
-          (utmr ? utmr + " m / " : "") +
-          (uts ? uts + " s" : "");
-        $("#console").html(
-          "Up time: " + uptimeMsg + "<br/>" + uptime.toString() + " s"
-        );
-      } else $("#console").html("Uptime not received yet");
-    };
-
-    commands["muid"] = function () {
-      $("#console").html("Machine Unique ID: " + muid.toString());
-    };
-
-    commands["setConfigKey"] = confKeyModifier;
-
-    commands["getConfigKey"] = showConfKey;
-
-    commands["saveStartupScript"] = saveStartupScript;
-
-    commands["setAPSsid"] = function () {
-      var SSIDDraftName = "AP name";
-
-      // if (devApssid != "" && devApssid != "null")
-      //     SSIDDraftName = devApssid;
-
-      var apssid = prompt("Access Point Name", SSIDDraftName);
-
-      if (apssid != null && apssid != "") {
-        $.ajax({
-          type: "GET",
-          dataType: "jsonp",
-          crossDomain: true,
-          success: function (data) {
-            $("#console").html("New AP SSID: " + apssid);
-          },
-          url: mcu + "/conf/ap/ssid/" + apssid,
-        });
-      } else $("#console").html("AP SSID cannot be empty");
-    };
-
-    commands["getRawConfig"] = function () {
-      $.ajax({
-        type: "GET",
-        dataType: "jsonp",
-        crossDomain: true,
-        success: function (data) {
-          console.log(data);
-          $("#console").html(jsonPrettyPrintHtml(data.view));
-        },
-        url: mcu + "/conf/view",
-      });
-    };
-
-    commands["deleteUserConfig"] = function () {
-      $.ajax({
-        type: "GET",
-        dataType: "jsonp",
-        crossDomain: true,
-        success: function (data) {
-          message = JSON.stringify(data.delconf);
-          $("#console").html(message);
-        },
-        url: mcu + "/conf/delete",
-      });
-    };
-
-    commands["connectionStatus"] = function () {
-      $("#console").html(JSON.stringify(getConnectionStatus()));
-    };
-
-    commands["setGroup"] = function () {
-      var group = prompt("Group name", "group");
-
-      if (group)
-        $.ajax({
-          type: "GET",
-          dataType: "jsonp",
-          crossDomain: true,
-          success: function (data) {
-            message = JSON.stringify(data.groupset);
-            $("#console").html(message);
-          },
-          url: mcu + "/conf/group/" + group,
-        });
-      else $("#console").html("Password cannot be empty");
-    };
-
-    commands["connectSavedAps"] = function () {
-      $.ajax({
-        type: "GET",
-        dataType: "jsonp",
-        crossDomain: true,
-        success: function (data) {
-          console.log(data);
-          $("#aplist").html("");
-
-          for (e in data.aps)
-            $("#aplist").append(
-              "<tr><td>" +
-              e +
-              '</td><td><button class="apconnect" id="' +
-              e +
-              '">x</button></td><tr>'
-            );
-
-          $("button.apconnect", "#aplist").each(function () {
-            $(this).click(function () {
-              connectTo(this.attributes.getNamedItem("id").value);
-            });
-          });
-        },
-        url: mcu + "/conf/st/saved",
-      });
-    };
-
-    commands["wifiScan"] = function () {
-      $.ajax({
-        type: "GET",
-        dataType: "json",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "text/plain",
-          "X-Requested-With": "XmlHttpRequest",
-        },
-        crossDomain: true,
-        success: function (data) {
-          console.log(data);
-          $("#aplist").html("");
-          for (e in data.aps) {
-            var record = data.aps[e];
-            $("#aplist").append(
-              "<tr><td>" +
-              record["essid"] +
-              '</td><td><button class="apconnect" id="' +
-              record["essid"] +
-              '">' +
-              record["rssid"] +
-              "</button></td><tr>"
+        if (check)
+          if (check.indexOf(kv) == -1) {
+            goChecked = false;
+            $("#console").html(
+              "Value of " +
+                kn +
+                " not in the list of allowed values: " +
+                check.join(" , ")
             );
           }
-          $("button.apconnect", "#aplist").each(function () {
-            $(this).click(function () {
-              connectTo(this.attributes.getNamedItem("id").value);
-            });
-          });
-        },
-        url: mcu + "/net/st/list",
-      });
-    };
 
-    var peripheralsTemplates = {
-      mpu6050: `<div align="center" class="mpu6050">
+        if (kn && kv && goChecked)
+          $.ajax({
+            type: "GET",
+            dataType: "jsonp",
+            crossDomain: true,
+            success: function (data) {
+              if (data.hasOwnProperty("error"))
+                $("#console").html("Could not set " + kn);
+              else $("#console").html(kn + " is  " + data[kn]);
+            },
+            url: mcu + "/conf/key/set/" + kn + "?value=" + kv,
+          });
+      }
+
+      function showConfKey(k) {
+        if (k) var kn = k;
+        else var kn = prompt("Key Name");
+
+        $.ajax({
+          type: "GET",
+          dataType: "jsonp",
+          crossDomain: true,
+          success: function (data) {
+            console.log(data);
+            if (data.hasOwnProperty("error"))
+              $("#console").html("Could not find " + kn);
+            else $("#console").html(kn + " is  " + data[kn]);
+          },
+          url: mcu + "/conf/key/get/" + kn,
+        });
+      }
+
+      function saveStartupScript(k) {
+        // if (startupDialog == false)
+        if ($("div#startupDialogContent").dialog("instance") == undefined)
+          $("div#startupDialogContent").dialog({
+            title: "Startup script",
+            width: window.innerWidth * 0.8,
+            height: window.innerHeight * 0.8,
+            autoOpen: false,
+            closeOnEscape: false,
+            modal: true,
+            open: function () {
+              $("textarea", this).width($(this).width() * 0.95);
+              $("textarea", this).height($(this).height() * 0.95);
+            },
+            buttons: {
+              Ok: function () {
+                var toSend = {
+                  set: $("textarea", this).val(),
+                  muid: muid.toString(),
+                };
+
+                $.ajax({
+                  cache: false,
+                  contentType: false,
+                  processData: false,
+                  method: "POST",
+                  dataType: "json",
+                  crossDomain: true,
+                  headers: {
+                    Accept: "application/json",
+                    "Content-Type":
+                      "multipart/form-data; boundary=---DATAFIELD---",
+                    "X-Requested-With": "XmlHttpRequest",
+                  },
+                  data: packJSONForPOST(toSend, "---DATAFIELD---"),
+                  success: function (data) {
+                    console.log(data);
+                    if (data.hasOwnProperty("error"))
+                      $("#console").html("Error on save: " + data["error"]);
+                    else $("#console").html(JSON.stringify(data));
+                  },
+                  url: mcu + "/machine/startup",
+                });
+
+                $(this).dialog("close");
+              },
+              Close: function () {
+                $(this).dialog("close");
+              },
+            },
+          });
+
+        $("div#startupDialogContent").dialog("open");
+        $("div#startupDialogContent").dialog("moveToTop");
+      }
+
+      commands["reboot"] = function () {
+        if (confirm("Are you sure you want to reboot?"))
+          $.ajax({
+            type: "GET",
+            dataType: "jsonp",
+            crossDomain: true,
+            success: function (data) {
+              $("#console").html("Reboot request sent. Log in again");
+            },
+            url: mcu + "/machine/reboot",
+          });
+      };
+
+      commands["ipConfig"] = function () {
+        $("#ipConfig").show();
+      };
+
+      commands["uptime"] = function () {
+        var ut = parseInt(uptime);
+        if (ut > 0) {
+          var uts = ut % 60; //sec ramase
+          var utm = (ut - uts) / 60; //total min
+          var utmr = utm % 60; //min ramase
+          var utth = (utm - utmr) / 60; //total ore
+          var uthr = utth % 24; //ore ramase
+          var utz = (utth - uthr) / 24; //zile
+
+          uptimeMsg =
+            (utz ? utz + " d / " : "") +
+            (uthr ? uthr + " h / " : "") +
+            (utmr ? utmr + " m / " : "") +
+            (uts ? uts + " s" : "");
+          $("#console").html(
+            "Up time: " + uptimeMsg + "<br/>" + uptime.toString() + " s"
+          );
+        } else $("#console").html("Uptime not received yet");
+      };
+
+      commands["muid"] = function () {
+        $("#console").html("Machine Unique ID: " + muid.toString());
+      };
+
+      commands["setConfigKey"] = confKeyModifier;
+
+      commands["getConfigKey"] = showConfKey;
+
+      commands["saveStartupScript"] = saveStartupScript;
+
+      commands["setAPSsid"] = function () {
+        var SSIDDraftName = "AP name";
+
+        // if (devApssid != "" && devApssid != "null")
+        //     SSIDDraftName = devApssid;
+
+        var apssid = prompt("Access Point Name", SSIDDraftName);
+
+        if (apssid != null && apssid != "") {
+          $.ajax({
+            type: "GET",
+            dataType: "jsonp",
+            crossDomain: true,
+            success: function (data) {
+              $("#console").html("New AP SSID: " + apssid);
+            },
+            url: mcu + "/conf/ap/ssid/" + apssid,
+          });
+        } else $("#console").html("AP SSID cannot be empty");
+      };
+
+      commands["getRawConfig"] = function () {
+        $.ajax({
+          type: "GET",
+          dataType: "jsonp",
+          crossDomain: true,
+          success: function (data) {
+            console.log(data);
+            $("#console").html(jsonPrettyPrintHtml(data.view));
+          },
+          url: mcu + "/conf/view",
+        });
+      };
+
+      commands["deleteUserConfig"] = function () {
+        $.ajax({
+          type: "GET",
+          dataType: "jsonp",
+          crossDomain: true,
+          success: function (data) {
+            message = JSON.stringify(data.delconf);
+            $("#console").html(message);
+          },
+          url: mcu + "/conf/delete",
+        });
+      };
+
+      commands["connectionStatus"] = function () {
+        $("#console").html(JSON.stringify(getConnectionStatus()));
+      };
+
+      commands["setGroup"] = function () {
+        var group = prompt("Group name", "group");
+
+        if (group)
+          $.ajax({
+            type: "GET",
+            dataType: "jsonp",
+            crossDomain: true,
+            success: function (data) {
+              message = JSON.stringify(data.groupset);
+              $("#console").html(message);
+            },
+            url: mcu + "/conf/group/" + group,
+          });
+        else $("#console").html("Password cannot be empty");
+      };
+
+      commands["connectSavedAps"] = function () {
+        $.ajax({
+          type: "GET",
+          dataType: "jsonp",
+          crossDomain: true,
+          success: function (data) {
+            console.log(data);
+            $("#aplist").html("");
+
+            for (e in data.aps)
+              $("#aplist").append(
+                "<tr><td>" +
+                  e +
+                  '</td><td><button class="apconnect" id="' +
+                  e +
+                  '">x</button></td><tr>'
+              );
+
+            $("button.apconnect", "#aplist").each(function () {
+              $(this).click(function () {
+                connectTo(this.attributes.getNamedItem("id").value);
+              });
+            });
+          },
+          url: mcu + "/conf/st/saved",
+        });
+      };
+
+      commands["wifiScan"] = function () {
+        $.ajax({
+          type: "GET",
+          dataType: "json",
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "text/plain",
+            "X-Requested-With": "XmlHttpRequest",
+          },
+          crossDomain: true,
+          success: function (data) {
+            console.log(data);
+            $("#aplist").html("");
+            for (e in data.aps) {
+              var record = data.aps[e];
+              $("#aplist").append(
+                "<tr><td>" +
+                  record["essid"] +
+                  '</td><td><button class="apconnect" id="' +
+                  record["essid"] +
+                  '">' +
+                  record["rssid"] +
+                  "</button></td><tr>"
+              );
+            }
+            $("button.apconnect", "#aplist").each(function () {
+              $(this).click(function () {
+                connectTo(this.attributes.getNamedItem("id").value);
+              });
+            });
+          },
+          url: mcu + "/net/st/list",
+        });
+      };
+
+      var peripheralsTemplates = {
+        mpu6050: `<div align="center" class="mpu6050">
           <button type="button" class="switch" id="startStopAccel">-</button>
           <input id="period" min="0" alt="period" type="number" placeholder="msec" style="width: 60px;" />
       </div>`,
-      emiter: `<div align="center" class="emiter"></div>`,
-      receiver: `<div align="center" class="receiver"></div>`,
-      bts7960: `<div align="center" class="bts7960"></div>`,
-      aht10: `<div align="center" class="aht10"></div>`,
-      uartcommht: `<div align="center" class="uartcommht"></div>`,
-      servo: `<div align="center" class="servo"></div>`,
-      digital_in: `<div align="center" class="digital_in"></div>`,
-      analog_in: `<div align="center" class="analog_in"></div>`,
-      espnowdrv: `
+        imu6050: `<div align="center" class="imu6050">
+          <button type="button" class="switch" id="startStopAccel">-</button>
+          <input id="period" min="0" alt="period" type="number" placeholder="msec" style="width: 60px;" />
+      </div>`,
+        imu9250: `<div align="center" class="imu9250">
+          <button type="button" class="switch" id="startStopAccel">-</button>
+          <input id="period" min="0" alt="period" type="number" placeholder="msec" style="width: 60px;" />
+      </div>`,
+        imu9150: `<div align="center" class="imu9150">
+          <button type="button" class="switch" id="startStopAccel">-</button>
+          <input id="period" min="0" alt="period" type="number" placeholder="msec" style="width: 60px;" />
+      </div>`,
+        emiter: `<div align="center" class="emiter"></div>`,
+        receiver: `<div align="center" class="receiver"></div>`,
+        bts7960: `<div align="center" class="bts7960"></div>`,
+        aht10: `<div align="center" class="aht10"></div>`,
+        uartcommht: `<div align="center" class="uartcommht"></div>`,
+        servo: `<div align="center" class="servo"></div>`,
+        digital_in: `<div align="center" class="digital_in"></div>`,
+        analog_in: `<div align="center" class="analog_in"></div>`,
+        espnowdrv: `
               <div align="center" class="espnowdrv">
                 <table>
                   <tr>
@@ -580,7 +608,7 @@
                   </tr>
               </table>
               </div>`,
-      iruart: `
+        iruart: `
               <div align="center" class="iruart">
               <table>
                   <thead>
@@ -604,9 +632,9 @@
               </table>
           </div>
               `,
-      realbutton: `<div align="center" class="realbutton"></div>`,
-      realbuttonv2: `<div align="center" class="realbuttonv2"></div>`,
-      mqtt: `<div align="center" class="mqtt">
+        realbutton: `<div align="center" class="realbutton"></div>`,
+        realbuttonv2: `<div align="center" class="realbuttonv2"></div>`,
+        mqtt: `<div align="center" class="mqtt">
 
           <table width="100%">
               <tr width="50%">
@@ -638,7 +666,7 @@
               </tr>
           </table>
       </div>`,
-      mqtta: `<div align="center" class="mqtt">
+        mqtta: `<div align="center" class="mqtta">
 
         <table width="100%">
             <tr width="50%">
@@ -670,7 +698,7 @@
             </tr>
         </table>
       </div>`,
-      mqttht: `<div align="center" class="mqtt">
+        mqttht: `<div align="center" class="mqttht">
 
         <table width="100%">
             <tr width="50%">
@@ -702,16 +730,16 @@
             </tr>
         </table>
       </div>`,
-      // "mqtt": `<div align="center" class="mqtt"></div>`,
-      messager: `<div align="center" class="messager"></div>`,
-      nokiadisplay: `<div align="center" class="nokiadisplay"></div>`,
-      rotencoder: `<div align="center" class="rotencoder"></div>`,
-      relay: `
+        // "mqtt": `<div align="center" class="mqtt"></div>`,
+        messager: `<div align="center" class="messager"></div>`,
+        nokiadisplay: `<div align="center" class="nokiadisplay"></div>`,
+        rotencoder: `<div align="center" class="rotencoder"></div>`,
+        relay: `
       <div align="center" class="relfet">
           <button type="button" class="switch" id="switch">-</button>
       </div>
       `,
-      fet: `
+        fet: `
       <div align="center" class="fet">
           <div align="center">
               <div class="fetMode" id="pwm">
@@ -724,7 +752,7 @@
           </div>
       </div>
       `,
-      relfet: `
+        relfet: `
       <div align="center" class="relfet">
           <button type="button" class="switch" id="switch">-</button>
           <div align="center">
@@ -742,7 +770,7 @@
           </div>
       </div>
       `,
-      stimer: `
+        stimer: `
       <div align="center" class="stimer">
                               <table align="center" style="width:100%;">
                                   <tr>
@@ -778,1134 +806,1323 @@
                               </table>
                           </div>
       `,
-    };
+      };
 
-    function updateFetContainer(p, s) {
-      var state = s.state;
+      function updateFetContainer(p, s) {
+        var state = s.state;
 
-      if (state.hasOwnProperty("duty")) {
-        $("input#duty", this).val(state.duty);
-      }
-
-      if (state.hasOwnProperty("freq")) {
-        $("input#freq", this).val(state.freq);
-      }
-    }
-
-    function updateRelContainer(p, s) {
-      var state = s.state;
-
-      var sbtn = $("button#switch", this);
-
-      state.hasOwnProperty("on") && state["on"]
-        ? sbtn.addClass("on")
-        : sbtn.removeClass("on");
-    }
-
-    function updateRelfetContainer(p, s) {
-      var state = s.state;
-
-      // $(this).append(JSON.stringify(state));
-      var sbtn = $("button#switch", this);
-      var modeSelector = $("select#pwm", this).get(0);
-
-      if (state.hasOwnProperty("duty")) {
-        $("input#duty", this).val(state.duty);
-      }
-
-      if (state.hasOwnProperty("freq")) {
-        $("input#freq", this).val(state.freq);
-      }
-
-      state.hasOwnProperty("on") && state["on"]
-        ? sbtn.addClass("on")
-        : sbtn.removeClass("on");
-      if (state.hasOwnProperty("pwm")) {
-        var oi = 0;
-        var lookFor = "false";
-        var sv =
-          typeof state["pwm"] == "string"
-            ? state["pwm"].toLowerCase()
-            : state["pwm"];
-
-        if (trueValues.indexOf(sv) >= 0)
-          // if(trueValues.includes(sv))
-          lookFor = "true";
-
-        for (var i = 0; i < modeSelector.options.length; i++) {
-          if (modeSelector.options[i].value == lookFor) {
-            oi = i;
-          }
+        if (state.hasOwnProperty("duty")) {
+          $("input#duty", this).val(state.duty);
         }
 
-        modeSelector.options.selectedIndex = oi;
-        $(modeSelector).trigger("update");
-      }
-    }
-
-    function updateStimerContainer(p, s) {
-      // {"state":{"on":false,"period":6000,"mode":1,"minutes":true}}
-      var state = s.state;
-
-      var timerStatus = $("select#timerStatus", this);
-      var repeat = $("select#repeat", this);
-      var period = $("input#period", this);
-
-      timerStatus
-        .children("option[value=" + (state.on ? "start" : "stop") + "]")
-        .get(0).selected = true;
-      repeat
-        .children("option[value=" + (state.mode ? "1" : "0") + "]")
-        .get(0).selected = true;
-      period.val(state.period / 1000 / 60);
-
-      // $("#console").html(JSON.stringify(s));
-    }
-
-    function updateAccelContainer(p, s) {
-      var state = s.state;
-
-      var swbtn = $("button#startStopAccel.switch", this);
-      var periodInput = $("input#period", this);
-
-      periodInput.val(state.period);
-
-      state.running ? swbtn.addClass("on") : swbtn.removeClass("on");
-    }
-
-    function updatePeripheralUI(data, id) {
-      var panel = $("#peripherals").find(
-        "div[role=tabpanel][aria-labelledby=" + id + "]"
-      );
-
-      var pcbk = peripheralsStateUpdateCallback[peripherals[id]["type"]];
-      if (panel.length == 1) panel.get(0).PERIPHERAL_STATE = data;
-      pcbk.apply(panel, [peripherals[id], data]);
-    }
-
-    function peripheralsOnActivate(event, ui) {
-      var activePeripheral = ui.newHeader.get(0).getAttribute("id");
-
-      function lp(data) {
-        if (data.hasOwnProperty("uptime")) {
-          uptime = parseInt(data["uptime"]);
+        if (state.hasOwnProperty("freq")) {
+          $("input#freq", this).val(state.freq);
         }
-
-        return updatePeripheralUI(data, activePeripheral);
       }
 
-      $.ajax({
-        type: "GET",
-        dataType: "jsonp",
-        crossDomain: true,
-        headers: {
-          Accept: "application/jsonp",
-          "Content-Type": "text/plain",
-          "X-Requested-With": "XmlHttpRequest",
-        },
-        success: lp,
-        url: mcu + "/cmd/" + activePeripheral + "/state",
-      });
-    }
+      function updateRelContainer(p, s) {
+        var state = s.state;
 
-    function getControlsAccordionContainer(control) {
-      return $(control)
-        .parents("div.ui-accordion-content[role=tabpanel]")
-        .get(0);
-    }
+        var sbtn = $("button#switch", this);
 
-    function fetAddUIEvents(p) {
-      var container = this;
+        state.hasOwnProperty("on") && state["on"]
+          ? sbtn.addClass("on")
+          : sbtn.removeClass("on");
+      }
 
-      $("button#setFetPWM", this).click(function () {
-        var cc = getControlsAccordionContainer(this);
-        var spid = cc.getAttribute("aria-labelledby");
-        var setduty = $("input#duty", cc).val();
-        var setfreq = $("input#freq", cc).val();
-        console.log(
-          "SET Dev " + spid + " to duty " + setduty + " freq " + setfreq
-        );
-        $.ajax({
-          type: "GET",
-          dataType: "json",
-          crossDomain: true,
-          headers: {
-            Accept: "application/json",
-            "Content-Type": "text/plain",
-            "X-Requested-With": "XmlHttpRequest",
-          },
-          success: function (data) {
-            console.log("pwmset " + spid);
-            console.log(data);
-          },
-          url:
-            mcu +
-            "/cmd/" +
-            spid +
-            "/pwmset?duty=" +
-            setduty +
-            "&freq=" +
-            setfreq,
-        });
-      });
-    }
+      function updateRelfetContainer(p, s) {
+        var state = s.state;
 
-    function relAddUIEvents(p) {
-      var container = this;
+        // $(this).append(JSON.stringify(state));
+        var sbtn = $("button#switch", this);
+        var modeSelector = $("select#pwm", this).get(0);
 
-      $("button#switch.switch", this).click(function () {
-        var swbtn = this;
-        var cc = getControlsAccordionContainer(this);
-        var spid = cc.getAttribute("aria-labelledby");
-        $.ajax({
-          type: "GET",
-          dataType: "json",
-          crossDomain: true,
-          headers: {
-            Accept: "application/json",
-            "Content-Type": "text/plain",
-            "X-Requested-With": "XmlHttpRequest",
-          },
-          success: function (data) {
-            console.log("TOGGLE " + spid);
-            console.log(data);
-            data.result
-              ? $(swbtn).addClass("on")
-              : $(swbtn).removeClass("on");
-          },
-          url: mcu + "/cmd/" + spid + "/toggle",
-        });
-      });
-    }
-
-    function accelAddUIEvents(p) {
-      var container = this;
-
-      $("button#startStopAccel.switch", this).click(function () {
-        var swbtn = this;
-        var cc = getControlsAccordionContainer(this);
-        var spid = cc.getAttribute("aria-labelledby");
-        var periodInput = $("input#period", cc);
-
-        if ($(swbtn).hasClass("on")) {
-          var btnAction = "/stop";
-        } else {
-          var ps = "";
-          if (isNumeric(periodInput.val()))
-            ps = "?period=" + periodInput.val();
-
-          var btnAction = "/start" + ps;
+        if (state.hasOwnProperty("duty")) {
+          $("input#duty", this).val(state.duty);
         }
 
-        $.ajax({
-          type: "GET",
-          dataType: "json",
-          crossDomain: true,
-          headers: {
-            Accept: "application/json",
-            "Content-Type": "text/plain",
-            "X-Requested-With": "XmlHttpRequest",
-          },
-          success: function (data) {
-            console.log(data);
-            data.result.running
-              ? $(swbtn).addClass("on")
-              : $(swbtn).removeClass("on");
-          },
-          url: mcu + "/cmd/" + spid + btnAction,
-        });
-      });
-    }
+        if (state.hasOwnProperty("freq")) {
+          $("input#freq", this).val(state.freq);
+        }
 
-    function relfetAddUIEvents(p) {
-      var container = this;
-      $("select#pwm", this).on("update", function () {
-        if (this.options[this.options.selectedIndex].value == "true")
-          $(this).next("div#pwm.fetMode").first().show();
-        else $(this).next("div#pwm.fetMode").first().hide();
-      });
+        state.hasOwnProperty("on") && state["on"]
+          ? sbtn.addClass("on")
+          : sbtn.removeClass("on");
+        if (state.hasOwnProperty("pwm")) {
+          var oi = 0;
+          var lookFor = "false";
+          var sv =
+            typeof state["pwm"] == "string"
+              ? state["pwm"].toLowerCase()
+              : state["pwm"];
 
-      $("button#switch.switch", this).click(function () {
-        var swbtn = this;
-        var cc = getControlsAccordionContainer(this);
-        var spid = cc.getAttribute("aria-labelledby");
-        var cmd = cc.PERIPHERAL_STATE ? "/off" : "/on";
+          if (trueValues.indexOf(sv) >= 0)
+            // if(trueValues.includes(sv))
+            lookFor = "true";
 
-        $.ajax({
-          type: "GET",
-          dataType: "json",
-          crossDomain: true,
-          headers: {
-            Accept: "application/json",
-            "Content-Type": "text/plain",
-            "X-Requested-With": "XmlHttpRequest",
-          },
-          success: function (data) {
-            console.log(JSON.stringify(data));
-            console.log(typeof data.result);
-            cc.PERIPHERAL_STATE = data.result;
-            data.result
-              ? $(swbtn).addClass("on")
-              : $(swbtn).removeClass("on");
-          },
-          // url: mcu + "/cmd/" + spid + "/relayValue?to="+(!cc.PERIPHERAL_STATE).toString()
-          // url: mcu + "/cmd/" + spid + cmd
-          url: mcu + "/cmd/" + spid + "/toggle",
-        });
-      });
-
-      $("button#setFetPWM", this).click(function () {
-        var cc = getControlsAccordionContainer(this);
-        var spid = cc.getAttribute("aria-labelledby");
-        var setduty = $("input#duty", cc).val();
-        var setfreq = $("input#freq", cc).val();
-        console.log(
-          "SET Dev " + spid + " to duty " + setduty + " freq " + setfreq
-        );
-        $.ajax({
-          type: "GET",
-          dataType: "json",
-          crossDomain: true,
-          headers: {
-            Accept: "application/json",
-            "Content-Type": "text/plain",
-            "X-Requested-With": "XmlHttpRequest",
-          },
-          success: function (data) {
-            console.log("pwmset " + spid);
-            console.log(data);
-          },
-          url:
-            mcu +
-            "/cmd/" +
-            spid +
-            "/pwmset?duty=" +
-            setduty +
-            "&freq=" +
-            setfreq,
-        });
-      });
-
-      $("select#pwm", this).on("change", function () {
-        $(this).trigger("update");
-        var cc = getControlsAccordionContainer(this);
-        var spid = cc.getAttribute("aria-labelledby");
-        var selv = this.options[this.options.selectedIndex].value;
-        $.ajax({
-          type: "GET",
-          dataType: "json",
-          crossDomain: true,
-          headers: {
-            Accept: "application/json",
-            "Content-Type": "text/plain",
-            "X-Requested-With": "XmlHttpRequest",
-          },
-          success: function (data) {
-            console.log(
-              "Dev " + spid + " PWM mode set to " + selv + "; Result:"
-            );
-            console.log(data);
-          },
-          url: mcu + "/cmd/" + spid + "/mode?pwm=" + selv,
-        });
-        console.log("ID: " + cc.getAttribute("aria-labelledby"));
-      });
-    }
-
-    function getPeripheralCommands(id) {
-      var cmds = [];
-      $.ajax({
-        type: "GET",
-        dataType: "json",
-        crossDomain: true,
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "text/plain",
-          "X-Requested-With": "XmlHttpRequest",
-        },
-        success: function (data) {
-          data.commands.forEach(function (cmd) {
-            cmds.push(cmd);
-          });
-        },
-        url: mcu + "/cmd/" + id + "/commands",
-      });
-
-      return cmds;
-    }
-
-    function getPeripheralObservableMethods(id) {
-      var cmds = [];
-      $.ajax({
-        type: "GET",
-        dataType: "json",
-        crossDomain: true,
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "text/plain",
-          "X-Requested-With": "XmlHttpRequest",
-        },
-        success: function (data) {
-          data.methods.forEach(function (cmd) {
-            cmds.push(cmd);
-          });
-        },
-        url: mcu + "/cmd/" + id + "/observable/?what=methods",
-      });
-
-      return cmds;
-    }
-
-    function getPeripheralObservableProperties(id) {
-      var cmds = [];
-      $.ajax({
-        type: "GET",
-        dataType: "json",
-        crossDomain: true,
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "text/plain",
-          "X-Requested-With": "XmlHttpRequest",
-        },
-        success: function (data) {
-          data.properties.forEach(function (cmd) {
-            cmds.push(cmd);
-          });
-        },
-        url: mcu + "/cmd/" + id + "/observable/?what=properties",
-      });
-
-      return cmds;
-    }
-
-    // TODO: mut in functii generale
-    function arrayDiff(other, smaller) {
-      var ret = [];
-
-      other.forEach(function (el, i) {
-        var skip = false;
-        smaller.forEach(function (tel) {
-          if (JSON.stringify(el) === JSON.stringify(tel)) skip = true;
-        });
-        if (!skip) ret.push(el);
-      });
-
-      return ret;
-    }
-
-    function stimerAddUIEvents(p) {
-      var container = this;
-      var timerStatus = $("select#timerStatus", container);
-      var timerRepeat = $("select#repeat", container);
-      var timerPeriod = $("input#period", container);
-
-      $("button#setTimer", this).click(function () {
-        var cc = getControlsAccordionContainer(this);
-        var spid = cc.getAttribute("aria-labelledby");
-        if (
-          timerPeriod.get(0).value &&
-          timerStatus.val() &&
-          timerRepeat.val()
-        )
-          var link =
-            mcu +
-            "/cmd/" +
-            spid +
-            "/" +
-            timerStatus.val() +
-            "?period=" +
-            timerPeriod.get(0).value +
-            "&mode=" +
-            timerRepeat.val();
-
-        if (timerStatus.val().trim() == "stop")
-          link = mcu + "/cmd/" + spid + "/stop";
-
-        $.ajax({
-          type: "GET",
-          dataType: "json",
-          crossDomain: true,
-          headers: {
-            Accept: "application/json",
-            "Content-Type": "text/plain",
-            "X-Requested-With": "XmlHttpRequest",
-          },
-          success: function (data) {
-            console.log("success Timer call");
-          },
-          url: link,
-        });
-      });
-    }
-
-    function peripheralsObservablesBuildJSON(el, ta) {
-      var observables = { triggers: {}, watchers: {} };
-      var clbcks = ta.val().split("\n");
-      clbcks.forEach(function (line) {
-        var l = line.trim().replace(/\s+/g, " ");
-
-        if (l.length > 0) {
-          var lm = [
-            l.substr(0, l.indexOf(":")),
-            l.substr(l.indexOf(":") + 1, l.length),
-          ];
-
-          var addTo;
-          //WHEN(...) sau ON(...)
-          // var re = /(\w*)\((\w*)\)/i;
-
-          //ca sa returnez proprietate[testFor] pt a face action diferite pe test diferit
-          //folosesc asta in loc de tiedTo = findObservable[2]
-          var reEvenimFull = lm[0].match(/\w*\((.*?)\)/i)[1];
-
-          //WHEN(ceva[val]) sau ON(ceva[para=2])
-          var re = /(\w*)\((.*?)\[(.*?)\]\)/i;
-          //[0=stringCompelt,1=tip, 2=eveniment/proprietate, 3 testFor]
-          var findObservable = lm[0].trim().match(re);
-
-          if (findObservable[1].toLowerCase() == "when") addTo = "watchers";
-          if (findObservable[1].toLowerCase() == "on") addTo = "triggers";
-
-          var tiedTo = findObservable[2];
-          var testFor = findObservable[3];
-
-          var eol = { test: testFor, execute: [] };
-
-          // VARIANTA ASTA NU ACCEPTA SPATIU PT CA FACEM SPLIT DUPA EL
-          //  var todoActions = lm[1].trim().replace(/\s\s+/g, ' ').split(" ");
-
-          var todoActionsFixed = lm[1].trim().replace(/\s\s+/g, " ") + " ";
-          var todoActions = [];
-
-          // gaseste formate de genul dev[0]/send(topic=DISPLAY,msg="T:"+str(pargs[0]),encapsulate=False)
-          var peripheralCommandFinder = /^(dev\[\d\]\/\w*\(.*?\))\s/i;
-          var peripheral_re = /^dev\[(\d)\]\/(\w*)\((.*?)\)$/i;
-
-          // gaseste format de genul context/set(topic=DISPLAY) la inceput string
-          // unde DISPLAY este evaluata si asignata mpu.userVariables[topic]
-          // pt access variabile context pt periferice
-          var contextFinder = /^(context\/\w*\(.*?\))\s/i;
-          //pt scoatere parametri si comanda
-          var contextAct_re = /^context\/(\w*)\((.*?)\)$/i;
-
-          // gaseste format mpu/set(topic=DISPLAY,ceva=valoare)
-          //pt comenzi directe mpu
-          var mpuCommandFinder = /^(mpu\/\w*\(.*?\))\s/i;
-          //pt scoatere parametri si comanda
-          var mpuAct_re = /^mpu\/(\w*)\((.*?)\)$/i;
-
-          // while (todoActionsFixed.match(peripheralCommandFinder) != null) {
-          //   var tdaf = todoActionsFixed.match(peripheralCommandFinder);
-          //   todoActions.push(tdaf[0].trim());
-          //   todoActionsFixed = todoActionsFixed.substr(tdaf[0].length);
-          //   todoActionsFixed.trimStart();
-          // }
-
-          var useThisRegex = "";
-          while (todoActionsFixed.length > 0) {
-            if (todoActionsFixed.match(peripheralCommandFinder) != null)
-              useThisRegex = peripheralCommandFinder;
-            if (todoActionsFixed.match(contextFinder) != null)
-              useThisRegex = contextFinder;
-            if (todoActionsFixed.match(mpuCommandFinder) != null)
-              useThisRegex = mpuCommandFinder;
-
-            var tdaf = todoActionsFixed.match(useThisRegex);
-            todoActions.push(tdaf[0].trim());
-            todoActionsFixed = todoActionsFixed.substr(tdaf[0].length);
-            todoActionsFixed.trimStart();
-          }
-
-          console.log(todoActions);
-
-          var devAction = {};
-
-          todoActions.forEach(function (todo) {
-            devAction = {};
-
-            if (todo.match(peripheral_re) != null) {
-              //model : dev[0]/off(3)
-              //[0=stringComplet,1=devid, 2=commanda,3 params]
-              var devIdandCommand = todo.match(peripheral_re);
-              devAction["pid"] = devIdandCommand[1];
-              devAction["cmd"] = devIdandCommand[2];
-              devAction["params"] = devIdandCommand[3];
-              eol["execute"].push(devAction);
-            } else if (todo.match(contextAct_re) != null) {
-              //model: context/set(topic=DISPLAY)
-              // [0=stringComplet,1=set, 2=topic=DISPLAY]
-              var devIdandCommand = todo.match(contextAct_re);
-              devAction["pid"] = "context";
-              devAction["cmd"] = devIdandCommand[1];
-              devAction["params"] = devIdandCommand[2];
-              eol["execute"].push(devAction);
-            } else if (todo.match(mpuAct_re) != null) {
-              // model: mpu/mpuMethod(topic=DISPLAY,ceva=valoare)
-              // [0=stringComplet,1=mpuMethod, 2=topic=DISPLAY,ceva=valoare]
-              devAction["pid"] = "mpu";
-              var devIdandCommand = todo.match(mpuAct_re);
-              devAction["cmd"] = devIdandCommand[1];
-              devAction["params"] = devIdandCommand[2];
-              eol["execute"].push(devAction);
+          for (var i = 0; i < modeSelector.options.length; i++) {
+            if (modeSelector.options[i].value == lookFor) {
+              oi = i;
             }
-          });
+          }
 
-          if (!observables[addTo].hasOwnProperty(el.id))
-            observables[addTo][el.id] = {};
-
-          observables[addTo][el.id][reEvenimFull] = eol;
+          modeSelector.options.selectedIndex = oi;
+          $(modeSelector).trigger("update");
         }
-      });
-      return observables;
-    }
+      }
 
-    function displayAutomateTargets_addEvents(el) {
-      var sinat = $("h3#" + el.id, "#automateTarget")
-        .next("div[for=" + el.id + "]")
-        .get(0);
+      function updateStimerContainer(p, s) {
+        // {"state":{"on":false,"period":6000,"mode":1,"minutes":true}}
+        var state = s.state;
 
-      var observableSelect = $("#observableTargets", sinat).get(0);
-      var setObservablesBtn = $("button#setObservables", sinat);
-      var applyObservablesBtn = $("button#applyObservables", sinat);
-      var loadObservablesBtn = $("button#loadObservables", sinat);
-      var resetObservablesBtn = $("button#resetObservables", sinat);
-      var ta = $("textarea", sinat);
+        var timerStatus = $("select#timerStatus", this);
+        var repeat = $("select#repeat", this);
+        var period = $("input#period", this);
 
-      $(observableSelect).on("input", function () {
-        var whatWasSelected =
-          this.options[this.selectedIndex].parentNode.getAttribute("label");
-        if (ta.val()) ta.val(ta.val() + "\n");
+        timerStatus
+          .children("option[value=" + (state.on ? "start" : "stop") + "]")
+          .get(0).selected = true;
+        repeat
+          .children("option[value=" + (state.mode ? "1" : "0") + "]")
+          .get(0).selected = true;
+        period.val(state.period / 1000 / 60);
 
-        if (whatWasSelected == "properties")
-          ta.val(ta.val() + "WHEN(" + $(this).val() + "[]): ");
-        else if (whatWasSelected == "methods")
-          ta.val(ta.val() + "ON(" + $(this).val() + "[]): ");
+        // $("#console").html(JSON.stringify(s));
+      }
 
-        ta.get(0).focus();
+      function updateAccelContainer(p, s) {
+        var state = s.state;
 
-        console.info(
-          "GET methids for " +
-          this.getAttribute("pType") +
-          "/" +
-          $(this).val()
+        var swbtn = $("button#startStopAccel.switch", this);
+        var periodInput = $("input#period", this);
+
+        periodInput.val(state.period);
+
+        state.running ? swbtn.addClass("on") : swbtn.removeClass("on");
+      }
+
+      function updatePeripheralUI(data, id) {
+        var panel = $("#peripherals").find(
+          "div[role=tabpanel][aria-labelledby=" + id + "]"
         );
 
-        selectedPeripheralMethod = $(this).val();
-        selectedPeripheralType = this.getAttribute("pType");
+        var pcbk = peripheralsStateUpdateCallback[peripherals[id]["type"]];
+        if (panel.length == 1) panel.get(0).PERIPHERAL_STATE = data;
+        pcbk.apply(panel, [peripherals[id], data]);
+      }
 
-        peripheralMethods = {};
+      function peripheralsOnActivate(event, ui) {
+        var activePeripheral = ui.newHeader.get(0).getAttribute("id");
 
-        pydefDataRetrieved = function (data) {
-          go = false;
-          docstring = "";
-          if (typeof data == "object") methods = data;
-          if (typeof data == "string") methods = JSON.parse(data);
-          if (
-            selectedPeripheralMethod in
-            methods["classes"][selectedPeripheralType]["methods"]
-          ) {
-            go = true;
-            paramsAsString =
-              methods["classes"][selectedPeripheralType]["methods"][
-              selectedPeripheralMethod
-              ]["params"];
-            if (
-              "docstring" in
-              methods["classes"][selectedPeripheralType]["methods"][
-              selectedPeripheralMethod
-              ]
-            )
-              docstring =
-                methods["classes"][selectedPeripheralType]["methods"][
-                selectedPeripheralMethod
-                ]["docstring"];
+        function lp(data) {
+          if (data.hasOwnProperty("uptime")) {
+            uptime = parseInt(data["uptime"]);
           }
-          // NU FOLOSESC - este in externalCommands
-          // else if (selectedPeripheralMethod in methods["functions"]) {
-          //   go = true;
-          //   paramsAsString = methods["functions"][
-          //     selectedPeripheralMethod
-          //   ]["params"];
-          //   if ("docstring" in methods["functions"][selectedPeripheralMethod])
-          //     docstring = methods["functions"][selectedPeripheralMethod]["docstring"];
-          // }
 
-          if (go) {
-            paramsAsArray = paramsAsString.split(",");
-            paramsLessSelf = paramsAsArray.slice(1, paramsAsArray.length);
+          return updatePeripheralUI(data, activePeripheral);
+        }
 
-            $("#console").html(
-              selectedPeripheralType +
-              "/" +
-              selectedPeripheralMethod +
-              "(" +
-              paramsLessSelf.toString() +
-              ")<br/>" +
-              docstring
-            );
-          } else $("#console").html("");
-        };
+        $.ajax({
+          type: "GET",
+          dataType: "jsonp",
+          crossDomain: true,
+          headers: {
+            Accept: "application/jsonp",
+            "Content-Type": "text/plain",
+            "X-Requested-With": "XmlHttpRequest",
+          },
+          success: lp,
+          url: mcu + "/cmd/" + activePeripheral + "/state",
+        });
+      }
 
-        if (typeof Android == "object" && "getPyDef" in Android) {
-          methods = JSON.parse(
-            Android.getPyDef(
-              "pydef/" + this.getAttribute("pType") + ".py-def.json"
-            )
+      function getControlsAccordionContainer(control) {
+        return $(control)
+          .parents("div.ui-accordion-content[role=tabpanel]")
+          .get(0);
+      }
+
+      function fetAddUIEvents(p) {
+        var container = this;
+
+        $("button#setFetPWM", this).click(function () {
+          var cc = getControlsAccordionContainer(this);
+          var spid = cc.getAttribute("aria-labelledby");
+          var setduty = $("input#duty", cc).val();
+          var setfreq = $("input#freq", cc).val();
+          console.log(
+            "SET Dev " + spid + " to duty " + setduty + " freq " + setfreq
           );
-          pydefDataRetrieved(methods);
-          // TODO
-        } else {
-          methods = {};
           $.ajax({
-            success: pydefDataRetrieved,
-            url: "pydef/" + this.getAttribute("pType") + ".py-def.json",
+            type: "GET",
+            dataType: "json",
+            crossDomain: true,
+            headers: {
+              Accept: "application/json",
+              "Content-Type": "text/plain",
+              "X-Requested-With": "XmlHttpRequest",
+            },
+            success: function (data) {
+              console.log("pwmset " + spid);
+              console.log(data);
+            },
+            url:
+              mcu +
+              "/cmd/" +
+              spid +
+              "/pwmset?duty=" +
+              setduty +
+              "&freq=" +
+              setfreq,
           });
-        }
-      });
-
-      setObservablesBtn.click(function () {
-        var observables = peripheralsObservablesBuildJSON(el, ta);
-        console.log(observables);
-
-        $.ajax({
-          type: "GET",
-          dataType: "json",
-          crossDomain: true,
-          data: { set: JSON.stringify(observables) },
-          headers: {
-            Accept: "application/json",
-            "Content-Type": "text/plain",
-            "X-Requested-With": "XmlHttpRequest",
-          },
-          success: function (data) {
-            $("#console").html(JSON.stringify(data));
-          },
-          url: mcu + "/cmd/" + el.id + "/observables",
         });
-      });
-
-      applyObservablesBtn.click(function () {
-        var observables = peripheralsObservablesBuildJSON(el, ta);
-        console.log(observables);
-
-        $.ajax({
-          type: "GET",
-          dataType: "json",
-          crossDomain: true,
-          data: { apply: JSON.stringify(observables) },
-          headers: {
-            Accept: "application/json",
-            "Content-Type": "text/plain",
-            "X-Requested-With": "XmlHttpRequest",
-          },
-          success: function (data) {
-            $("#console").html(JSON.stringify(data));
-          },
-          url: mcu + "/cmd/" + el.id + "/observables",
-        });
-      });
-
-      loadObservablesBtn.click(function () {
-        $.ajax({
-          type: "GET",
-          dataType: "json",
-          crossDomain: true,
-          data: { load: el.id },
-          headers: {
-            Accept: "application/json",
-            "Content-Type": "text/plain",
-            "X-Requested-With": "XmlHttpRequest",
-          },
-          success: function (data) {
-            $("#console").html(JSON.stringify(data.load));
-          },
-          url: mcu + "/cmd/" + el.id + "/observables",
-        });
-      });
-      resetObservablesBtn.click(function () {
-        $.ajax({
-          type: "GET",
-          dataType: "json",
-          crossDomain: true,
-          data: { reset: el.id },
-          headers: {
-            Accept: "application/json",
-            "Content-Type": "text/plain",
-            "X-Requested-With": "XmlHttpRequest",
-          },
-          success: function (data) {
-            $("#console").html(JSON.stringify(data));
-          },
-          url: mcu + "/cmd/" + el.id + "/observables",
-        });
-      });
-    }
-
-    function displayAutomateTargets(el) {
-      $("#automateTarget").append(
-        '<h3 id="' +
-        el.id +
-        '">' +
-        (el.alias != null ? el.alias : el.type) +
-        '</h3><div for="' +
-        el.id +
-        '" align="center"><select id="observableTargets" pType="' +
-        el.type +
-        '"></select><br/><textarea></textarea><br/><button id="setObservables">Save</button><button id="resetObservables">Reset</button><button id="loadObservables">View</button><button id="applyObservables">Apply</button></div>'
-      );
-      var sinat = $("h3#" + el.id, "#automateTarget")
-        .next("div[for=" + el.id + "]")
-        .get(0);
-      $(sinat).css({ "padding-left": "0px" }).css({ "padding-right": "0px" });
-      $("textarea", sinat).width($(sinat).width() * 0.95);
-      $("#observableTargets", sinat).width($(sinat).width() * 0.95);
-
-      var observableSelect = $("#observableTargets", sinat).get(0);
-
-      var optgrMethods = document.createElement("optgroup");
-      optgrMethods.setAttribute("label", "methods");
-      observableSelect.appendChild(optgrMethods);
-      el.observableMethods.forEach(function (o) {
-        var opt = document.createElement("option");
-        opt.setAttribute("name", o);
-        opt.appendChild(document.createTextNode(o));
-        optgrMethods.appendChild(opt);
-      });
-
-      var optgrProps = document.createElement("optgroup");
-      optgrProps.setAttribute("label", "properties");
-      observableSelect.appendChild(optgrProps);
-      el.observableProperties.forEach(function (o) {
-        var opt = document.createElement("option");
-        opt.setAttribute("name", o);
-        opt.appendChild(document.createTextNode(o));
-        optgrProps.appendChild(opt);
-      });
-
-      displayAutomateTargets_addEvents(el);
-    }
-
-    function typeInTextarea(textarea, text) {
-      textarea.setRangeText(
-        text,
-        textarea.selectionStart,
-        textarea.selectionEnd,
-        "end"
-      );
-      textarea.focus();
-    }
-
-    function displayAutomateActions(el) {
-      var automateActionsSelect = $("#targetActions", "#automateActions").get(
-        0
-      );
-      var optgroup = document.createElement("optgroup");
-      automateActionsSelect.appendChild(optgroup);
-
-      var cmds = el.commands;
-
-      cmds.forEach(function (cmd, i, ds) {
-        var opt = document.createElement("option");
-        var txtcnt = document.createTextNode(cmd);
-        opt.appendChild(txtcnt);
-        opt.value = cmd;
-        opt.setAttribute("pid", el.id);
-        opt.setAttribute("type", el.type);
-        optgroup.appendChild(opt);
-      });
-      optgroup.setAttribute(
-        "label",
-        el.alias ? el.alias : el.type + "[" + el.id.toString() + "]"
-      );
-    }
-
-    function displayAutomateControls(el) {
-      displayAutomateTargets(el);
-      displayAutomateActions(el);
-      $("select#targetActions").width($("#automateTarget").width());
-      $("select#targetActions").height($("#automateTarget").height() * 0.5);
-    }
-
-    function displayAutomateControls_attachSelectEvents() {
-      if (typeof Android == "object" && "getExternalCommands" in Android)
-        externalPeripheralCommands = JSON.parse(
-          Android.getExternalCommands()
-        );
-      else {
-        externalPeripheralCommands = {};
-
-        $.ajax({
-          success: function (data) {
-            if (typeof data == "object") externalPeripheralCommands = data;
-            if (typeof data == "string")
-              externalPeripheralCommands = JSON.parse(data);
-          },
-          url: "externalCommands.json",
-        });
-
-        // fetch("externalCommands.json")
-
-        //   .then((response) => {
-        //     if (!response.ok) {
-        //       throw new Error(`HTTP error: ${response.status}`);
-        //     }
-
-        //     return response.text();
-        //   });
       }
 
-      $("select#targetActions").on("change", function (evt) {
-        var ta = $(
-          "textarea",
-          $(
-            "div[for][role=tabpanel][aria-hidden=false]",
-            "div#automateTarget"
-          )
-        );
+      function relAddUIEvents(p) {
+        var container = this;
 
-        var so = this.options[this.selectedIndex];
-        var sd = so.getAttribute("pid");
-        typeInTextarea(ta.get(0), " dev[" + sd + "]/" + so.value + "()");
+        $("button#switch.switch", this).click(function () {
+          var swbtn = this;
+          var cc = getControlsAccordionContainer(this);
+          var spid = cc.getAttribute("aria-labelledby");
+          $.ajax({
+            type: "GET",
+            dataType: "json",
+            crossDomain: true,
+            headers: {
+              Accept: "application/json",
+              "Content-Type": "text/plain",
+              "X-Requested-With": "XmlHttpRequest",
+            },
+            success: function (data) {
+              console.log("TOGGLE " + spid);
+              console.log(data);
+              data.result
+                ? $(swbtn).addClass("on")
+                : $(swbtn).removeClass("on");
+            },
+            url: mcu + "/cmd/" + spid + "/toggle",
+          });
+        });
+      }
 
-        var activePeripheralId = so.getAttribute("pid");
+      function accelAddUIEvents(p) {
+        var container = this;
 
-        if (
-          peripherals[activePeripheralId]["type"] in
-          externalPeripheralCommands
-        ) {
-          var paramsForSelectedMethod =
-            externalPeripheralCommands[
-            peripherals[activePeripheralId]["type"]
-            ][so.value];
-          $("#console").html(
-            peripherals[activePeripheralId]["type"] +
-            "/" +
-            so.value +
-            "(" +
-            paramsForSelectedMethod.trim() +
-            ")"
+        $("button#startStopAccel.switch", this).click(function () {
+          var swbtn = this;
+          var cc = getControlsAccordionContainer(this);
+          var spid = cc.getAttribute("aria-labelledby");
+          var periodInput = $("input#period", cc);
+
+          if ($(swbtn).hasClass("on")) {
+            var btnAction = "/stop";
+          } else {
+            var ps = "";
+            if (isNumeric(periodInput.val()))
+              ps = "?period=" + periodInput.val();
+
+            var btnAction = "/start" + ps;
+          }
+
+          $.ajax({
+            type: "GET",
+            dataType: "json",
+            crossDomain: true,
+            headers: {
+              Accept: "application/json",
+              "Content-Type": "text/plain",
+              "X-Requested-With": "XmlHttpRequest",
+            },
+            success: function (data) {
+              console.log(data);
+              data.result.running
+                ? $(swbtn).addClass("on")
+                : $(swbtn).removeClass("on");
+            },
+            url: mcu + "/cmd/" + spid + btnAction,
+          });
+        });
+      }
+
+      function relfetAddUIEvents(p) {
+        var container = this;
+        $("select#pwm", this).on("update", function () {
+          if (this.options[this.options.selectedIndex].value == "true")
+            $(this).next("div#pwm.fetMode").first().show();
+          else $(this).next("div#pwm.fetMode").first().hide();
+        });
+
+        $("button#switch.switch", this).click(function () {
+          var swbtn = this;
+          var cc = getControlsAccordionContainer(this);
+          var spid = cc.getAttribute("aria-labelledby");
+          var cmd = cc.PERIPHERAL_STATE ? "/off" : "/on";
+
+          $.ajax({
+            type: "GET",
+            dataType: "json",
+            crossDomain: true,
+            headers: {
+              Accept: "application/json",
+              "Content-Type": "text/plain",
+              "X-Requested-With": "XmlHttpRequest",
+            },
+            success: function (data) {
+              console.log(JSON.stringify(data));
+              console.log(typeof data.result);
+              cc.PERIPHERAL_STATE = data.result;
+              data.result
+                ? $(swbtn).addClass("on")
+                : $(swbtn).removeClass("on");
+            },
+            // url: mcu + "/cmd/" + spid + "/relayValue?to="+(!cc.PERIPHERAL_STATE).toString()
+            // url: mcu + "/cmd/" + spid + cmd
+            url: mcu + "/cmd/" + spid + "/toggle",
+          });
+        });
+
+        $("button#setFetPWM", this).click(function () {
+          var cc = getControlsAccordionContainer(this);
+          var spid = cc.getAttribute("aria-labelledby");
+          var setduty = $("input#duty", cc).val();
+          var setfreq = $("input#freq", cc).val();
+          console.log(
+            "SET Dev " + spid + " to duty " + setduty + " freq " + setfreq
           );
-        }
-      });
-    }
-
-    function automation_displayPeripherals(prfs) {
-      var goAhead = false;
-
-      if ($("#automateTarget").children("h3").length != peripherals.length) {
-        $("#automateTarget").empty();
-        goAhead = true;
-      }
-
-      if (peripherals.length) {
-        if (goAhead) {
-          peripherals.forEach(displayAutomateControls);
-          displayAutomateControls_attachSelectEvents();
-        }
-
-        $("#automateTarget").accordion({
-          heightStyle: "content",
-        });
-      } else
-        $("#console").html(
-          "Peripherals list not received, please try again soon"
-        );
-    }
-
-    function devicecontroller_displayPeripherals(prfs) {
-      var goAhead = false;
-
-      if ($("#peripherals").children("h3").length != peripherals.length) {
-        $("#peripherals").empty();
-        goAhead = true;
-      }
-
-      if (goAhead)
-        if (peripherals.length) {
-          peripherals.forEach(function (el) {
-            if (el.type in peripheralsTemplates) {
-              $("#peripherals").append(
-                '<h3 id="' +
-                el.id +
-                '">' +
-                (el.alias != null ? el.alias : el.type) +
-                "</h3>" +
-                peripheralsTemplates[el.type]
-              );
-              var micbk = makeContainerInteractive[el.type];
-              var pcinin = $("h3#" + el.id, "#peripherals")
-                .next("div")
-                .get(0);
-              micbk.apply(pcinin, [peripherals[peripherals.length - 1]]);
-            }
+          $.ajax({
+            type: "GET",
+            dataType: "json",
+            crossDomain: true,
+            headers: {
+              Accept: "application/json",
+              "Content-Type": "text/plain",
+              "X-Requested-With": "XmlHttpRequest",
+            },
+            success: function (data) {
+              console.log("pwmset " + spid);
+              console.log(data);
+            },
+            url:
+              mcu +
+              "/cmd/" +
+              spid +
+              "/pwmset?duty=" +
+              setduty +
+              "&freq=" +
+              setfreq,
           });
-          $("#peripherals").accordion({
+        });
+
+        $("select#pwm", this).on("change", function () {
+          $(this).trigger("update");
+          var cc = getControlsAccordionContainer(this);
+          var spid = cc.getAttribute("aria-labelledby");
+          var selv = this.options[this.options.selectedIndex].value;
+          $.ajax({
+            type: "GET",
+            dataType: "json",
+            crossDomain: true,
+            headers: {
+              Accept: "application/json",
+              "Content-Type": "text/plain",
+              "X-Requested-With": "XmlHttpRequest",
+            },
+            success: function (data) {
+              console.log(
+                "Dev " + spid + " PWM mode set to " + selv + "; Result:"
+              );
+              console.log(data);
+            },
+            url: mcu + "/cmd/" + spid + "/mode?pwm=" + selv,
+          });
+          console.log("ID: " + cc.getAttribute("aria-labelledby"));
+        });
+      }
+
+      function getPeripheralCommands(id) {
+        var cmds = [];
+        $.ajax({
+          type: "GET",
+          dataType: "json",
+          crossDomain: true,
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "text/plain",
+            "X-Requested-With": "XmlHttpRequest",
+          },
+          success: function (data) {
+            data.commands.forEach(function (cmd) {
+              cmds.push(cmd);
+            });
+          },
+          url: mcu + "/cmd/" + id + "/commands",
+        });
+
+        return cmds;
+      }
+
+      function getPeripheralObservableMethods(id) {
+        var cmds = [];
+        $.ajax({
+          type: "GET",
+          dataType: "json",
+          crossDomain: true,
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "text/plain",
+            "X-Requested-With": "XmlHttpRequest",
+          },
+          success: function (data) {
+            data.methods.forEach(function (cmd) {
+              cmds.push(cmd);
+            });
+          },
+          url: mcu + "/cmd/" + id + "/observable/?what=methods",
+        });
+
+        return cmds;
+      }
+
+      function getPeripheralObservableProperties(id) {
+        var cmds = [];
+        $.ajax({
+          type: "GET",
+          dataType: "json",
+          crossDomain: true,
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "text/plain",
+            "X-Requested-With": "XmlHttpRequest",
+          },
+          success: function (data) {
+            data.properties.forEach(function (cmd) {
+              cmds.push(cmd);
+            });
+          },
+          url: mcu + "/cmd/" + id + "/observable/?what=properties",
+        });
+
+        return cmds;
+      }
+
+      // TODO: mut in functii generale
+      function arrayDiff(other, smaller) {
+        var ret = [];
+
+        other.forEach(function (el, i) {
+          var skip = false;
+          smaller.forEach(function (tel) {
+            if (JSON.stringify(el) === JSON.stringify(tel)) skip = true;
+          });
+          if (!skip) ret.push(el);
+        });
+
+        return ret;
+      }
+
+      function stimerAddUIEvents(p) {
+        var container = this;
+        var timerStatus = $("select#timerStatus", container);
+        var timerRepeat = $("select#repeat", container);
+        var timerPeriod = $("input#period", container);
+
+        $("button#setTimer", this).click(function () {
+          var cc = getControlsAccordionContainer(this);
+          var spid = cc.getAttribute("aria-labelledby");
+          if (
+            timerPeriod.get(0).value &&
+            timerStatus.val() &&
+            timerRepeat.val()
+          )
+            var link =
+              mcu +
+              "/cmd/" +
+              spid +
+              "/" +
+              timerStatus.val() +
+              "?period=" +
+              timerPeriod.get(0).value +
+              "&mode=" +
+              timerRepeat.val();
+
+          if (timerStatus.val().trim() == "stop")
+            link = mcu + "/cmd/" + spid + "/stop";
+
+          $.ajax({
+            type: "GET",
+            dataType: "json",
+            crossDomain: true,
+            headers: {
+              Accept: "application/json",
+              "Content-Type": "text/plain",
+              "X-Requested-With": "XmlHttpRequest",
+            },
+            success: function (data) {
+              console.log("success Timer call");
+            },
+            url: link,
+          });
+        });
+      }
+
+      function peripheralsObservablesBuildJSON(el, ta) {
+        var observables = { triggers: {}, watchers: {} };
+        var clbcks = ta.val().split("\n");
+        clbcks.forEach(function (line) {
+          var l = line.trim().replace(/\s+/g, " ");
+
+          if (l.length > 0) {
+            var lm = [
+              l.substr(0, l.indexOf(":")),
+              l.substr(l.indexOf(":") + 1, l.length),
+            ];
+
+            var addTo;
+            //WHEN(...) sau ON(...)
+            // var re = /(\w*)\((\w*)\)/i;
+
+            //ca sa returnez proprietate[testFor] pt a face action diferite pe test diferit
+            //folosesc asta in loc de tiedTo = findObservable[2]
+            var reEvenimFull = lm[0].match(/\w*\((.*?)\)/i)[1];
+
+            //WHEN(ceva[val]) sau ON(ceva[para=2])
+            var re = /(\w*)\((.*?)\[(.*?)\]\)/i;
+            //[0=stringCompelt,1=tip, 2=eveniment/proprietate, 3 testFor]
+            var findObservable = lm[0].trim().match(re);
+
+            if (findObservable[1].toLowerCase() == "when") addTo = "watchers";
+            if (findObservable[1].toLowerCase() == "on") addTo = "triggers";
+
+            var tiedTo = findObservable[2];
+            var testFor = findObservable[3];
+
+            var eol = { test: testFor, execute: [] };
+
+            // VARIANTA ASTA NU ACCEPTA SPATIU PT CA FACEM SPLIT DUPA EL
+            //  var todoActions = lm[1].trim().replace(/\s\s+/g, ' ').split(" ");
+
+            var todoActionsFixed = lm[1].trim().replace(/\s\s+/g, " ") + " ";
+            var todoActions = [];
+
+            // gaseste formate de genul dev[0]/send(topic=DISPLAY,msg="T:"+str(pargs[0]),encapsulate=False)
+            var peripheralCommandFinder = /^(dev\[\d\]\/\w*\(.*?\))\s/i;
+            var peripheral_re = /^dev\[(\d)\]\/(\w*)\((.*?)\)$/i;
+
+            // gaseste format de genul context/set(topic=DISPLAY) la inceput string
+            // unde DISPLAY este evaluata si asignata mpu.userVariables[topic]
+            // pt access variabile context pt periferice
+            var contextFinder = /^(context\/\w*\(.*?\))\s/i;
+            //pt scoatere parametri si comanda
+            var contextAct_re = /^context\/(\w*)\((.*?)\)$/i;
+
+            // gaseste format mpu/set(topic=DISPLAY,ceva=valoare)
+            //pt comenzi directe mpu
+            var mpuCommandFinder = /^(mpu\/\w*\(.*?\))\s/i;
+            //pt scoatere parametri si comanda
+            var mpuAct_re = /^mpu\/(\w*)\((.*?)\)$/i;
+
+            // while (todoActionsFixed.match(peripheralCommandFinder) != null) {
+            //   var tdaf = todoActionsFixed.match(peripheralCommandFinder);
+            //   todoActions.push(tdaf[0].trim());
+            //   todoActionsFixed = todoActionsFixed.substr(tdaf[0].length);
+            //   todoActionsFixed.trimStart();
+            // }
+
+            var useThisRegex = "";
+            while (todoActionsFixed.length > 0) {
+              if (todoActionsFixed.match(peripheralCommandFinder) != null)
+                useThisRegex = peripheralCommandFinder;
+              if (todoActionsFixed.match(contextFinder) != null)
+                useThisRegex = contextFinder;
+              if (todoActionsFixed.match(mpuCommandFinder) != null)
+                useThisRegex = mpuCommandFinder;
+
+              var tdaf = todoActionsFixed.match(useThisRegex);
+              todoActions.push(tdaf[0].trim());
+              todoActionsFixed = todoActionsFixed.substr(tdaf[0].length);
+              todoActionsFixed.trimStart();
+            }
+
+            console.log(todoActions);
+
+            var devAction = {};
+
+            todoActions.forEach(function (todo) {
+              devAction = {};
+
+              if (todo.match(peripheral_re) != null) {
+                //model : dev[0]/off(3)
+                //[0=stringComplet,1=devid, 2=commanda,3 params]
+                var devIdandCommand = todo.match(peripheral_re);
+                devAction["pid"] = devIdandCommand[1];
+                devAction["cmd"] = devIdandCommand[2];
+                devAction["params"] = devIdandCommand[3];
+                eol["execute"].push(devAction);
+              } else if (todo.match(contextAct_re) != null) {
+                //model: context/set(topic=DISPLAY)
+                // [0=stringComplet,1=set, 2=topic=DISPLAY]
+                var devIdandCommand = todo.match(contextAct_re);
+                devAction["pid"] = "context";
+                devAction["cmd"] = devIdandCommand[1];
+                devAction["params"] = devIdandCommand[2];
+                eol["execute"].push(devAction);
+              } else if (todo.match(mpuAct_re) != null) {
+                // model: mpu/mpuMethod(topic=DISPLAY,ceva=valoare)
+                // [0=stringComplet,1=mpuMethod, 2=topic=DISPLAY,ceva=valoare]
+                devAction["pid"] = "mpu";
+                var devIdandCommand = todo.match(mpuAct_re);
+                devAction["cmd"] = devIdandCommand[1];
+                devAction["params"] = devIdandCommand[2];
+                eol["execute"].push(devAction);
+              }
+            });
+
+            if (!observables[addTo].hasOwnProperty(el.id))
+              observables[addTo][el.id] = {};
+
+            observables[addTo][el.id][reEvenimFull] = eol;
+          }
+        });
+        return observables;
+      }
+
+      function displayAutomateTargets_addEvents(el) {
+        var sinat = $("h3#" + el.id, "#automateTarget")
+          .next("div[for=" + el.id + "]")
+          .get(0);
+
+        var observableSelect = $("#observableTargets", sinat).get(0);
+        var setObservablesBtn = $("button#setObservables", sinat);
+        var applyObservablesBtn = $("button#applyObservables", sinat);
+        var loadObservablesBtn = $("button#loadObservables", sinat);
+        var resetObservablesBtn = $("button#resetObservables", sinat);
+        var ta = $("textarea", sinat);
+
+        $(observableSelect).on("input", function () {
+          var whatWasSelected =
+            this.options[this.selectedIndex].parentNode.getAttribute("label");
+          if (ta.val()) ta.val(ta.val() + "\n");
+
+          if (whatWasSelected == "properties")
+            ta.val(ta.val() + "WHEN(" + $(this).val() + "[]): ");
+          else if (whatWasSelected == "methods")
+            ta.val(ta.val() + "ON(" + $(this).val() + "[]): ");
+
+          ta.get(0).focus();
+
+          console.info(
+            "GET methids for " +
+              this.getAttribute("pType") +
+              "/" +
+              $(this).val()
+          );
+
+          selectedPeripheralMethod = $(this).val();
+          selectedPeripheralType = this.getAttribute("pType");
+
+          peripheralMethods = {};
+
+          pydefDataRetrieved = function (data) {
+            go = false;
+            docstring = "";
+            if (typeof data == "object") methods = data;
+            if (typeof data == "string") methods = JSON.parse(data);
+            if (
+              selectedPeripheralMethod in
+              methods["classes"][selectedPeripheralType]["methods"]
+            ) {
+              go = true;
+              paramsAsString =
+                methods["classes"][selectedPeripheralType]["methods"][
+                  selectedPeripheralMethod
+                ]["params"];
+              if (
+                "docstring" in
+                methods["classes"][selectedPeripheralType]["methods"][
+                  selectedPeripheralMethod
+                ]
+              )
+                docstring =
+                  methods["classes"][selectedPeripheralType]["methods"][
+                    selectedPeripheralMethod
+                  ]["docstring"];
+            }
+            // NU FOLOSESC - este in externalCommands
+            // else if (selectedPeripheralMethod in methods["functions"]) {
+            //   go = true;
+            //   paramsAsString = methods["functions"][
+            //     selectedPeripheralMethod
+            //   ]["params"];
+            //   if ("docstring" in methods["functions"][selectedPeripheralMethod])
+            //     docstring = methods["functions"][selectedPeripheralMethod]["docstring"];
+            // }
+
+            if (go) {
+              paramsAsArray = paramsAsString.split(",");
+              paramsLessSelf = paramsAsArray.slice(1, paramsAsArray.length);
+
+              $("#console").html(
+                selectedPeripheralType +
+                  "/" +
+                  selectedPeripheralMethod +
+                  "(" +
+                  paramsLessSelf.toString() +
+                  ")<br/>" +
+                  docstring
+              );
+            } else $("#console").html("");
+          };
+
+          if (typeof Android == "object" && "getPyDef" in Android) {
+            methods = JSON.parse(
+              Android.getPyDef(
+                "pydef/" + this.getAttribute("pType") + ".py-def.json"
+              )
+            );
+            pydefDataRetrieved(methods);
+            // TODO
+          } else {
+            methods = {};
+            $.ajax({
+              success: pydefDataRetrieved,
+              url: "pydef/" + this.getAttribute("pType") + ".py-def.json",
+            });
+          }
+        });
+
+        setObservablesBtn.click(function () {
+          var observables = peripheralsObservablesBuildJSON(el, ta);
+          console.log(observables);
+
+          $.ajax({
+            type: "GET",
+            dataType: "json",
+            crossDomain: true,
+            data: { set: JSON.stringify(observables) },
+            headers: {
+              Accept: "application/json",
+              "Content-Type": "text/plain",
+              "X-Requested-With": "XmlHttpRequest",
+            },
+            success: function (data) {
+              $("#console").html(JSON.stringify(data));
+            },
+            url: mcu + "/cmd/" + el.id + "/observables",
+          });
+        });
+
+        applyObservablesBtn.click(function () {
+          var observables = peripheralsObservablesBuildJSON(el, ta);
+          console.log(observables);
+
+          $.ajax({
+            type: "GET",
+            dataType: "json",
+            crossDomain: true,
+            data: { apply: JSON.stringify(observables) },
+            headers: {
+              Accept: "application/json",
+              "Content-Type": "text/plain",
+              "X-Requested-With": "XmlHttpRequest",
+            },
+            success: function (data) {
+              $("#console").html(JSON.stringify(data));
+            },
+            url: mcu + "/cmd/" + el.id + "/observables",
+          });
+        });
+
+        loadObservablesBtn.click(function () {
+          $.ajax({
+            type: "GET",
+            dataType: "json",
+            crossDomain: true,
+            data: { load: el.id },
+            headers: {
+              Accept: "application/json",
+              "Content-Type": "text/plain",
+              "X-Requested-With": "XmlHttpRequest",
+            },
+            success: function (data) {
+              $("#console").html(JSON.stringify(data.load));
+            },
+            url: mcu + "/cmd/" + el.id + "/observables",
+          });
+        });
+        resetObservablesBtn.click(function () {
+          $.ajax({
+            type: "GET",
+            dataType: "json",
+            crossDomain: true,
+            data: { reset: el.id },
+            headers: {
+              Accept: "application/json",
+              "Content-Type": "text/plain",
+              "X-Requested-With": "XmlHttpRequest",
+            },
+            success: function (data) {
+              $("#console").html(JSON.stringify(data));
+            },
+            url: mcu + "/cmd/" + el.id + "/observables",
+          });
+        });
+      }
+
+      function displayAutomateTargets(el) {
+        $("#automateTarget").append(
+          '<h3 id="' +
+            el.id +
+            '">' +
+            (el.alias != null ? el.alias : el.type) +
+            '</h3><div for="' +
+            el.id +
+            '" align="center"><select id="observableTargets" pType="' +
+            el.type +
+            '"></select><br/><textarea></textarea><br/><button id="setObservables">Save</button><button id="resetObservables">Reset</button><button id="loadObservables">View</button><button id="applyObservables">Apply</button></div>'
+        );
+        var sinat = $("h3#" + el.id, "#automateTarget")
+          .next("div[for=" + el.id + "]")
+          .get(0);
+        $(sinat).css({ "padding-left": "0px" }).css({ "padding-right": "0px" });
+        $("textarea", sinat).width($(sinat).width() * 0.95);
+        $("#observableTargets", sinat).width($(sinat).width() * 0.95);
+
+        var observableSelect = $("#observableTargets", sinat).get(0);
+
+        var optgrMethods = document.createElement("optgroup");
+        optgrMethods.setAttribute("label", "methods");
+        observableSelect.appendChild(optgrMethods);
+        el.observableMethods.forEach(function (o) {
+          var opt = document.createElement("option");
+          opt.setAttribute("name", o);
+          opt.appendChild(document.createTextNode(o));
+          optgrMethods.appendChild(opt);
+        });
+
+        var optgrProps = document.createElement("optgroup");
+        optgrProps.setAttribute("label", "properties");
+        observableSelect.appendChild(optgrProps);
+        el.observableProperties.forEach(function (o) {
+          var opt = document.createElement("option");
+          opt.setAttribute("name", o);
+          opt.appendChild(document.createTextNode(o));
+          optgrProps.appendChild(opt);
+        });
+
+        displayAutomateTargets_addEvents(el);
+      }
+
+      function typeInTextarea(textarea, text) {
+        textarea.setRangeText(
+          text,
+          textarea.selectionStart,
+          textarea.selectionEnd,
+          "end"
+        );
+        textarea.focus();
+      }
+
+      function displayAutomateActions(el) {
+        var automateActionsSelect = $("#targetActions", "#automateActions").get(
+          0
+        );
+        var optgroup = document.createElement("optgroup");
+        automateActionsSelect.appendChild(optgroup);
+
+        var cmds = el.commands;
+
+        cmds.forEach(function (cmd, i, ds) {
+          var opt = document.createElement("option");
+          var txtcnt = document.createTextNode(cmd);
+          opt.appendChild(txtcnt);
+          opt.value = cmd;
+          opt.setAttribute("pid", el.id);
+          opt.setAttribute("type", el.type);
+          optgroup.appendChild(opt);
+        });
+        optgroup.setAttribute(
+          "label",
+          el.alias ? el.alias : el.type + "[" + el.id.toString() + "]"
+        );
+      }
+
+      function displayAutomateControls(el) {
+        displayAutomateTargets(el);
+        displayAutomateActions(el);
+        $("select#targetActions").width($("#automateTarget").width());
+        $("select#targetActions").height($("#automateTarget").height() * 0.5);
+      }
+
+      function displayAutomateControls_attachSelectEvents() {
+        if (typeof Android == "object" && "getExternalCommands" in Android)
+          externalPeripheralCommands = JSON.parse(
+            Android.getExternalCommands()
+          );
+        else {
+          externalPeripheralCommands = {};
+
+          $.ajax({
+            success: function (data) {
+              if (typeof data == "object") externalPeripheralCommands = data;
+              if (typeof data == "string")
+                externalPeripheralCommands = JSON.parse(data);
+            },
+            url: "externalCommands.json",
+          });
+
+          // fetch("externalCommands.json")
+
+          //   .then((response) => {
+          //     if (!response.ok) {
+          //       throw new Error(`HTTP error: ${response.status}`);
+          //     }
+
+          //     return response.text();
+          //   });
+        }
+
+        $("select#targetActions").on("change", function (evt) {
+          var ta = $(
+            "textarea",
+            $(
+              "div[for][role=tabpanel][aria-hidden=false]",
+              "div#automateTarget"
+            )
+          );
+
+          var so = this.options[this.selectedIndex];
+          var sd = so.getAttribute("pid");
+          typeInTextarea(ta.get(0), " dev[" + sd + "]/" + so.value + "()");
+
+          var activePeripheralId = so.getAttribute("pid");
+
+          if (
+            peripherals[activePeripheralId]["type"] in
+            externalPeripheralCommands
+          ) {
+            var paramsForSelectedMethod =
+              externalPeripheralCommands[
+                peripherals[activePeripheralId]["type"]
+              ][so.value];
+            $("#console").html(
+              peripherals[activePeripheralId]["type"] +
+                "/" +
+                so.value +
+                "(" +
+                paramsForSelectedMethod.trim() +
+                ")"
+            );
+          }
+        });
+      }
+
+      function automation_displayPeripherals(prfs) {
+        var goAhead = false;
+
+        if ($("#automateTarget").children("h3").length != peripherals.length) {
+          $("#automateTarget").empty();
+          goAhead = true;
+        }
+
+        if (peripherals.length) {
+          if (goAhead) {
+            peripherals.forEach(displayAutomateControls);
+            displayAutomateControls_attachSelectEvents();
+          }
+
+          $("#automateTarget").accordion({
             heightStyle: "content",
-            activate: peripheralsOnActivate,
           });
         } else
           $("#console").html(
             "Peripherals list not received, please try again soon"
           );
-    }
+      }
 
-    function fetchPeripherals(prfs) {
-      prfs.forEach(function (el) {
-        peripherals.push({
-          id: el.id,
-          type: el.type,
-          alias: el.alias,
-          commands: getPeripheralCommands(el.id),
-          observableProperties: getPeripheralObservableProperties(el.id),
-          observableMethods: getPeripheralObservableMethods(el.id),
+      function devicecontroller_displayPeripherals(prfs) {
+        var goAhead = false;
+
+        if ($("#peripherals").children("h3").length != peripherals.length) {
+          $("#peripherals").empty();
+          goAhead = true;
+        }
+
+        if (goAhead)
+          if (peripherals.length) {
+            peripherals.forEach(function (el) {
+              if (el.type in peripheralsTemplates) {
+                $("#peripherals").append(
+                  '<h3 id="' +
+                    el.id +
+                    '">' +
+                    (el.alias != null ? el.alias : el.type) +
+                    "</h3>" +
+                    peripheralsTemplates[el.type]
+                );
+                var micbk = makeContainerInteractive[el.type];
+                var pcinin = $("h3#" + el.id, "#peripherals")
+                  .next("div")
+                  .get(0);
+                micbk.apply(pcinin, [peripherals[peripherals.length - 1]]);
+              }
+            });
+            $("#peripherals").accordion({
+              heightStyle: "content",
+              activate: peripheralsOnActivate,
+            });
+          } else
+            $("#console").html(
+              "Peripherals list not received, please try again soon"
+            );
+      }
+
+      function fetchPeripherals(prfs) {
+        prfs.forEach(function (el) {
+          peripherals.push({
+            id: el.id,
+            type: el.type,
+            alias: el.alias,
+            commands: getPeripheralCommands(el.id),
+            observableProperties: getPeripheralObservableProperties(el.id),
+            observableMethods: getPeripheralObservableMethods(el.id),
+          });
         });
-      });
-    }
+      }
 
-    function getPeripherals() {
-      $.ajax({
-        type: "GET",
-        dataType: "json",
-        crossDomain: true,
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "text/plain",
-          "X-Requested-With": "XmlHttpRequest",
-        },
-        success: fetchPeripherals,
-        url: mcu + "/machine/peripherals",
-      });
-    }
+      function getPeripherals() {
+        $.ajax({
+          type: "GET",
+          dataType: "json",
+          crossDomain: true,
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "text/plain",
+            "X-Requested-With": "XmlHttpRequest",
+          },
+          success: fetchPeripherals,
+          url: mcu + "/machine/peripherals",
+        });
+      }
 
-    function std_getDeviceInfo() {
-      var mpuData = {};
+      function std_getDeviceInfo() {
+        var mpuData = {};
 
-      console.log("getting data");
+        console.log("getting data");
 
-      $.ajax({
-        type: "GET",
-        dataType: "jsonp",
-        crossDomain: true,
-        headers: {
-          Accept: "application/jsonp",
-          "Content-Type": "text/plain",
-          "X-Requested-With": "XmlHttpRequest",
-        },
-        url: mcu,
-      }).done(function (mpuData) {
-        storage.setItem(
-          "mcu_" + mpuData.muid + "_peripherals",
-          JSON.stringify(peripherals)
-        );
-        peripherals = mpuData.peripherals;
-        muid = mpuData.muid;
-      });
-
-      return mpuData;
-    }
-
-    function saveAp(name, apps) {
-      if (apps == null) apps = prompt("Password for " + name);
-
-      if (apps)
         $.ajax({
           type: "GET",
           dataType: "jsonp",
-          crossOrigin: true,
           crossDomain: true,
-          success: function (data) {
-            //de pe server primesk json key writeconf
-            $("#console").html(data.writeconf);
+          headers: {
+            Accept: "application/jsonp",
+            "Content-Type": "text/plain",
+            "X-Requested-With": "XmlHttpRequest",
           },
-          url: mcu + "/conf/st/save/" + name + "/" + apps,
+          url: mcu,
+        }).done(function (mpuData) {
+          storage.setItem(
+            "mcu_" + mpuData.muid + "_peripherals",
+            JSON.stringify(peripherals)
+          );
+          peripherals = mpuData.peripherals;
+          muid = mpuData.muid;
         });
-      else $("#console").html("A valid password must be given");
-    }
 
-    function connectTo(name) {
-      var apps = prompt("Password for " + name);
-      var saveIt = confirm("Save it?");
+        return mpuData;
+      }
 
-      if (saveIt) saveAp(name, apps);
+      function saveAp(name, apps) {
+        if (apps == null) apps = prompt("Password for " + name);
 
-      if (apps != null)
+        if (apps)
+          $.ajax({
+            type: "GET",
+            dataType: "jsonp",
+            crossOrigin: true,
+            crossDomain: true,
+            success: function (data) {
+              //de pe server primesk json key writeconf
+              $("#console").html(data.writeconf);
+            },
+            url: mcu + "/conf/st/save/" + name + "/" + apps,
+          });
+        else $("#console").html("A valid password must be given");
+      }
+
+      function connectTo(name) {
+        var apps = prompt("Password for " + name);
+        var saveIt = confirm("Save it?");
+
+        if (saveIt) saveAp(name, apps);
+
+        if (apps != null)
+          $.ajax({
+            type: "GET",
+            dataType: "jsonp",
+            crossOrigin: true,
+            crossDomain: true,
+            success: function (data) {
+              if ("connected" in data)
+                message = "Connected <br/>" + JSON.stringify(data.connected);
+              else message = "Could not connect";
+
+              $("#console").html(message);
+            },
+            url: mcu + "/net/st/connect/" + name + "/" + apps,
+          });
+        else $("#console").html("A valid password must be given");
+      }
+
+      function getConnectionStatus() {
+        var connectionStatus;
         $.ajax({
           type: "GET",
-          dataType: "jsonp",
-          crossOrigin: true,
+          dataType: "json",
           crossDomain: true,
-          success: function (data) {
-            if ("connected" in data)
-              message = "Connected <br/>" + JSON.stringify(data.connected);
-            else message = "Could not connect";
-
-            $("#console").html(message);
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "text/plain",
+            "X-Requested-With": "XmlHttpRequest",
           },
-          url: mcu + "/net/st/connect/" + name + "/" + apps,
+          success: function (data) {
+            connectionStatus = data;
+            $("#console").html(data.ifconfig.join(" / "));
+          },
+          url: mcu + "/net/st/connected",
         });
-      else $("#console").html("A valid password must be given");
-    }
+        return connectionStatus;
+      }
 
-    function getConnectionStatus() {
-      var connectionStatus;
-      $.ajax({
-        type: "GET",
-        dataType: "json",
-        crossDomain: true,
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "text/plain",
-          "X-Requested-With": "XmlHttpRequest",
-        },
-        success: function (data) {
-          connectionStatus = data;
-          $("#console").html(data.ifconfig.join(" / "));
-        },
-        url: mcu + "/net/st/connected",
-      });
-      return connectionStatus;
-    }
+      function updateEmiterContainer() {}
 
-    function updateEmiterContainer() { }
+      function updateReceiverContainer() {}
 
-    function updateReceiverContainer() { }
+      function emiterAddUIEvents() {}
 
-    function emiterAddUIEvents() { }
+      function receiverAddUIEvents() {}
 
-    function receiverAddUIEvents() { }
+      function bts7960AddUIEvents() {}
 
-    function bts7960AddUIEvents() { }
+      function aht10AddUIEvents() {}
 
-    function aht10AddUIEvents() { }
+      function uartcommhtAddUIEvents() {}
 
-    function uartcommhtAddUIEvents() { }
+      function servoAddUIEvents() {}
 
-    function servoAddUIEvents() { }
+      function digital_inAddUIEvents() {}
 
-    function digital_inAddUIEvents() { }
+      function analog_inAddUIEvents() {}
 
-    function analog_inAddUIEvents() { }
+      function espnowdrvAddUIEvents() {
+        var espnowHtmlContainer = this;
+        var peerSelector = $("#peersList", espnowHtmlContainer).get(0);
 
-    function espnowdrvAddUIEvents() {
-      var espnowHtmlContainer = this;
-      var peerSelector = $("#peersList", espnowHtmlContainer).get(0);
+        $("#peersList", this).on("change", function () {
+          var selectedDeviceMacValue =
+            peerSelector.options[peerSelector.options.selectedIndex].value;
+          $("#peerMac", espnowHtmlContainer).val(selectedDeviceMacValue);
+        });
 
-      $("#peersList", this).on("change", function () {
-        var selectedDeviceMacValue =
-          peerSelector.options[peerSelector.options.selectedIndex].value;
-        $("#peerMac", espnowHtmlContainer).val(selectedDeviceMacValue);
-      });
+        $("#sendMessage", this).click(function () {
+          var cc = getControlsAccordionContainer(this);
+          var spid = cc.getAttribute("aria-labelledby");
 
-      $("#sendMessage", this).click(function () {
-        var cc = getControlsAccordionContainer(this);
-        var spid = cc.getAttribute("aria-labelledby");
+          var msgContent = $("#messageContent", espnowHtmlContainer).val();
 
-        var msgContent = $("#messageContent", espnowHtmlContainer).val();
+          var selectedPeer =
+            peerSelector.options[peerSelector.options.selectedIndex].value;
 
-        var selectedPeer =
-          peerSelector.options[peerSelector.options.selectedIndex].value;
+          if (msgContent && selectedPeer)
+            $.ajax({
+              type: "GET",
+              dataType: "json",
+              crossDomain: true,
+              headers: {
+                Accept: "application/json",
+                "Content-Type": "text/plain",
+                "X-Requested-With": "XmlHttpRequest",
+              },
+              success: function (data) {
+                // console.log("TOGGLE " + spid);
+                console.log(data);
+                // data.result
+                //   ? $(swbtn).addClass("on")
+                //   : $(swbtn).removeClass("on");
+              },
+              // /cmd/devid/cmdName/?options
+              // options: key, dictionary
+              // EX
+              // http://192.168.88.45:8080/cmd/1/emit?dictionary=default&key=POWER
+              url:
+                mcu +
+                "/cmd/" +
+                spid +
+                "/send/?msg=" +
+                msgContent +
+                "&to=" +
+                selectedPeer,
+            });
+          else $("#console").html("message and peer cannot be empty");
+        });
 
-        if (msgContent && selectedPeer)
+        $("#broadcastRegistration", this).click(function () {
+          var cc = getControlsAccordionContainer(this);
+          var spid = cc.getAttribute("aria-labelledby");
+
+          var msgContent = "BCAST_REG_PEER";
+
+          var selectedPeer = "ffffffffffff";
+
+          if (msgContent && selectedPeer)
+            $.ajax({
+              type: "GET",
+              dataType: "json",
+              crossDomain: true,
+              headers: {
+                Accept: "application/json",
+                "Content-Type": "text/plain",
+                "X-Requested-With": "XmlHttpRequest",
+              },
+              success: function (data) {
+                console.log(data);
+                alert("Registration Broadcast message sent");
+              },
+
+              url: mcu + "/cmd/" + spid + "/broadcastRegister",
+            });
+        });
+
+        $("#addPeer", this).click(function () {
+          var cc = getControlsAccordionContainer(this);
+          var spid = cc.getAttribute("aria-labelledby");
+          var newPeer = $("#peerMac", espnowHtmlContainer).val();
+
+          if (newPeer)
+            $.ajax({
+              type: "GET",
+              dataType: "json",
+              crossDomain: true,
+              headers: {
+                Accept: "application/json",
+                "Content-Type": "text/plain",
+                "X-Requested-With": "XmlHttpRequest",
+              },
+              success: function (data) {
+                console.log(data);
+              },
+
+              url: mcu + "/cmd/" + spid + "/addPeer/?mac=" + newPeer,
+            });
+          else $("#console").html("Peer MAC cannot be empty");
+        });
+
+        $("#rebootPeer", this).click(function () {
+          var cc = getControlsAccordionContainer(this);
+          var spid = cc.getAttribute("aria-labelledby");
+          var newPeer = $("#peerMac", espnowHtmlContainer).val();
+
+          var modesList = $("option[confkeymodifier=run]")
+            .get(0)
+            .getAttribute("vlist");
+          var vlist = modesList.split("|");
+          var rebootToPrompt = prompt("Reboot to \n" + modesList);
+
+          if (newPeer && vlist.indexOf(rebootToPrompt) >= 0)
+            $.ajax({
+              type: "GET",
+              dataType: "json",
+              data: { msg: '{"rebootTo":"espnow/ap"}', to: newPeer },
+              crossDomain: true,
+              headers: {
+                Accept: "application/json",
+                "Content-Type": "text/plain",
+                "X-Requested-With": "XmlHttpRequest",
+              },
+              success: function (data) {
+                console.log(data);
+              },
+              url: mcu + "/cmd/" + spid + "/send/",
+            });
+          else $("#console").html("Peer MAC cannot be empty");
+        });
+
+        $("#deletePeer", this).click(function () {
+          var cc = getControlsAccordionContainer(this);
+          var spid = cc.getAttribute("aria-labelledby");
+          var newPeer = $("#peerMac", espnowHtmlContainer).val();
+
+          if (newPeer)
+            $.ajax({
+              type: "GET",
+              dataType: "json",
+              crossDomain: true,
+              headers: {
+                Accept: "application/json",
+                "Content-Type": "text/plain",
+                "X-Requested-With": "XmlHttpRequest",
+              },
+              success: function (data) {
+                console.log(data);
+              },
+
+              url: mcu + "/cmd/" + spid + "/removePeer/?mac=" + newPeer,
+            });
+          else $("#console").html("Peer MAC cannot be empty");
+        });
+      }
+
+      function iruartAddUIEvents() {
+        var irHtmlContainer = this;
+
+        $("#irDictNameSelector", this).on("change", function () {
+          var selectElement = this;
+
+          var dictCommandsIR =
+            this.options[this.options.selectedIndex].commands;
+
+          $("#irCmdSelector", irHtmlContainer).empty();
+
+          for (irCMD in dictCommandsIR) {
+            var irCMDOption = document.createElement("option");
+            irCMDOption.textContent = irCMD;
+            irCMDOption.value = dictCommandsIR[irCMD];
+            $("#irCmdSelector", irHtmlContainer).get(0).add(irCMDOption);
+          }
+
+          $("#irLearnDictName", irHtmlContainer).val(
+            this.options[this.options.selectedIndex].textContent
+          );
+        });
+
+        $("#irCmdSelector", irHtmlContainer).on("change", function () {
+          $("#console").html(
+            "Code for " +
+              this.options[this.options.selectedIndex].textContent +
+              " is " +
+              this.options[this.options.selectedIndex].value
+          );
+        });
+
+        $("button#irSendSignal", this).click(function () {
+          var swbtn = this;
+          var cc = getControlsAccordionContainer(this);
+          var spid = cc.getAttribute("aria-labelledby");
+
+          var dictionarySelectElement = $(
+            "#irDictNameSelector",
+            irHtmlContainer
+          ).get(0);
+          var cmdSelectElement = $("#irCmdSelector", irHtmlContainer).get(0);
+
+          var selectedDictionary =
+            dictionarySelectElement.options[
+              dictionarySelectElement.options.selectedIndex
+            ].textContent;
+          var selectedCommand =
+            cmdSelectElement.options[cmdSelectElement.options.selectedIndex]
+              .textContent;
+
           $.ajax({
             type: "GET",
             dataType: "json",
@@ -1930,274 +2147,215 @@
               mcu +
               "/cmd/" +
               spid +
-              "/send/?msg=" +
-              msgContent +
-              "&to=" +
-              selectedPeer,
-          });
-        else $("#console").html("message and peer cannot be empty");
-      });
-
-      $("#broadcastRegistration", this).click(function () {
-        var cc = getControlsAccordionContainer(this);
-        var spid = cc.getAttribute("aria-labelledby");
-
-        var msgContent = "BCAST_REG_PEER";
-
-        var selectedPeer = "ffffffffffff";
-
-        if (msgContent && selectedPeer)
-          $.ajax({
-            type: "GET",
-            dataType: "json",
-            crossDomain: true,
-            headers: {
-              Accept: "application/json",
-              "Content-Type": "text/plain",
-              "X-Requested-With": "XmlHttpRequest",
-            },
-            success: function (data) {
-              console.log(data);
-              alert("Registration Broadcast message sent");
-            },
-
-            url: mcu + "/cmd/" + spid + "/broadcastRegister",
-          });
-      });
-
-      $("#addPeer", this).click(function () {
-        var cc = getControlsAccordionContainer(this);
-        var spid = cc.getAttribute("aria-labelledby");
-        var newPeer = $("#peerMac", espnowHtmlContainer).val();
-
-        if (newPeer)
-          $.ajax({
-            type: "GET",
-            dataType: "json",
-            crossDomain: true,
-            headers: {
-              Accept: "application/json",
-              "Content-Type": "text/plain",
-              "X-Requested-With": "XmlHttpRequest",
-            },
-            success: function (data) {
-              console.log(data);
-            },
-
-            url: mcu + "/cmd/" + spid + "/addPeer/?mac=" + newPeer,
-          });
-        else $("#console").html("Peer MAC cannot be empty");
-      });
-
-      $("#rebootPeer", this).click(function () {
-        var cc = getControlsAccordionContainer(this);
-        var spid = cc.getAttribute("aria-labelledby");
-        var newPeer = $("#peerMac", espnowHtmlContainer).val();
-
-        var modesList = $("option[confkeymodifier=run]")
-          .get(0)
-          .getAttribute("vlist");
-        var vlist = modesList.split("|");
-        var rebootToPrompt = prompt("Reboot to \n" + modesList);
-
-        if (newPeer && vlist.indexOf(rebootToPrompt) >= 0)
-          $.ajax({
-            type: "GET",
-            dataType: "json",
-            data: { msg: '{"rebootTo":"espnow/ap"}', to: newPeer },
-            crossDomain: true,
-            headers: {
-              Accept: "application/json",
-              "Content-Type": "text/plain",
-              "X-Requested-With": "XmlHttpRequest",
-            },
-            success: function (data) {
-              console.log(data);
-            },
-            url: mcu + "/cmd/" + spid + "/send/",
-          });
-        else $("#console").html("Peer MAC cannot be empty");
-      });
-
-      $("#deletePeer", this).click(function () {
-        var cc = getControlsAccordionContainer(this);
-        var spid = cc.getAttribute("aria-labelledby");
-        var newPeer = $("#peerMac", espnowHtmlContainer).val();
-
-        if (newPeer)
-          $.ajax({
-            type: "GET",
-            dataType: "json",
-            crossDomain: true,
-            headers: {
-              Accept: "application/json",
-              "Content-Type": "text/plain",
-              "X-Requested-With": "XmlHttpRequest",
-            },
-            success: function (data) {
-              console.log(data);
-            },
-
-            url: mcu + "/cmd/" + spid + "/removePeer/?mac=" + newPeer,
-          });
-        else $("#console").html("Peer MAC cannot be empty");
-      });
-    }
-
-    function iruartAddUIEvents() {
-      var irHtmlContainer = this;
-
-      $("#irDictNameSelector", this).on("change", function () {
-        var selectElement = this;
-
-        var dictCommandsIR =
-          this.options[this.options.selectedIndex].commands;
-
-        $("#irCmdSelector", irHtmlContainer).empty();
-
-        for (irCMD in dictCommandsIR) {
-          var irCMDOption = document.createElement("option");
-          irCMDOption.textContent = irCMD;
-          irCMDOption.value = dictCommandsIR[irCMD];
-          $("#irCmdSelector", irHtmlContainer).get(0).add(irCMDOption);
-        }
-
-        $("#irLearnDictName", irHtmlContainer).val(
-          this.options[this.options.selectedIndex].textContent
-        );
-      });
-
-      $("#irCmdSelector", irHtmlContainer).on("change", function () {
-        $("#console").html(
-          "Code for " +
-          this.options[this.options.selectedIndex].textContent +
-          " is " +
-          this.options[this.options.selectedIndex].value
-        );
-      });
-
-      $("button#irSendSignal", this).click(function () {
-        var swbtn = this;
-        var cc = getControlsAccordionContainer(this);
-        var spid = cc.getAttribute("aria-labelledby");
-
-        var dictionarySelectElement = $(
-          "#irDictNameSelector",
-          irHtmlContainer
-        ).get(0);
-        var cmdSelectElement = $("#irCmdSelector", irHtmlContainer).get(0);
-
-        var selectedDictionary =
-          dictionarySelectElement.options[
-            dictionarySelectElement.options.selectedIndex
-          ].textContent;
-        var selectedCommand =
-          cmdSelectElement.options[cmdSelectElement.options.selectedIndex]
-            .textContent;
-
-        $.ajax({
-          type: "GET",
-          dataType: "json",
-          crossDomain: true,
-          headers: {
-            Accept: "application/json",
-            "Content-Type": "text/plain",
-            "X-Requested-With": "XmlHttpRequest",
-          },
-          success: function (data) {
-            // console.log("TOGGLE " + spid);
-            console.log(data);
-            // data.result
-            //   ? $(swbtn).addClass("on")
-            //   : $(swbtn).removeClass("on");
-          },
-          // /cmd/devid/cmdName/?options
-          // options: key, dictionary
-          // EX
-          // http://192.168.88.45:8080/cmd/1/emit?dictionary=default&key=POWER
-          url:
-            mcu +
-            "/cmd/" +
-            spid +
-            "/emit/?dictionary=" +
-            selectedDictionary +
-            "&key=" +
-            selectedCommand,
-        });
-      });
-
-      $("button#irLearnRelearn", this).click(function () {
-        var swbtn = this;
-        var cc = getControlsAccordionContainer(this);
-        var spid = cc.getAttribute("aria-labelledby");
-
-        var dictionarySelectElement = $(
-          "#irLearnDictName",
-          irHtmlContainer
-        ).get(0);
-        var cmdSelectElement = $("#irLearnCmdId", irHtmlContainer).get(0);
-
-        var selectedDictionary = dictionarySelectElement.value;
-        var selectedCommand = cmdSelectElement.value;
-
-        if (selectedDictionary && selectedCommand)
-          $.ajax({
-            type: "GET",
-            dataType: "json",
-            crossDomain: true,
-            headers: {
-              Accept: "application/json",
-              "Content-Type": "text/plain",
-              "X-Requested-With": "XmlHttpRequest",
-            },
-            success: function (data) {
-              $("#console").html(JSON.stringify(data));
-            },
-            // /cmd/devid/cmdName/?options
-            // options: key, dictionary
-            // EX
-            // http://192.168.88.45:8080/cmd/1/learn?dictionary=default&key=POWER
-            url:
-              mcu +
-              "/cmd/" +
-              spid +
-              "/learn/?dictionary=" +
+              "/emit/?dictionary=" +
               selectedDictionary +
               "&key=" +
               selectedCommand,
           });
-        else
-          $("#console").html("Dictionary and command fields cannot be empty");
-      });
+        });
 
-      $("button#irSetDictPrefix", this).click(function () {
-        var swbtn = this;
-        var cc = getControlsAccordionContainer(this);
-        var spid = cc.getAttribute("aria-labelledby");
+        $("button#irLearnRelearn", this).click(function () {
+          var swbtn = this;
+          var cc = getControlsAccordionContainer(this);
+          var spid = cc.getAttribute("aria-labelledby");
 
-        var dictionarySelectElement = $(
-          "#irLearnDictName",
-          irHtmlContainer
-        ).get(0);
-        var cmdSelectElement = $("#irLearnCmdId", irHtmlContainer).get(0);
-
-        var selectedDictionary = dictionarySelectElement.value;
-        var prefixFromPrevStateRequest = false;
-
-        if (
-          "irDictionaries" in $("#irDictNameSelector", irHtmlContainer).get(0)
-        )
-          prefixFromPrevStateRequest = $(
-            "#irDictNameSelector",
+          var dictionarySelectElement = $(
+            "#irLearnDictName",
             irHtmlContainer
-          ).get(0).irDictionaries[selectedDictionary]["prefix"];
+          ).get(0);
+          var cmdSelectElement = $("#irLearnCmdId", irHtmlContainer).get(0);
 
-        var newPrefix = prompt(
-          "Enter the new prefix",
-          prefixFromPrevStateRequest ? prefixFromPrevStateRequest : "a1f1"
-        );
+          var selectedDictionary = dictionarySelectElement.value;
+          var selectedCommand = cmdSelectElement.value;
 
-        if (selectedDictionary && !isEmpty(newPrefix))
+          if (selectedDictionary && selectedCommand)
+            $.ajax({
+              type: "GET",
+              dataType: "json",
+              crossDomain: true,
+              headers: {
+                Accept: "application/json",
+                "Content-Type": "text/plain",
+                "X-Requested-With": "XmlHttpRequest",
+              },
+              success: function (data) {
+                $("#console").html(JSON.stringify(data));
+              },
+              // /cmd/devid/cmdName/?options
+              // options: key, dictionary
+              // EX
+              // http://192.168.88.45:8080/cmd/1/learn?dictionary=default&key=POWER
+              url:
+                mcu +
+                "/cmd/" +
+                spid +
+                "/learn/?dictionary=" +
+                selectedDictionary +
+                "&key=" +
+                selectedCommand,
+            });
+          else
+            $("#console").html("Dictionary and command fields cannot be empty");
+        });
+
+        $("button#irSetDictPrefix", this).click(function () {
+          var swbtn = this;
+          var cc = getControlsAccordionContainer(this);
+          var spid = cc.getAttribute("aria-labelledby");
+
+          var dictionarySelectElement = $(
+            "#irLearnDictName",
+            irHtmlContainer
+          ).get(0);
+          var cmdSelectElement = $("#irLearnCmdId", irHtmlContainer).get(0);
+
+          var selectedDictionary = dictionarySelectElement.value;
+          var prefixFromPrevStateRequest = false;
+
+          if (
+            "irDictionaries" in $("#irDictNameSelector", irHtmlContainer).get(0)
+          )
+            prefixFromPrevStateRequest = $(
+              "#irDictNameSelector",
+              irHtmlContainer
+            ).get(0).irDictionaries[selectedDictionary]["prefix"];
+
+          var newPrefix = prompt(
+            "Enter the new prefix",
+            prefixFromPrevStateRequest ? prefixFromPrevStateRequest : "a1f1"
+          );
+
+          if (selectedDictionary && !isEmpty(newPrefix))
+            $.ajax({
+              type: "GET",
+              dataType: "json",
+              crossDomain: true,
+              headers: {
+                Accept: "application/json",
+                "Content-Type": "text/plain",
+                "X-Requested-With": "XmlHttpRequest",
+              },
+              success: function (data) {
+                $("#console").html(JSON.stringify(data));
+              },
+              // /cmd/devid/cmdName/?options
+              // options: key, dictionary
+              // EX
+              // http://192.168.88.45:8080/cmd/1/prefix?dictionary=default&prefix=...
+              url:
+                mcu +
+                "/cmd/" +
+                spid +
+                "/prefix/?dictionary=" +
+                selectedDictionary +
+                "&prefix=" +
+                newPrefix,
+            });
+          else $("#console").html("Dictionary and prefix cannot be empty");
+        });
+      }
+
+      function updateespnowdrv_inContainer(p, s) {
+        var state = s.state;
+        var container = this;
+
+        container.lastState = state;
+        var peersListSelect = $("#peersList", container);
+        peersListSelect.empty();
+        peersListSelect.get(0).appendChild(document.createElement("option"));
+        state.peers.forEach(function (mac, index) {
+          var option = document.createElement("option");
+
+          option.textContent = state.aliases.valueOf(mac)
+            ? state.aliases[mac]
+            : mac;
+
+          option.setAttribute("value", mac);
+          peersListSelect.get(0).appendChild(option);
+        });
+
+        $("#console").html(JSON.stringify(state));
+      }
+
+      function updateiruartContainer(p, s) {
+        var state = s.state;
+
+        $("#irDictNameSelector", this).get(0).irDictionaries = state.dicts;
+        this.irDictionaries = state.dicts;
+
+        $("#irDictNameSelector", this).empty();
+        $("#irCmdSelector", this).empty();
+
+        for (dictionaryName in s.state.dicts) {
+          var opt = document.createElement("option");
+          opt.textContent = dictionaryName;
+          opt.setAttribute("value", dictionaryName);
+          opt.commands = s.state.dicts[dictionaryName]["commands"];
+          $("#irDictNameSelector", this).get(0).appendChild(opt);
+        }
+
+        $("#console").html(JSON.stringify(state.result));
+      }
+
+      function realbuttonAddUIEvents(p, s) {
+        // var state = s.state;
+        // $(this).append(JSON.stringify(state));
+      }
+      function mqttAddUIEvents(p) {
+        container = this;
+
+        $("button#setHandler", this).click(function () {
+          // # /mqttsetup/topic/set?script=...
+          // # /mqttsetup/topic/get
+          if (
+            $("textarea", container).val() &&
+            $("select#topicsList", container).val()
+          )
+            $.ajax({
+              cache: false,
+              contentType: false,
+              processData: false,
+              method: "POST",
+              dataType: "json",
+              crossDomain: true,
+              headers: {
+                Accept: "application/json",
+                "Content-Type": "multipart/form-data; boundary=---DATAFIELD---",
+                "X-Requested-With": "XmlHttpRequest",
+              },
+              data: packJSONForPOST(
+                { script: $("textarea", container).val() },
+                "---DATAFIELD---"
+              ),
+              success: function (data) {
+                console.info("Handler script saved");
+                console.log(data);
+              },
+              url:
+                mcu +
+                "/mqttsetup/" +
+                $("select#topicsList", container).val() +
+                "/set",
+            });
+          else
+            alert(
+              "Script cannot be empty\n and / or \nyou have to select a topic"
+            );
+        });
+
+        $("button#subscribe", this).click(function () {
+          // subscribe(new=False, add=False)
+          var spid = container.getAttribute("aria-labelledby");
+          var state = p.hasOwnProperty("lastState") ? p.lastState : {};
+
+          if ($("input#newTopic", container).val().trim())
+            var link =
+              mcu +
+              "/cmd/" +
+              spid +
+              "/subscribe?topic=" +
+              $("input#newTopic", container).val().trim();
+
           $.ajax({
             type: "GET",
             dataType: "json",
@@ -2208,527 +2366,402 @@
               "X-Requested-With": "XmlHttpRequest",
             },
             success: function (data) {
-              $("#console").html(JSON.stringify(data));
+              console.info("Subscribing feedback:");
+              console.log(data);
             },
-            // /cmd/devid/cmdName/?options
-            // options: key, dictionary
-            // EX
-            // http://192.168.88.45:8080/cmd/1/prefix?dictionary=default&prefix=...
-            url:
-              mcu +
-              "/cmd/" +
-              spid +
-              "/prefix/?dictionary=" +
-              selectedDictionary +
-              "&prefix=" +
-              newPrefix,
+            url: link,
           });
-        else $("#console").html("Dictionary and prefix cannot be empty");
-      });
-    }
+        });
 
-    function updateespnowdrv_inContainer(p, s) {
-      var state = s.state;
-      var container = this;
+        $("button#running", this).click(function () {
+          var spid = container.getAttribute("aria-labelledby");
+          var state = p.hasOwnProperty("lastState") ? p.lastState : {};
 
-      container.lastState = state;
-      var peersListSelect = $("#peersList", container);
-      peersListSelect.empty();
-      peersListSelect.get(0).appendChild(document.createElement("option"));
-      state.peers.forEach(function (mac, index) {
-        var option = document.createElement("option");
+          if (state.connected) doThis = "/disconnect";
+          else doThis = "/connect";
+          link = mcu + "/cmd/" + spid + doThis;
 
-        option.textContent = state.aliases.valueOf(mac)
-          ? state.aliases[mac]
-          : mac;
-
-        option.setAttribute("value", mac);
-        peersListSelect.get(0).appendChild(option);
-      });
-
-      $("#console").html(JSON.stringify(state));
-    }
-
-    function updateiruartContainer(p, s) {
-      var state = s.state;
-
-      $("#irDictNameSelector", this).get(0).irDictionaries = state.dicts;
-      this.irDictionaries = state.dicts;
-
-      $("#irDictNameSelector", this).empty();
-      $("#irCmdSelector", this).empty();
-
-      for (dictionaryName in s.state.dicts) {
-        var opt = document.createElement("option");
-        opt.textContent = dictionaryName;
-        opt.setAttribute("value", dictionaryName);
-        opt.commands = s.state.dicts[dictionaryName]["commands"];
-        $("#irDictNameSelector", this).get(0).appendChild(opt);
-      }
-
-      $("#console").html(JSON.stringify(state.result));
-    }
-
-    function realbuttonAddUIEvents(p, s) {
-      // var state = s.state;
-      // $(this).append(JSON.stringify(state));
-    }
-    function mqttAddUIEvents(p) {
-      container = this;
-
-      $("button#setHandler", this).click(function () {
-        // # /mqttsetup/topic/set?script=...
-        // # /mqttsetup/topic/get
-        if (
-          $("textarea", container).val() &&
-          $("select#topicsList", container).val()
-        )
           $.ajax({
-            cache: false,
-            contentType: false,
-            processData: false,
-            method: "POST",
+            type: "GET",
             dataType: "json",
             crossDomain: true,
             headers: {
               Accept: "application/json",
-              "Content-Type": "multipart/form-data; boundary=---DATAFIELD---",
+              "Content-Type": "text/plain",
               "X-Requested-With": "XmlHttpRequest",
             },
-            data: packJSONForPOST(
-              { script: $("textarea", container).val() },
-              "---DATAFIELD---"
-            ),
             success: function (data) {
-              console.info("Handler script saved");
-              console.log(data);
+              console.log("mqtt driver command sent: " + link);
             },
-            url:
-              mcu +
-              "/mqttsetup/" +
-              $("select#topicsList", container).val() +
-              "/set",
+            url: link,
           });
-        else
-          alert(
-            "Script cannot be empty\n and / or \nyou have to select a topic"
+        });
+      }
+      function mqttaAddUIEvents(p, s) {
+        // var state = s.state;
+        // $(this).append(JSON.stringify(state));
+      }
+      function messagerAddUIEvents(p, s) {
+        // var state = s.state;
+        // $(this).append(JSON.stringify(state));
+      }
+      function nokiadisplayAddUIEvents(p, s) {
+        // var state = s.state;
+        // $(this).append(JSON.stringify(state));
+      }
+
+      function rotencoderAddUIEvents(p, s) {
+        // var state = s.state;
+        // $(this).append(JSON.stringify(state));
+      }
+
+      function updatebts7960Container(p, s) {
+        var state = s.state;
+
+        $("#console").html(JSON.stringify(state));
+      }
+
+      function updateaht10Container(p, s) {
+        var state = s.state;
+
+        $("#console").html(JSON.stringify(state));
+      }
+
+      function updateuartcommhtContainer(p, s) {
+        var state = s.state;
+
+        $("#console").html(JSON.stringify(state));
+      }
+
+      function updateservoContainer(p, s) {
+        var state = s.state;
+
+        $("#console").html(JSON.stringify(state));
+      }
+
+      function updatedigital_inContainer(p, s) {
+        var state = s.state;
+
+        $("#console").html(JSON.stringify(state));
+      }
+
+      function updateanalog_inContainer(p, s) {
+        var state = s.state;
+
+        $("#console").html(JSON.stringify(state));
+      }
+
+      function updaterealbuttonContainer(p, s) {
+        var state = s.state;
+
+        $("#console").html(JSON.stringify(state));
+      }
+
+      function updateMqttContainer(p, s) {
+        // {"connected":true,"id":"mqb8f009cd119c","topics":"mqhomeintercom,PRESENCE,DEVCONF"}
+        p["lastState"] = s.state;
+        var state = s.state;
+        var select = $("select#topicsList", this);
+        select.html("");
+
+        state.topics.split(",").forEach(function (topic) {
+          select.append(
+            '<option value="' + topic.trim() + '">' + topic.trim() + "</option>"
           );
-      });
-
-      $("button#subscribe", this).click(function () {
-        // subscribe(new=False, add=False)
-        var spid = container.getAttribute("aria-labelledby");
-        var state = p.hasOwnProperty("lastState") ? p.lastState : {};
-
-        if ($("input#newTopic", container).val().trim())
-          var link =
-            mcu +
-            "/cmd/" +
-            spid +
-            "/subscribe?topic=" +
-            $("input#newTopic", container).val().trim();
-
-        $.ajax({
-          type: "GET",
-          dataType: "json",
-          crossDomain: true,
-          headers: {
-            Accept: "application/json",
-            "Content-Type": "text/plain",
-            "X-Requested-With": "XmlHttpRequest",
-          },
-          success: function (data) {
-            console.info("Subscribing feedback:");
-            console.log(data);
-          },
-          url: link,
         });
-      });
 
-      $("button#running", this).click(function () {
-        var spid = container.getAttribute("aria-labelledby");
-        var state = p.hasOwnProperty("lastState") ? p.lastState : {};
+        $("button#running", this).html(state.id);
+        if (state.connected) $("button#running", this).addClass("on");
+        else $("button#running", this).removeClass("on");
+      }
+      function updateMessagerContainer(p, s) {
+        var state = s.state;
 
-        if (state.connected) doThis = "/disconnect";
-        else doThis = "/connect";
-        link = mcu + "/cmd/" + spid + doThis;
+        $("#console").html(JSON.stringify(state));
+      }
+      function updateMqttaContainer(p, s) {
+        var state = s.state;
 
-        $.ajax({
-          type: "GET",
-          dataType: "json",
-          crossDomain: true,
-          headers: {
-            Accept: "application/json",
-            "Content-Type": "text/plain",
-            "X-Requested-With": "XmlHttpRequest",
+        $("#console").html(JSON.stringify(state));
+      }
+      function updatenokiadisplayContainer(p, s) {
+        var state = s.state;
+
+        $("#console").html(JSON.stringify(state));
+      }
+
+      function updaterotencoderContainer(p, s) {
+        var state = s.state;
+
+        $("#console").html(JSON.stringify(state));
+        // var sbtn = $("button#switch", this);
+        // var modeSelector = $("select#pwm", this).get(0);
+      }
+      var peripheralsStateUpdateCallback = {
+        emiter: updateEmiterContainer,
+        receiver: updateReceiverContainer,
+        bts7960: updatebts7960Container,
+        aht10: updateaht10Container,
+        uartcommht: updateuartcommhtContainer,
+        servo: updateservoContainer,
+        digital_in: updatedigital_inContainer,
+        analog_in: updateanalog_inContainer,
+        espnowdrv: updateespnowdrv_inContainer,
+        iruart: updateiruartContainer,
+        realbutton: updaterealbuttonContainer,
+        realbuttonv2: updaterealbuttonContainer,
+        mqtt: updateMqttContainer,
+        mqttht: updateMqttContainer,
+        mqtta: updateMqttaContainer,
+        messager: updateMessagerContainer,
+        nokiadisplay: updatenokiadisplayContainer,
+        rotencoder: updaterotencoderContainer,
+        relfet: updateRelfetContainer,
+        fet: updateFetContainer,
+        relay: updateRelContainer,
+        stimer: updateStimerContainer,
+        mpu6050: updateAccelContainer,
+        imu6050: updateAccelContainer,
+        imu9150: updateAccelContainer,
+        imu9250: updateAccelContainer,
+        model: function (peripheric, state) {
+          // $(this).append(JSON.stringify(peripheric));
+          console.log(peripheric);
+          console.log(state);
+        },
+      };
+
+      var makeContainerInteractive = {
+        emiter: emiterAddUIEvents,
+        receiver: receiverAddUIEvents,
+        bts7960: bts7960AddUIEvents,
+        aht10: aht10AddUIEvents,
+        uartcommht: uartcommhtAddUIEvents,
+        servo: servoAddUIEvents,
+        digital_in: digital_inAddUIEvents,
+        analog_in: analog_inAddUIEvents,
+        espnowdrv: espnowdrvAddUIEvents,
+        iruart: iruartAddUIEvents,
+        realbutton: realbuttonAddUIEvents,
+        realbuttonv2: realbuttonAddUIEvents,
+        mqtt: mqttAddUIEvents,
+        mqtta: mqttaAddUIEvents,
+        mqttht: mqttaAddUIEvents,
+        messager: messagerAddUIEvents,
+        nokiadisplay: nokiadisplayAddUIEvents,
+        rotencoder: rotencoderAddUIEvents,
+        relfet: relfetAddUIEvents,
+        fet: fetAddUIEvents,
+        relay: relAddUIEvents,
+        stimer: stimerAddUIEvents,
+        mpu6050: accelAddUIEvents,
+        imu6050: accelAddUIEvents,
+        imu9150: accelAddUIEvents,
+        imu9250: accelAddUIEvents,
+        model: function (p) {},
+      };
+
+      function initApp(devIpAddress) {
+        $("#mcu").text(devIpAddress);
+
+        mcu = "http://" + devIpAddress;
+
+        var cp = $("#devicecontroller");
+
+        mcuData = std_getDeviceInfo();
+
+        //getPeripherals();
+
+        var tab = $("#clientSections").tabs({
+          activate: function (event, ui) {
+            var activatedPanel = ui.newPanel.get(0).getAttribute("id");
+
+            if (activatedPanel == "devicecontroller") {
+              devicecontroller_displayPeripherals();
+            }
+
+            if (activatedPanel == "mcusetup") {
+            }
+
+            if (activatedPanel == "automation") {
+              automation_displayPeripherals();
+            }
           },
-          success: function (data) {
-            console.log("mqtt driver command sent: " + link);
-          },
-          url: link,
         });
-      });
-    }
-    function mqttaAddUIEvents(p, s) {
-      // var state = s.state;
-      // $(this).append(JSON.stringify(state));
-    }
-    function messagerAddUIEvents(p, s) {
-      // var state = s.state;
-      // $(this).append(JSON.stringify(state));
-    }
-    function nokiadisplayAddUIEvents(p, s) {
-      // var state = s.state;
-      // $(this).append(JSON.stringify(state));
-    }
 
-    function rotencoderAddUIEvents(p, s) {
-      // var state = s.state;
-      // $(this).append(JSON.stringify(state));
-    }
-
-    function updatebts7960Container(p, s) {
-      var state = s.state;
-
-      $("#console").html(JSON.stringify(state));
-    }
-
-    function updateaht10Container(p, s) {
-      var state = s.state;
-
-      $("#console").html(JSON.stringify(state));
-    }
-
-    function updateuartcommhtContainer(p, s) {
-      var state = s.state;
-
-      $("#console").html(JSON.stringify(state));
-    }
-
-    function updateservoContainer(p, s) {
-      var state = s.state;
-
-      $("#console").html(JSON.stringify(state));
-    }
-
-    function updatedigital_inContainer(p, s) {
-      var state = s.state;
-
-      $("#console").html(JSON.stringify(state));
-    }
-
-    function updateanalog_inContainer(p, s) {
-      var state = s.state;
-
-      $("#console").html(JSON.stringify(state));
-    }
-
-    function updaterealbuttonContainer(p, s) {
-      var state = s.state;
-
-      $("#console").html(JSON.stringify(state));
-    }
-
-    function updateMqttContainer(p, s) {
-      // {"connected":true,"id":"mqb8f009cd119c","topics":"mqhomeintercom,PRESENCE,DEVCONF"}
-      p["lastState"] = s.state;
-      var state = s.state;
-      var select = $("select#topicsList", this);
-      select.html("");
-
-      state.topics.split(",").forEach(function (topic) {
-        select.append(
-          '<option value="' + topic.trim() + '">' + topic.trim() + "</option>"
+        $("select#commands").width(
+          $("select#commands").parent("td").first().css("width") * 0.95
         );
-      });
 
-      $("button#running", this).html(state.id);
-      if (state.connected) $("button#running", this).addClass("on");
-      else $("button#running", this).removeClass("on");
-    }
-    function updateMessagerContainer(p, s) {
-      var state = s.state;
+        $("select#commands").change(function () {
+          var selectedOption = this.options.item(this.options.selectedIndex);
+          var selectedCommand = selectedOption.value;
 
-      $("#console").html(JSON.stringify(state));
-    }
-    function updateMqttaContainer(p, s) {
-      var state = s.state;
+          if (selectedOption.hasAttribute("confKeyModifier")) {
+            var vlist = false;
+            if (selectedOption.hasAttribute("vlist"))
+              var vlist = selectedOption.getAttribute("vlist").split("|");
 
-      $("#console").html(JSON.stringify(state));
-    }
-    function updatenokiadisplayContainer(p, s) {
-      var state = s.state;
-
-      $("#console").html(JSON.stringify(state));
-    }
-
-    function updaterotencoderContainer(p, s) {
-      var state = s.state;
-
-      $("#console").html(JSON.stringify(state));
-      // var sbtn = $("button#switch", this);
-      // var modeSelector = $("select#pwm", this).get(0);
-    }
-    var peripheralsStateUpdateCallback = {
-      emiter: updateEmiterContainer,
-      receiver: updateReceiverContainer,
-      bts7960: updatebts7960Container,
-      aht10: updateaht10Container,
-      uartcommht: updateuartcommhtContainer,
-      servo: updateservoContainer,
-      digital_in: updatedigital_inContainer,
-      analog_in: updateanalog_inContainer,
-      espnowdrv: updateespnowdrv_inContainer,
-      iruart: updateiruartContainer,
-      realbutton: updaterealbuttonContainer,
-      realbuttonv2: updaterealbuttonContainer,
-      mqtt: updateMqttContainer,
-      mqttht: updateMqttContainer,
-      mqtta: updateMqttaContainer,
-      messager: updateMessagerContainer,
-      nokiadisplay: updatenokiadisplayContainer,
-      rotencoder: updaterotencoderContainer,
-      relfet: updateRelfetContainer,
-      fet: updateFetContainer,
-      relay: updateRelContainer,
-      stimer: updateStimerContainer,
-      mpu6050: updateAccelContainer,
-      model: function (peripheric, state) {
-        // $(this).append(JSON.stringify(peripheric));
-        console.log(peripheric);
-        console.log(state);
-      },
-    };
-
-    var makeContainerInteractive = {
-      emiter: emiterAddUIEvents,
-      receiver: receiverAddUIEvents,
-      bts7960: bts7960AddUIEvents,
-      aht10: aht10AddUIEvents,
-      uartcommht: uartcommhtAddUIEvents,
-      servo: servoAddUIEvents,
-      digital_in: digital_inAddUIEvents,
-      analog_in: analog_inAddUIEvents,
-      espnowdrv: espnowdrvAddUIEvents,
-      iruart: iruartAddUIEvents,
-      realbutton: realbuttonAddUIEvents,
-      realbuttonv2: realbuttonAddUIEvents,
-      mqtt: mqttAddUIEvents,
-      mqtta: mqttaAddUIEvents,
-      mqttht: mqttaAddUIEvents,
-      messager: messagerAddUIEvents,
-      nokiadisplay: nokiadisplayAddUIEvents,
-      rotencoder: rotencoderAddUIEvents,
-      relfet: relfetAddUIEvents,
-      fet: fetAddUIEvents,
-      relay: relAddUIEvents,
-      stimer: stimerAddUIEvents,
-      mpu6050: accelAddUIEvents,
-      model: function (p) { },
-    };
-
-    function initApp(devIpAddress) {
-      $("#mcu").text(devIpAddress);
-
-      mcu = "http://" + devIpAddress;
-
-      var cp = $("#devicecontroller");
-
-      mcuData = std_getDeviceInfo();
-
-      //getPeripherals();
-
-      var tab = $("#clientSections").tabs({
-        activate: function (event, ui) {
-          var activatedPanel = ui.newPanel.get(0).getAttribute("id");
-
-          if (activatedPanel == "devicecontroller") {
-            devicecontroller_displayPeripherals();
-          }
-
-          if (activatedPanel == "mcusetup") {
-          }
-
-          if (activatedPanel == "automation") {
-            automation_displayPeripherals();
-          }
-        },
-      });
-
-      $("select#commands").width(
-        $("select#commands").parent("td").first().css("width") * 0.95
-      );
-
-      $("select#commands").change(function () {
-        var selectedOption = this.options.item(this.options.selectedIndex);
-        var selectedCommand = selectedOption.value;
-
-        if (selectedOption.hasAttribute("confKeyModifier")) {
-          var vlist = false;
-          if (selectedOption.hasAttribute("vlist"))
-            var vlist = selectedOption.getAttribute("vlist").split("|");
-
-          confKeyModifier(
-            selectedOption.getAttribute("confKeyModifier"),
-            vlist
-          );
-        } else if (commands.hasOwnProperty(selectedCommand))
-          commands[selectedCommand].call();
-        else $("button#" + selectedCommand).trigger("click");
-      });
-
-      $("#ipConfig").change(function () {
-        var ipconfigSelectElement = this;
-        var go = true;
-
-        netConfType = this.options
-          .item(this.options.selectedIndex)
-          .getAttribute("value");
-        if (netConfType) {
-          // static?toip=..&netmask=...&gw=...&dns=...
-          var sUrl = mcu + "/conf/st/" + netConfType;
-          if (netConfType == "static") {
-            $.ajax({
-              type: "GET",
-              dataType: "json",
-              crossDomain: true,
-              headers: {
-                Accept: "application/json",
-                "Content-Type": "text/plain",
-                "X-Requested-With": "XmlHttpRequest",
-              },
-              success: function (data) {
-                var staticDataToBeSent = {};
-                wifiConnectionStatus = data;
-
-                if (typeof wifiConnectionStatus.ifconfig == "object") {
-                  staticDataToBeSent["netmask"] =
-                    wifiConnectionStatus.ifconfig[1];
-                  staticDataToBeSent["gw"] = wifiConnectionStatus.ifconfig[2];
-                  staticDataToBeSent["dns"] =
-                    wifiConnectionStatus.ifconfig[3];
-                }
-
-                if (
-                  confirm(
-                    "Use existing address: " +
-                    wifiConnectionStatus.ifconfig[0]
-                  )
-                ) {
-                  staticDataToBeSent["toip"] =
-                    wifiConnectionStatus.ifconfig[0];
-                } else {
-                  var newipadress = prompt("New IP Adress");
-                  if (newipadress) staticDataToBeSent["toip"] = newipadress;
-                  else {
-                    alert("You need to provide a valid ip address");
-                    go = false;
-                  }
-                }
-
-                if (go)
-                  $.ajax({
-                    type: "GET",
-                    dataType: "json",
-                    crossDomain: true,
-                    headers: {
-                      Accept: "application/json",
-                      "Content-Type": "text/plain",
-                      "X-Requested-With": "XmlHttpRequest",
-                    },
-                    data: staticDataToBeSent,
-                    success: function (data) {
-                      $("#console").html("Netconfig " + data.static);
-                      $(ipconfigSelectElement).hide();
-                    },
-                    url: sUrl,
-                  });
-              },
-              url: mcu + "/net/st/connected",
-            });
-          } else if (netConfType == "dhcp") {
-            $.ajax({
-              type: "GET",
-              dataType: "json",
-              crossDomain: true,
-              headers: {
-                Accept: "application/json",
-                "Content-Type": "text/plain",
-                "X-Requested-With": "XmlHttpRequest",
-              },
-              success: function (data) {
-                $("#console").html("Netconfig " + netConfType);
-                $(ipconfigSelectElement).hide();
-              },
-              url: sUrl,
-            });
-          }
-        } else $("#console").html("No network configuration selected");
-      });
-    }
-
-    $(function () {
-      // storage.setItem("mcu_" + mpuData.muid + "_peripherals", JSON.stringify(peripherals));
-      var mculistStored = storage.getItem("mqhome-mculist");
-      var mcusList = [];
-
-      mcusSelectDialog = $("div#mcusSelectDialog").dialog({
-        title: "MCU Address",
-        width: window.innerWidth * 0.8,
-        height: window.innerHeight * 0.8,
-        autoOpen: false,
-        closeOnEscape: false,
-        modal: true,
-        open: function () { },
-        buttons: {
-          Ok: function () {
-            // mcusListSelect
-            // mcuaddress
-            if ($("input#mcuaddress", this).val())
-              devIpAddress = $("input#mcuaddress", this).val();
-            // else {
-            //     var s = $("select#mcusListSelect", this).get(0);
-            //     if (s.options.selectedIndex >= 0)
-            //         devIpAddress = $("select#mcusListSelect").get(0).options[s.options.selectedIndex].textContent;
-            // }
-
-            if (devIpAddress) {
-              if (mcusList.indexOf(devIpAddress) == -1) {
-                mcusList.push(devIpAddress);
-                storage.setItem("mqhome-mculist", JSON.stringify(mcusList));
-              }
-              $(this).dialog("close");
-              initApp(devIpAddress);
-            } else
-              alert(
-                "You either have to enter an mcu address or select one from the list, if available"
-              );
-          },
-        },
-      });
-
-      if (mculistStored != null) {
-        mcusList = JSON.parse(mculistStored);
-        mcusList.forEach(function (el) {
-          $("select#mcusListSelect", mcusSelectDialog).append(
-            "<option>" + el + "</option>"
-          );
+            confKeyModifier(
+              selectedOption.getAttribute("confKeyModifier"),
+              vlist
+            );
+          } else if (commands.hasOwnProperty(selectedCommand))
+            commands[selectedCommand].call();
+          else $("button#" + selectedCommand).trigger("click");
         });
-        $("select#mcusListSelect", mcusSelectDialog).change(function () {
-          $("input#mcuaddress").val(
-            this.options[this.options.selectedIndex].textContent
-          );
+
+        $("#ipConfig").change(function () {
+          var ipconfigSelectElement = this;
+          var go = true;
+
+          netConfType = this.options
+            .item(this.options.selectedIndex)
+            .getAttribute("value");
+          if (netConfType) {
+            // static?toip=..&netmask=...&gw=...&dns=...
+            var sUrl = mcu + "/conf/st/" + netConfType;
+            if (netConfType == "static") {
+              $.ajax({
+                type: "GET",
+                dataType: "json",
+                crossDomain: true,
+                headers: {
+                  Accept: "application/json",
+                  "Content-Type": "text/plain",
+                  "X-Requested-With": "XmlHttpRequest",
+                },
+                success: function (data) {
+                  var staticDataToBeSent = {};
+                  wifiConnectionStatus = data;
+
+                  if (typeof wifiConnectionStatus.ifconfig == "object") {
+                    staticDataToBeSent["netmask"] =
+                      wifiConnectionStatus.ifconfig[1];
+                    staticDataToBeSent["gw"] = wifiConnectionStatus.ifconfig[2];
+                    staticDataToBeSent["dns"] =
+                      wifiConnectionStatus.ifconfig[3];
+                  }
+
+                  if (
+                    confirm(
+                      "Use existing address: " +
+                        wifiConnectionStatus.ifconfig[0]
+                    )
+                  ) {
+                    staticDataToBeSent["toip"] =
+                      wifiConnectionStatus.ifconfig[0];
+                  } else {
+                    var newipadress = prompt("New IP Adress");
+                    if (newipadress) staticDataToBeSent["toip"] = newipadress;
+                    else {
+                      alert("You need to provide a valid ip address");
+                      go = false;
+                    }
+                  }
+
+                  if (go)
+                    $.ajax({
+                      type: "GET",
+                      dataType: "json",
+                      crossDomain: true,
+                      headers: {
+                        Accept: "application/json",
+                        "Content-Type": "text/plain",
+                        "X-Requested-With": "XmlHttpRequest",
+                      },
+                      data: staticDataToBeSent,
+                      success: function (data) {
+                        $("#console").html("Netconfig " + data.static);
+                        $(ipconfigSelectElement).hide();
+                      },
+                      url: sUrl,
+                    });
+                },
+                url: mcu + "/net/st/connected",
+              });
+            } else if (netConfType == "dhcp") {
+              $.ajax({
+                type: "GET",
+                dataType: "json",
+                crossDomain: true,
+                headers: {
+                  Accept: "application/json",
+                  "Content-Type": "text/plain",
+                  "X-Requested-With": "XmlHttpRequest",
+                },
+                success: function (data) {
+                  $("#console").html("Netconfig " + netConfType);
+                  $(ipconfigSelectElement).hide();
+                },
+                url: sUrl,
+              });
+            }
+          } else $("#console").html("No network configuration selected");
         });
       }
 
-      mcusSelectDialog.dialog("open");
+      $(function () {
+        // storage.setItem("mcu_" + mpuData.muid + "_peripherals", JSON.stringify(peripherals));
+        var mculistStored = storage.getItem("mqhome-mculist");
+        var mcusList = [];
 
-      // else {
-      //     devIpAddress = prompt("MCU Address", "192.168.4.1:8080");
-      //     storage.setItem("mqhome-mculist", JSON.stringify([devIpAddress]));
-      // }
-    });
-  </script>
-</body>
+        mcusSelectDialog = $("div#mcusSelectDialog").dialog({
+          title: "MCU Address",
+          width: window.innerWidth * 0.8,
+          height: window.innerHeight * 0.8,
+          autoOpen: false,
+          closeOnEscape: false,
+          modal: true,
+          open: function () {},
+          buttons: {
+            Ok: function () {
+              // mcusListSelect
+              // mcuaddress
+              if ($("input#mcuaddress", this).val())
+                devIpAddress = $("input#mcuaddress", this).val();
+              // else {
+              //     var s = $("select#mcusListSelect", this).get(0);
+              //     if (s.options.selectedIndex >= 0)
+              //         devIpAddress = $("select#mcusListSelect").get(0).options[s.options.selectedIndex].textContent;
+              // }
 
+              if (devIpAddress) {
+                if (mcusList.indexOf(devIpAddress) == -1) {
+                  mcusList.push(devIpAddress);
+                  storage.setItem("mqhome-mculist", JSON.stringify(mcusList));
+                }
+                $(this).dialog("close");
+                initApp(devIpAddress);
+              } else
+                alert(
+                  "You either have to enter an mcu address or select one from the list, if available"
+                );
+            },
+          },
+        });
+
+        if (mculistStored != null) {
+          mcusList = JSON.parse(mculistStored);
+          mcusList.forEach(function (el) {
+            $("select#mcusListSelect", mcusSelectDialog).append(
+              "<option>" + el + "</option>"
+            );
+          });
+          $("select#mcusListSelect", mcusSelectDialog).change(function () {
+            $("input#mcuaddress").val(
+              this.options[this.options.selectedIndex].textContent
+            );
+          });
+        }
+
+        mcusSelectDialog.dialog("open");
+
+        // else {
+        //     devIpAddress = prompt("MCU Address", "192.168.4.1:8080");
+        //     storage.setItem("mqhome-mculist", JSON.stringify([devIpAddress]));
+        // }
+      });
+    </script>
+  </body>
 </html>

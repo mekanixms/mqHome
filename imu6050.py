@@ -31,7 +31,7 @@ def setPeriod(s, period=1000):
                 s.period = int(period)
 
 
-class mpu6050(peripheral):
+class imu6050(peripheral):
     po = False
     isESP8266 = True if platform == 'esp8266' else False
     isESP32 = True if platform == 'esp32' else False

@@ -1,3 +1,19 @@
+0.17.0-2024-02-13
+    imu9250:
+        - first functional version of mpu 9250 implementation
+        - calibration functional
+        - fuseUpdateTime saved as json in config file
+        - init Timer is used for calibration and later to update Fusion;
+        = TODO: declination and update in init Options
+
+
+0.16.3-2024-02-11
+    mpu6050: roll, pitch, yaw read self.imu.accel.xyz if no parameters are given
+    
+0.16-2023-11-30
+    mqttht mqtta and mqtt.py: fixed mqtt bug in mqttht mqtta si mqtt - list assignment rawMessagePosArgs.append(msgjs) not [2]
+    jsu.py: added animation condition value evaluation with context dev[] context[] pargs[] and kargs[] 
+
 0.15.4-2023-09-10
     fixed sending manufacturer id in ble advertising package
     
