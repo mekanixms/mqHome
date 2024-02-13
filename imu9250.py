@@ -8,9 +8,7 @@ from time import sleep_ms, ticks_us, ticks_diff
 import json
 from utils import file_exists, is_number
 
-# TODO:
-# - implement Calibrate cu swtich Pin 4 ca in FuseTest
-# - declination
+# NEEDS Fusion https://github.com/micropython-IMU/micropython-fusion/tree/master
 
 
 def enable(s, period=1000):
