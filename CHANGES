@@ -1,3 +1,6 @@
+0.17.3-2024-02-13
+    mcu2: added blerepl/off
+    
 0.17.1-2024-02-13
     imu9250: declination and calibrate in init Options
 
