@@ -264,12 +264,13 @@ class espnowdrv(peripheral):
         except:
             m = {"error": "other"}
 
-        m["FROM"] = decodedFromMac
+        m["source"] = decodedFromMac
         if "message" not in m.keys():
             m["message"] = msg.decode("utf-8")
 
-        rmpa = [m["FROM"], m["message"]]
-        rmkwa = {"source": rmpa[0], "message": rmpa[1]}
+        # rmpa = [m["FROM"], m["message"]]
+        # rmkwa = {"source": rmpa[0], "message": rmpa[1]}
+        rmkwa = {"source": decodedFromMac, "message": msg}
 
         try:
             self.rawMessage(**rmkwa)

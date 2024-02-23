@@ -1,3 +1,8 @@
+0.18-2024-02-23:
+    espnowdrv.py:
+        - message and rawMessage called with "source" and "message" arguments
+        - rawMessage "message" argument is coded 
+
 0.17.4-2024-02-18
     conf.py: runModes add single/off and blerepl/off
 
