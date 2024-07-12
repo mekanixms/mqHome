@@ -1,7 +1,17 @@
+0.19-2024-07-12:
+    espnowdrv.py:
+        - onrcvcbk and run: irecv(-1) set timeout to wait forever
+        - send(None, msg): set mac to None (when not provided) so the message will be sent to all registered peers
+    clients/mqtt2.html:
+        - added bootstrap.js
+            TODO:
+                - add to mqhomeAdmin / Android
+                - further improve UI with it
 0.18-2024-02-23:
     espnowdrv.py:
         - message and rawMessage called with "source" and "message" arguments
         - rawMessage "message" argument is coded 
+        - send() - added @peripheral._trigger decorator TESTED with S3 fuseEspnow script
 
 0.17.4-2024-02-18
     conf.py: runModes add single/off and blerepl/off

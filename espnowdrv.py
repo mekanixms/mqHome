@@ -282,7 +282,9 @@ class espnowdrv(peripheral):
         mem_manage()
 
     def onrcvcbk(self, enow):
-        host, msg = self.espnow.irecv(0)
+        host, msg = enow.irecv(-1)
+        # timeout < 0: Do not timeout, ie. wait forever for new messages
+        # host, msg = self.espnow.irecv(-1)
         if msg:
             self.__re(host, msg)
 
@@ -291,7 +293,7 @@ class espnowdrv(peripheral):
         while True:
             with a_lock:
                 if self.espnow.any():
-                    host, msg = self.espnow.irecv(0)
+                    host, msg = self.espnow.irecv(-1)
 
                     if msg:
                         self.__re(host, msg)
@@ -308,7 +310,9 @@ class espnowdrv(peripheral):
 
         try:
             if to == "*":
-                response = self.espnow.send(msg)
+                #  If mac is None (ESP32 only) the message will be sent to all registered peers
+                # except any broadcast or multicast MAC addresses
+                response = self.espnow.send(None, msg)
             else:
                 if len(to) == 12:
                     encTo = self.__encodeHexBytes(to)
