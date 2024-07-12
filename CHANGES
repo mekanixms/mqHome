@@ -1,3 +1,7 @@
+0.19.1-2024-07-12:
+    espnowdrv.py:
+        - onrcvcbk: while enow.any()
+
 0.19-2024-07-12:
     espnowdrv.py:
         - onrcvcbk and run: irecv(-1) set timeout to wait forever

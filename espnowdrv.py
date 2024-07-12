@@ -75,7 +75,7 @@ class espnowdrv(peripheral):
     peersAlias = {}
     stop = False
     broadcast = 'ff'*6
-    version = 0.12
+    version = 0.13
     wap = network.WLAN(network.AP_IF)
 
     def __init__(self, options={"autostart": True, "broadcast": True, "wap_channel": 6}):
@@ -282,11 +282,12 @@ class espnowdrv(peripheral):
         mem_manage()
 
     def onrcvcbk(self, enow):
-        host, msg = enow.irecv(-1)
-        # timeout < 0: Do not timeout, ie. wait forever for new messages
-        # host, msg = self.espnow.irecv(-1)
-        if msg:
-            self.__re(host, msg)
+        while enow.any():
+            host, msg = enow.irecv(-1)
+            # timeout < 0: Do not timeout, ie. wait forever for new messages
+            # host, msg = self.espnow.irecv(-1)
+            if msg:
+                self.__re(host, msg)
 
     def run(self):
         a_lock = _thread.allocate_lock()
