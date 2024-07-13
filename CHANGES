@@ -1,3 +1,6 @@
+0.19.2-2024-07-13:
+    espnowdrv.py: send with sync when  mac None
+
 0.19.1-2024-07-12:
     espnowdrv.py:
         - onrcvcbk: while enow.any()

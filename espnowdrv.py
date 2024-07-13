@@ -313,7 +313,7 @@ class espnowdrv(peripheral):
             if to == "*":
                 #  If mac is None (ESP32 only) the message will be sent to all registered peers
                 # except any broadcast or multicast MAC addresses
-                response = self.espnow.send(None, msg)
+                response = self.espnow.send(None, msg, sync)
             else:
                 if len(to) == 12:
                     encTo = self.__encodeHexBytes(to)
