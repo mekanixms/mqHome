@@ -75,8 +75,9 @@ class espnowdrv(peripheral):
     peersAlias = {}
     stop = False
     broadcast = 'ff'*6
-    version = 0.13
+    version = 0.14
     wap = network.WLAN(network.AP_IF)
+    ALLOW_PEER_REGISTRATION = True
 
     def __init__(self, options={"autostart": True, "broadcast": True, "wap_channel": 6}):
         super().__init__(options)
@@ -251,10 +252,10 @@ class espnowdrv(peripheral):
         except ValueError:
             m = {"message": msg.decode("utf-8")}
 
-            if m["message"] == "BCAST_REG_PEER":
+            if m["message"] == "BCAST_REG_PEER" and self.ALLOW_PEER_REGISTRATION:
                 self.loadPeer(decodedFromMac)
                 self.savePeersToFile()
-            if m["message"].startswith("BCAST_REG_ALIAS/"):
+            if m["message"].startswith("BCAST_REG_ALIAS/") and self.ALLOW_PEER_REGISTRATION:
                 pAlias = m["message"].strip("BCAST_REG_ALIAS/")
                 if pAlias:
                     self.peersAlias[decodedFromMac] = pAlias

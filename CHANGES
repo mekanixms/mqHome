@@ -1,5 +1,7 @@
 0.19.3-2024-07-14:
-    espnowdrv.py: send(...,broadcast=True); if false will send the mesdsage individually to each in espnow.get_peers()
+    espnowdrv.py:
+        - send(...,broadcast=True); if false will send the mesdsage individually to each in espnow.get_peers()
+        - espnowdrv class ALLOW_PEER_REGISTRATION property default True
 
 0.19.2-2024-07-13:
     espnowdrv.py: send with sync when  mac None
