@@ -305,15 +305,22 @@ class espnowdrv(peripheral):
         _thread.exit()
 
     @peripheral._trigger
-    def send(self, msg, to="*", sync=False):
+    def send(self, msg, to="*", sync=False, broadcast=True):
 
         response = False
 
         try:
             if to == "*":
-                #  If mac is None (ESP32 only) the message will be sent to all registered peers
-                # except any broadcast or multicast MAC addresses
-                response = self.espnow.send(None, msg, sync)
+                if broadcast:
+                    #  If mac is None (ESP32 only) the message will be sent to all registered peers
+                    # except any broadcast or multicast MAC addresses
+                    response = self.espnow.send(None, msg, sync)
+                else:
+                    peers = self.espnow.get_peers()
+                    response = dict()
+                    for peer in peers:
+                        response[self.__decodeHexBytes(peer[0])] = self.espnow.send(
+                            peer[0], msg, sync)
             else:
                 if len(to) == 12:
                     encTo = self.__encodeHexBytes(to)
