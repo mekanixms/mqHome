@@ -83,7 +83,7 @@ class mcu:
                                    "realbutton", "realbuttonv2", "rotencoder",
                                    "nokiadisplay", "mqtt", "mqtta", "mqttht",
                                    "messager", "servo", "digital_in", "analog_in",
-                                   "iruart", "espnowdrv", "uartcomm", "uartcommht", "uartcomml"]:
+                                   "iruart", "espnowdrv", "uartcomm", "uartcommht", "uartcomml", "uartcommp"]:
             pt = thisOne.get("type")
             driverClass = getattr(__import__(pt), pt)
 

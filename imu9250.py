@@ -211,7 +211,7 @@ class imu9250(peripheral):
     def yaw(self, xyz=None):
         yo = 0
         if xyz == None:
-            yo = self.fuse.heading+self.declination
+            yo = self.fuse.heading
         else:
             x, y, z = xyz
             yo = 180 * atan(z/sqrt(x*x + z*z)) / pi

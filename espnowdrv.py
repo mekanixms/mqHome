@@ -166,7 +166,8 @@ class espnowdrv(peripheral):
         success = True
 
         try:
-            self.espnow.add_peer(self.__encodeHexBytes(peer))
+            self.espnow.add_peer(
+                self.__encodeHexBytes(peer), ifidx=network.AP_IF)
         except:
             success = False
 
@@ -327,7 +328,11 @@ class espnowdrv(peripheral):
                     encTo = self.__encodeHexBytes(to)
                     response = self.espnow.send(encTo, msg, sync)
         except OSError as ose:
-            response = str(ose.args[0]) + " : "+str(ose.args[1])
+            if type(ose.args) is list:
+                if len(ose.args) == 2:
+                    response = str(ose.args[0]) + " : "+str(ose.args[1])
+            else:
+                response = ujson.dumps(ose.args)
 
         return {
             "to": to,

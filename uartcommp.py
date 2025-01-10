@@ -2,32 +2,32 @@ from peripheral import peripheral
 from machine import UART, idle
 import ure
 import select
-
+from time import sleep_ms
+import _thread
 
 @peripheral._trigger
 def sendMessage(s, message):
     return s.send(message)
 
 
-class uartcommht(peripheral):
+class uartcommp(peripheral):
     '''
     select.poll version to read the messages from uart
     base example https://forum.micropython.org/viewtopic.php?t=1741
     '''
 
-    version = 0.1
+    version = 0.2
     matchFunctions = '(.*?)\((.*?)\)'
     lineSeparator = "\n"
 
     def __init__(self, options={
-        "autostart": True,
         "id": 2,
         "baudrate": 115200,
-        "skipRepeats": True
+        "skipRepeats": False
     }):
         super().__init__(options)
 
-        self.pType = "uartcommht"
+        self.pType = "uartcommp"
         self.pClass = "OUT"
 
 
@@ -41,25 +41,24 @@ class uartcommht(peripheral):
         self.__tmpValue = False
 
         self.uart = UART(self.settings["id"], self.settings["baudrate"])
-        self.poll = select.poll()
-        self.poll.register(self.uart, select.POLLIN)
 
-        if "autostart" in options.keys():
-            if options["autostart"]:
-                print("Autostart enabled")
-                self.start()
+        self.start()
 
     def start(self):
         # TODO: finish implementation
-        # self.hTimer.init(
-        #     period=self.settings["timer_period"], mode=Timer.PERIODIC, callback=self.run)
-        self.send("PING")
-        print("\t"+self.pType+" "+str(self.settings["id"]) +
-              " STARTED at " + str(self.settings["baudrate"]) + " bps")
+        self.poll = select.poll()
+        self.poll.register(self.uart, select.POLLIN)
+        print("\tPoll registered "+self.pType+" "+str(self.settings["id"]) +
+              " @ " + str(self.settings["baudrate"]) + " bps")
 
-    def run(self, t):
-        if self.uart.any():
-            self.value = self.uart.readline().decode().rstrip(self.lineSeparator)
+    
+    def run(self):
+        '''
+        call this from an outside loop
+        '''
+        for ev in self.poll.poll():
+            if ev[0] == self.uart:
+                self.value = self.uart.readline().decode().rstrip(self.lineSeparator)
 
     @property
     def value(self):
