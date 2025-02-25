@@ -328,7 +328,7 @@ class espnowdrv(peripheral):
                     encTo = self.__encodeHexBytes(to)
                     response = self.espnow.send(encTo, msg, sync)
         except OSError as ose:
-            if type(ose.args) is list:
+            if hasattr(ose,"args") and type(ose.args) is list:
                 if len(ose.args) == 2:
                     response = str(ose.args[0]) + " : "+str(ose.args[1])
             else:
