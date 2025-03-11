@@ -36,5 +36,27 @@
             "freq": 50,
             "max_us": 2400
         }
+    },
+    {
+        "id": 5,
+        "type": "scheduler",
+        "alias": "scheduler",
+        "initOptions": {
+            "timezone": 2,
+            "tasks": [
+                {
+                    "time": "08:00",
+                    "command": "dev[1]/start",
+                    "args": {"period": 0.5},
+                    "days": [0,1,2,3,4]
+                },
+                {
+                    "time": "1h",
+                    "command": "TEMPERATURE",
+                    "args": {"request": "status"},
+                    "days": null
+                }
+            ]
+        }
     }
 ]

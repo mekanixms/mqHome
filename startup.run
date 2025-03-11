@@ -7,3 +7,10 @@
 # dev[3].setTimer(True,period=200)
 #mpu.userVariables["clicked"] = 0
 #dev[2].start()
+
+# Process scheduler every minute
+#def check_scheduler():
+#    dev[5].process()  # Assuming scheduler is peripheral ID 5
+#    mpu.timer.init(period=60000, mode=mpu.timer.ONE_SHOT, callback=lambda t: check_scheduler())
+
+#check_scheduler()
