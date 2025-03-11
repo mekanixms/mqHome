@@ -75,8 +75,8 @@ class espnowdrv(peripheral):
     peersAlias = {}
     stop = False
     broadcast = 'ff'*6
-    version = 0.14
-    wap = network.WLAN(network.AP_IF)
+    version = 0.15
+
     ALLOW_PEER_REGISTRATION = True
 
     def __init__(self, options={"autostart": True, "broadcast": True, "wap_channel": 6}):
@@ -96,14 +96,6 @@ class espnowdrv(peripheral):
         self.commands["rebootAs"] = rebootAs
         self.commands["savePeers"] = savePeers
 
-        self.wap.active(True)
-        if "wap_channel" in self.settings.keys():
-            wap_channel = int(self.settings["wap_channel"])
-        else:
-            wap_channel = 2
-
-        self.wap.config(channel=wap_channel)
-        print("\tESPNow AP channel="+str(wap_channel))
 
         self.espnow = espnow.ESPNow()
         self.espnow.active(True)
@@ -167,7 +159,7 @@ class espnowdrv(peripheral):
 
         try:
             self.espnow.add_peer(
-                self.__encodeHexBytes(peer), ifidx=network.AP_IF)
+                self.__encodeHexBytes(peer))
         except:
             success = False
 
